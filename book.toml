@@ -1,0 +1,6 @@
+[book]
+authors = ["Masterchef365"]
+language = "en"
+multilingual = false
+src = "src"
+title = "The Book"
