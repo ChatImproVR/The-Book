@@ -1,16 +1,9 @@
 # ChatImproVR
 
 ## What is ChatImproVR?
-TODO
+ChatImproVR is a virtual world platform, with goals similar to that of VRChat or Neos VR. A virtual world platform is a game engine and a set of tools to create and experience an immersive virtual space. These virtual spaces are then hosted online, where users can join them to socialize and enjoy the activities in the virtual world.
+
+ChatImproVR will improve on existing virtual world platforms by promoting open source software and prioritizing user control over content, all while featuring excellent modding flexibility.
 
 ## Who is ChatImproVR for?
 Everyone! (TODO: Inclusive design)
-
-## How does ChatImproVR work?
-**ChatImproVR is based** on plugins. Plugins run on both the **Client** and the **Server**. Each plugin adds functionality to the virtual world by providing a number of **Systems**. We refer to the **Client** or the **Server** as the **"Host"**. **Systems** communicate with the **Host** via **Channels** and via the Entity Component System (**ECS**).
-
-## Channels
-Messages are sent on 
-Each **Channel** is referred to by it's **Unique ID**. This ID  
-
-## ECS
