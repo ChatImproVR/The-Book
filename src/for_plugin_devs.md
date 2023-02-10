@@ -25,4 +25,8 @@ Execution of **Systems** on each **Host** is broken up into a number of **Stages
 * **Post-Update**: Executed after each update, once per **Frame**.
 
 ## Synchronization
-There is a special **Sychronized** component which, if attached to an **Entity** on the **Server**, will cause the entire **Entity** and all of it's **Components** to be copied to the **Clients**'s **ECS** each **Update**. This mechanism is intended to make it very easy to create content which is visible to all **Clients** immediately. 
+There is a special **Sychronized** component which, if attached to an **Entity** on the **Server**, will cause the entire **Entity** and all of it's **Components** to be copied to the **Clients**'s **ECS**. This mechanism is intended to make it very easy to create content which is visible to all **Clients** immediately. 
+
+Expect this synchronization to be optimized, so that updates may not be immediate.
+
+In the future, we may offer lazy/immediate/streamed variants of this component.
