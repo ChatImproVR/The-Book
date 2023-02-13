@@ -1,9 +1,9 @@
 # Summary
 
 - [Introduction](./introduction.md)
-- [For Users]()
+- [Installation](./install.md)
 - [For Plugin developers](./for_plugin_devs.md)
-    - [Development environment](./dev_env.md)
+    - [Core concepts](./core_concepts.md)
     - [Webassembly](./wasm.md)
     - [Crates](./crates.md)
     - [Names](./names.md)
