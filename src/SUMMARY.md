@@ -8,5 +8,6 @@
     - [Crates](./crates.md)
     - [Names](./names.md)
     - [Coordinate system]()
+    - [API documentation](./api_docs.md)
 - [For Engine developers](./for_engine_developers.md)
 - [Common fixes](./common_fixes.md)
