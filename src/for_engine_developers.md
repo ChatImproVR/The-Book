@@ -12,3 +12,4 @@ The **Client** contains a number of subsystems which allow the **Engine** to int
 Each of these subsystems interacts with the **Engine** by making ECS queries and checking the message **Inboxes** that they've subscribed to. In this way, creating subsystems is very much like writing plugins.
 
 The **Server** is a lot simpler, except that it may connect to many **Clients** and is intended to be a headless program. It has a few simple subsystems which e.g. report which clients are connected.
+
