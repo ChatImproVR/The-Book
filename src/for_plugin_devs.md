@@ -23,6 +23,7 @@ This will become important later when you use the `pkg_namespace!()` macro! Make
 ## Setting up the helper script
 The helper script requires Python 3.
 
+### On Linux
 Assuming you have a copy of `iteration0` somewhere (in this case, `$HOME/Projects/chatimprovr`), you can put the following in your `~/.bashrc`:
 
 ```bash
@@ -35,6 +36,27 @@ This will allow you to access the script as `cimvr` anywhere.
 let's say we want to develop a plugin called `foo`, that we're developing at `$HOME/Projects/foo`. Then we could add this to our `~/.bashrc`:
 ```bash
 export CIMVR_PLUGINS="$HOME/Projects/foo/target/wasm32-unknown-unknown/release"
+```
+
+### On Windows
+Assuming you have a copy of `iteration0` somewhere (in this case, `C:\Users\dunca\Documents\iteration0`), you can put the following in your `$profile`
+```ps1
+function cimvr() {
+    $cimvr_path="C:\Users\dunca\Documents\iteration0"
+    python $cimvr_path\cimvr.py
+}
+```
+This will allow you to access the script as `cimvr` anywhere.
+
+let's say we want to develop a plugin called `foo`, that we're developing at `C:\Users\dunca\Documents\Projects\foo`. Then we could add this to our `$profile`
+```bash
+$Env:CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo\target\wasm32-unknown-unknown\release"
+```
+
+### Use the script to launch plugins
+We could launch the cube example included with ChatImproVR using:
+```bash
+cimvr camera cube
 ```
 
 After building both `iteration0`'s client and server, and also building our own plugin we could launch our script with the following:
