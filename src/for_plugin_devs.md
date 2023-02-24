@@ -43,7 +43,7 @@ Assuming you have a copy of `iteration0` somewhere (in this case, `C:\Users\dunc
 ```ps1
 function cimvr() {
     $cimvr_path="C:\Users\dunca\Documents\iteration0"
-    python $cimvr_path\cimvr.py
+    python $cimvr_path\cimvr.py $args
 }
 ```
 This will allow you to access the script as `cimvr` anywhere.
