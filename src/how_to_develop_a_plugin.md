@@ -24,3 +24,7 @@ git clone git@github.com:ChatImproVR/template.git && \
     git remote rm upstream
 ```
 
+After you clone this repository you can begin working on your plugin!
+
+# Important Plugin Functions
+> WIP
