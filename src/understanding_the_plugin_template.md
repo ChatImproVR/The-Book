@@ -58,57 +58,10 @@ serde = { version = "1", features = ["derive"] }
 Before we go straight into the `lib.rs` file and read the code, let's talk about some concept such as difference between client and server and the behavior of the template plugin.
 
 ### Difference between Client and Server
+The Client and Server play very different roles in plugin developement. Deciding what code belongs server-side and what code belongs client-side can be challenging.
 
-Client and server are very different based on their definition itself. However, what makes confusing to the developers will be what type of code falls into client versus server. 
+A simple description of the difference in semantics between client and server, is that changes made client-side will only be visible for that client, and changes made server-side can be made visible to **all** connected clients.
 
-Here is one simple sentence between the differences: Client will **only** show change on one user whereas server will show change on **every** users.
+For example, let say that a user presses the left key to move an object to the left. If we want that behavior to only be visible for that user, then that code should be part of the client side and we do not need to send a message to the server to change the object. However, if the user wants to move an object which is visible to everyone else in the Server, then that movement behavior should happen Server-side; The Client will send a command to the server requesting that the object must move left.
 
-For example, let say that one user press the left key to move an object to the left. If we want that behavior that only the user want to see it while no one else in the same server wants to see it, then that code should be part of the client side and do not need to send a message to move that object. However, if the user wants to see that object movement to everyone else in the same server, then that movement behavior should happen in the server side whereas the client will send a command to the server saying that certain object must move left.
-
-Therefore, it is worth thinking on what behaviors should happen for your plugin development. If you are planning to develop a plugin that multiple users will interact at the same time, then it is recommended to develop the bahavior of the event on the server side. If you are planning to develop a story mode game, for example, that only one user will interect with other objects, developing the code client side would make sense. 
-
-TODO: maybe have the picture of the whiteboard we had from 2/24 meeting
-
-### What Does the Template Plugin Do?
-The following code in lib.rs should be looking similar the code below.
-```rs
-use cimvr_engine_interface::{make_app_state, prelude::*, println};
-
-// All state associated with client-side behaviour
-struct ClientState;
-
-impl UserState for ClientState {
-    // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
-        println!("Hello, client!");
-
-        // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
-        cimvr_engine_interface::println!("This prints");
-        std::println!("But this doesn't");
-
-        Self
-    }
-}
-
-// All state associated with server-side behaviour
-struct ServerState;
-
-impl UserState for ServerState {
-    // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
-        println!("Hello, server!");
-        Self
-    }
-}
-
-// Defines entry points for the engine to hook into.
-// Calls new() for the appropriate state.
-make_app_state!(ClientState, ServerState);
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn im_a_test() {}
-}
-```
+Therefore, it is worth thinking about the desired behaviors first; If you are planning to develop a plugin that multiple users will interact at the same time, then it is recommended to develop the bahavior of the event on the Server-side. If you are planning to develop a story mode game, for example, that only one user will interect with other objects, developing the code client side would make sense and likely result in simpler code.
