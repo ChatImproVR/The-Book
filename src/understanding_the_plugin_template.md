@@ -1,57 +1,48 @@
 # Plugin Template
 
-Before we start getting creative with our plugin development, lets dive deep into the code to have a good understanding on what is going on.
+Before we start getting creative with plugin development, lets dive deep into the code to gain a better understanding of what is going on.
 
-## Plugin File Sturcture
+## Plugin File Structure
+The following list is the file structure of the plugin template:
+- `.cargo`
+    - `config.toml`
+- `src`
+    - `lib.rs`
+- `.gitignore`
+- `Cargo.toml`
+- `README.md`
 
-The following list is the file sturcture of the plugin template.
+New rust developers will be primarily familiar with developing code in `main.rs`, however plugins are a bit different. Plugins are libraries, so we write code starting from `lib.rs` instead.
 
-- .cargo
-    - config.toml
-- src
-    - lib.rs
-- .gitignore
-- Cargo.toml
-- README.md
-
-For early rust developers, majority of the code has been developed in the `main.rs` file. However, in this template does not contain at all because we are developing a feature/plugin as a library rather than entire new system (which will be the `main.rs`). 
-
-## So Where Do I Code...?
-
-As you might noticed that there is only one rust file which is `lib.rs` file. That is where we will spend the majority of our time. However, before we get into the code itself, there is one thing need to change. This information can be found in the `README.md` file, but we will go over here as well. 
+Before we get into the code itself, there is one thing need to change. This information can be found in the `README.md` file, but we will go over it here as well.
 
 ### Update Cargo.toml file
-
-Because this code is an template, the code is not fully setup for development. Inside the `Cargo.toml` file, you will find the following code.
+Because this code is a template, the code is not fully setup for development. Inside the `Cargo.toml` file, you will find the following code:
 ```toml
 [package]
-name = "template_plugin" # CHANGE HERE
-version = "0.1.0" # CHANGE HERE
-edition = "2021" # CHANGE HERE
+name = "template_plugin" # CHANGE ME!
+version = "0.1.0"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
 
-[dependencies] # KEEP IN EYE
+[dependencies] # IMPORTANT!
 cimvr_common = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" }
 cimvr_engine_interface  = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" } 
 serde = { version = "1", features = ["derive"] }
 ```
-There are few spots that need to change in this file as you can find the comments. 
 
-1. We want to change the name of the plugin to whatever name you want to give. In this tutorial, it will be **galaga**. Without changing the name, you will not able to compile the plugin the name you want to have; in other words, if we decide not change the name, we need to compile the plugin as `template_plugin`. Not only that, but also this will become important later when you use the `pkg_namespace!()` macro! Make sure to pick something descriptive, unique, and long.
+We need to change the name of the plugin. In this tutorial, it will be **galaga**. If we decide not change the name, the plugin will be compiled as `template_plugin.wasm`. Not only that, but the name will become important later when we use the `pkg_namespace!()` macro! __Make sure to pick something descriptive, unique, and long.__
 
-2. The version variable and edition veriables purposes are keeping track the plugin version itself. While there is no necessary need at the current moment, it is recommended to track the progess overtime.
+Note that in the future, ChatImproVR may be available on crates.io or change it's name in git, in which case you will need to update the `[dependencies]` section!
 
-There is a comment says `#KEEP IN EYE`. If there is a major change within ChatImproVR engine code such as the new name (instead of `iteration0`), those path needs to be change, but we will update that part in this tutorial/documentation as well.
-
-Therefore, if we are creating a **galaga** plugin, the up-to-date Cargo.toml should be looking like below.
-
+Therefore, if we are creating the **galaga** plugin, Cargo.toml should look like:
 ```toml
 [package]
 name = "galaga"
 version = "0.1.0"
-edition = "2023"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
