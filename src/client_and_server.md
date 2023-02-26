@@ -7,3 +7,22 @@ For example, let say that a user presses the left key to move an object to the l
 
 Therefore, it is worth thinking about the desired behaviors first; If you are planning to develop a plugin that multiple users will interact at the same time, then it is recommended to develop the bahavior of the event on the server-side. If you are planning to develop a story mode game, for example, that only one user will interect with other objects, developing the code client side would make sense and likely result in simpler code.
 
+# Update cycles and the Synchronized component
+Many applications in ChatImproVR will have a structure like this:
+![Flow diagram](./flow_diagram.svg)
+
+We explain each step in this process below:
+1. On initialization, the client-side plugin uploads mesh data to the render engine, in preperation for the cycle. Note that this will not show anything on screen, because there is no entity in the client-side ECS yet.
+2. The client-side plugin receives an input even describing e.g. a key press.
+3. The client-side plugin processes the event, and sends a corresponding movement command to the server-side plugin.
+4. The server-side plugin processes the movement command and writes to the server-side ECS database. Note that the entity includes a Render Component and position, which describe which mesh to render and where it should be displayed in the world. Critically, the entity also includes the Synchronized component, which instructs the server to perform the next step:
+5. The ECS data on the server is copied to the client-side ECS. Any existing components on the corresponding entity will be overwritten. This process is called Synchronization, and it happens automatically for entities which include the Synchronized component.
+6. The render engine queries the client-side ECS database, and displays the entity.
+
+The responsibilities of the Plugin are as follows:
+* Client-side
+    * Upload mesh data
+    * Receive input events
+    * Publish movement commands corresponding to input events
+* Server-side
+    * Receive movement commands and update the ECS accordingly
