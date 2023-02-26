@@ -1,11 +1,11 @@
 # Summary
 
 - [Introduction](./introduction.md)
-<!-- - [For Users]() -->
-- [Installation](./install.md)
+- [Installation]()
 - [Development environment](./dev_env.md)
 - [Core Concepts](./core_concepts.md)
     - [Webassembly](./wasm.md)
+    - [Client and Server](./client_and_server.md)
     - [Crates](./crates.md)
     - [Names](./names.md)
     - [Plugins](./for_plugin_devs.md)

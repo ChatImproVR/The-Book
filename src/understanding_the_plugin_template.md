@@ -14,7 +14,7 @@ The following list is the file structure of the plugin template:
 
 New rust developers will be primarily familiar with developing code in `main.rs`, however plugins are a bit different. Plugins are libraries, so we write code starting from `lib.rs` instead.
 
-Before we get into the code itself, there is one thing need to change. This information can be found in the `README.md` file, but we will go over it here as well.
+Before we get into the code itself, there is one thing we need to change. This information can be found in the `README.md` file, but we will go over it here as well.
 
 ### Update Cargo.toml file
 Because this code is a template, the code is not fully setup for development. Inside the `Cargo.toml` file, you will find the following code:
@@ -55,13 +55,37 @@ serde = { version = "1", features = ["derive"] }
 
 ## Understanding lib.rs
 
-Before we go straight into the `lib.rs` file and read the code, let's talk about some concept such as difference between client and server and the behavior of the template plugin.
+```rust
+use cimvr_engine_interface::{make_app_state, prelude::*, println};
 
-### Difference between Client and Server
-The Client and Server play very different roles in plugin developement. Deciding what code belongs server-side and what code belongs client-side can be challenging.
+// All state associated with client-side behaviour
+struct ClientState;
 
-A simple description of the difference in semantics between client and server, is that changes made client-side will only be visible for that client, and changes made server-side can be made visible to **all** connected clients.
+impl UserState for ClientState {
+    // Implement a constructor
+    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+        println!("Hello, client!");
 
-For example, let say that a user presses the left key to move an object to the left. If we want that behavior to only be visible for that user, then that code should be part of the client side and we do not need to send a message to the server to change the object. However, if the user wants to move an object which is visible to everyone else in the Server, then that movement behavior should happen Server-side; The Client will send a command to the server requesting that the object must move left.
+        // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
+        cimvr_engine_interface::println!("This prints");
+        std::println!("But this doesn't");
 
-Therefore, it is worth thinking about the desired behaviors first; If you are planning to develop a plugin that multiple users will interact at the same time, then it is recommended to develop the bahavior of the event on the Server-side. If you are planning to develop a story mode game, for example, that only one user will interect with other objects, developing the code client side would make sense and likely result in simpler code.
+        Self
+    }
+}
+
+// All state associated with server-side behaviour
+struct ServerState;
+
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+        println!("Hello, server!");
+        Self
+    }
+}
+
+// Defines entry points for the engine to hook into.
+// Calls new() for the appropriate state.
+make_app_state!(ClientState, ServerState);
+```

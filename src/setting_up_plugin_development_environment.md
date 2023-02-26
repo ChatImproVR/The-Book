@@ -1,8 +1,6 @@
 # Setting up Plugin Development Environment
 
-Firstly, plugins can be made entirely independant of the engine in their own repositories or folders.
-
-To get started, clone the plugin template repo like so:
+Plugins are typically developed in their own repositories or folders.
 
 ## Using the template
 The easiest way to get started is to fork the 
