@@ -13,10 +13,10 @@ Many applications in ChatImproVR will have a structure like this:
 
 We explain each step in this process below:
 1. On initialization, the client-side plugin uploads mesh data to the render engine, in preperation for the cycle. Note that this will not show anything on screen, because there is no entity in the client-side ECS yet.
-2. The client-side plugin receives an input even describing e.g. a key press.
-3. The client-side plugin processes the event, and sends a corresponding movement command to the server-side plugin.
-4. The server-side plugin processes the movement command and writes to the server-side ECS database. Note that the entity includes a Render Component and position, which describe which mesh to render and where it should be displayed in the world. Critically, the entity also includes the Synchronized component, which instructs the server to perform the next step:
-5. The ECS data on the server is copied to the client-side ECS. Any existing components on the corresponding entity will be overwritten. This process is called Synchronization, and it happens automatically for entities which include the Synchronized component.
+2. The client-side plugin receives an input event describing e.g. a key press.
+3. The client-side plugin processes the event, and sends a corresponding message (a movement command) to the server-side plugin.
+4. The server-side plugin processes the movement command and writes to the server-side ECS database. Note that the entity it writes includes a Render Component and a position, which describe which mesh to render and where it should be displayed in the world. Critically, the entity also includes the `Synchronized` component, which instructs the server to perform the next step:
+5. The ECS data on the server is copied to the client-side ECS. Any existing components attatched the corresponding entity client-side will be overwritten. This process is called **Synchronization**, and it happens automatically for entities which include the `Synchronized` component.
 6. The render engine queries the client-side ECS database, and displays the entity.
 
 The responsibilities of the Plugin are as follows:
