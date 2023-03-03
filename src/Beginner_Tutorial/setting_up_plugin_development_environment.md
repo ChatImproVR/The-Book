@@ -46,7 +46,7 @@ This will allow you to access the script as `cimvr` anywhere.
 
 > *NOTE: To find the `$profile` path, open Windows PowerShell and enter `$profile`. There is a chance that `$profile` might not exist yet. In that case, you need to create a new file and the directory to match that path. If running scripts is disabled on your machine, consult the common fixes section.*
 
-![$profile path](./profile_path.png)
+![$profile path](./Beginner_Tutorial/profile_path.png)
 
 Let's say we want to develop a plugin called `foo`, that we're developing at `C:\Users\dunca\Documents\Projects\foo`. Then we could add this to our `$profile`:
 ```bash
