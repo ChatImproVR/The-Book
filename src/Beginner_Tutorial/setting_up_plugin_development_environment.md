@@ -18,7 +18,10 @@ git remote remove origin
 ## Setting up the helper script
 The helper script is intended to make it easy to run the client, server, or both from a single command. The script requires Python 3.
 
-### On Linux/Unix
+### On Linux/Unix/MacOS (Bash)
+
+If your MacOS system is using `bash` instead of `zsh`, then please follow this procedure. Otherwise, please follow the MacOS (Zsh) section.
+
 Assuming you have a copy of `iteration0` somewhere (in this case, `$HOME/Projects/chatimprovr`), you can put the following in your `~/.bashrc`:
 
 ```bash
@@ -28,9 +31,30 @@ function cimvr() {
 ```
 This will allow you to access the script as `cimvr` anywhere.
 
+> *NOTE: If you do not have the .bashrc file, you need to create on in the $HOME directory.*
+
 let's say we want to develop a plugin called `foo`, that we're developing at `$HOME/Projects/foo`. Then we could add this to our `~/.bashrc`:
 ```bash
 export CIMVR_PLUGINS="$HOME/Projects/foo/target/wasm32-unknown-unknown/release"
+```
+
+### On MacOS (Zsh)
+
+Assuming you have a copy of `iteration0` somewhere (in this case,  `$HOME/Desktop/Rust/chatimprovr`), you can put the following in your `~/.zshrc`:
+
+```zsh
+function cimvr() {
+    $HOME/Desktop/Rust/chatimprovr/cimvr.py $@
+}
+```
+This will allow you to access the script as `cimvr` anywhere.
+
+> *NOTE: If you do not have the .zshrc file, you need to create on in the $HOME directory.*
+
+let's say we want to develop a plugin called `foo`, that we're developing at `$HOME/Desktop/Rust/foo`. Then we could add this to our `~/.bashrc`
+
+```zsh
+export CIMVR_PLUGINS="$HOME/Desktop/Rust/foo/target/wasm32-unknown-unknown/release"
 ```
 
 ### On Windows
@@ -46,7 +70,7 @@ This will allow you to access the script as `cimvr` anywhere.
 
 > *NOTE: To find the `$profile` path, open Windows PowerShell and enter `$profile`. There is a chance that `$profile` might not exist yet. In that case, you need to create a new file and the directory to match that path. If running scripts is disabled on your machine, consult the common fixes section.*
 
-![$profile path](./Beginner_Tutorial/profile_path.png)
+![$profile path](./profile_path.png)
 
 Let's say we want to develop a plugin called `foo`, that we're developing at `C:\Users\dunca\Documents\Projects\foo`. Then we could add this to our `$profile`:
 ```bash
