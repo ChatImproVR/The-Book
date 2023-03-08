@@ -6,6 +6,7 @@
 - [Core Concepts](./Core_Concepts/core_concepts.md)
     - [Webassembly](./Core_Concepts/wasm.md)
     - [Client and Server](./Core_Concepts/client_and_server.md)
+    - [Entity Component System](./Core_Concepts/entity_component_system.md)
     - [Crates](./Core_Concepts/crates.md)
     - [Names](./Core_Concepts/names.md)
     - [Plugins](./Core_Concepts/for_plugin_devs.md)
