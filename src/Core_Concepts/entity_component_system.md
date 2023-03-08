@@ -13,7 +13,7 @@ io.remove_entity(my_entity);
 ```
 
 ## Components
-Components in ChatImproVR are identified by their unique ID and by their (maximum) size. This unique ID corresponds to one and **only one** data schema. If the component data type changes, one must also change the ID of the component to avoid corrupting data for potentially reliant third party plugins. One of the less ergonomic aspects of ChatImproVR's current implementation is that components are fixed-size. This means that **a component must serialize to a data length less than or equal to the size prescribed in its ID**. The reason for this is that it makes manipulating components in memory much easier, and necessitates the association of a data type with its (fixed) size.
+Components in ChatImproVR are identified by their unique ID and by their (maximum) size. This unique ID corresponds to one and **only one** data schema. If the component data type changes, one must also change the ID of the component to avoid corrupting data for potentially reliant third party plugins. One of the less ergonomic aspects of ChatImproVR's current implementation is that components are fixed-size. This means that **a component must serialize to a data length less than or equal to the size prescribed in its ID**. The reason for this is that it makes manipulating components in memory much easier, and necessitates the association of a data type with it's (fixed) size.
 
 New components data types are declared like so:
 ```rust
@@ -38,7 +38,7 @@ impl Component for MyComponent {
 }
 ```
 
-Components may be added to an entity plugin-side:
+Components may be added to an entity:
 ```rust
 io.add_component(ent, &MyComponent { a: 0, b: 0.0 });
 ```
@@ -64,11 +64,26 @@ Systems always have the following function signature:
 fn my_system(&mut self, io: &mut EngineIo, query: &mut QueryResult) {}
 ```
 
-Systems are in the plugin's constructor:
+Systems are scheduled in the plugin's constructor:
+
+In the example below, the query contains one Component (`MyComponent`);
 ```rust
 sched.add_system(
     Self::update,
-    SystemDescriptor::new(Stage::Update).query::<MyComponent>(Access::Write),
+    SystemDescriptor::new(Stage::Update)
+        .query::<MyComponent>(Access::Write),
+);
+```
+
+The access mode for `MyComponent` is `Access::Write`, because we intend to manupulate fields on the component. `Access::Read` is used when you know you are only reading the given component. Writing to components when using `Access::Read` will result in an error.
+
+If we want to query for all entities containing both `MyComponent` and `Transform`, we could use the following;
+```rust
+sched.add_system(
+    Self::update,
+    SystemDescriptor::new(Stage::Update)
+        .query::<Transform>(Access::Read)
+        .query::<MyComponent>(Access::Write),
 );
 ```
 
