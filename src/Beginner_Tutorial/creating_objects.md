@@ -4,7 +4,7 @@ Now we have our template of the plugin and have some knowledge on what is going 
 
 ## Review
 
-Before we start adding code into the plugin, let's review what is an ECS. Please refer to this [page](../Core_Concepts/core_concepts.md#entity-component-system).
+Before we start adding code into the plugin, let's review what is an ECS. Please refer to this [page](../Core_Concepts/entity_component_system.md).
 
 In short, we need to have ID for each object that is associated with each graphic itself.
 
