@@ -95,11 +95,11 @@ Inside the first Vertex variable, the first array is define as the position of t
 
 For the rgb value, we are using the scale between 0.0 to 1.0 rather than the traditional of 0 to 255. If you want to get the exact value of the rgb value based on the scale between 0 to 255, you can simply do the value desire over 255. For example, if you want to have a certain red value (like 200), the math will be 200/255 which results to 0.7843137255. In this case, we are setting the player object as blue.
 
-Now let's switch our focus to the indices. We need to place the vertex by following the **Left Hand Rule**. For people who do not know what is the Left Hand Rule, it can be explain the image below.
+Now let's switch our focus to the indices. We need to place the vertex by following the **Right Hand Rule**. For people who do not know what is the Right Hand Rule, it can be explain the image below.
 
-![Left Hand Rule In Image](./left_hand_rule.jpeg)
+![Right Hand Rule In Image](./right_hand_rule.jpeg)
 
-Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/counter clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the clockwise order.
+Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the counter clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/ clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the counter clockwise order.
 
 Therefore, the indices variable will be define as below.
 ```rust
