@@ -103,9 +103,13 @@ Let's say the green arrow represents the x-axis, the blue arrow represents the y
 
 Therefore, the indices variable will be define as below.
 ```rust
-let indices: Vec<u32> = vec![0,3,2,2,1,0];
+let indices: Vec<u32> = vec![0,1,2,2,3,0];
 ```
 The 0, 1, 2, 3 came from the Vertex 0, Vertex 1, Vertex 2, and Vertex 3 that is describe above. Vertex 0 is the bottom left corner; Vertex 1 is the bottom right corner; Vertex 2 is upper right corner; and Vertex 3 is the upper left corner of the square.
+
+Here is an example drawing on how it will be displayed.
+
+![Player_Object_Drawing_Method_In_Image](./vertex_image_rotation.jpg)
 
 Lastly, we need to return the value of Mesh type as the following.
 ```rust 
@@ -125,7 +129,7 @@ fn player() -> Mesh {
         Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 3
     ];
 
-    let indices: Vec<u32> = vec![0,3,2,2,1,0];
+    let indices: Vec<u32> = vec![0,1,2,2,3,0];
 
     Mesh {vertices, indices}
 }
