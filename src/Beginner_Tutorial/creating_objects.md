@@ -28,16 +28,16 @@ use cimvr_common::{
 };
 ```
 Some of the crates are familiar from the plugin template such as `make_app_state` or `prelude::*`. Here is a brief summary on the remaining crates.
-- `pkg_namespace`: Name holder of the ID of the entity. We will explain and use this part in more detail.
+- `pkg_namespace`: This allows us to easily and uniquely name component and message data types based on our crate's (plugin's) name.
 - `cimvr_common`: The main crate that handles communcation between server and client.
     - `render`: The main crate for object loading part (the main itself explains that it will render graphics)
         - `Mesh`: This will contain both vertices and indices: **This will be important later on the object creation part**.
-        - `MeshHandle`: This will contain both the Mesh itself and the entity ID.
-        - `Primitive`: This will describe the method of rendering the object: **This is another component that it is important when it comes to object creation**.
-        - `Render`: This will render based on the entity ID and the Mesh that was given.
-        - `UploadMesh`: This will send the mesh to the server or client.
-        - `Vertex`: As the name itself, this is the vertext crate. In this vertex crate, it will contain the coordinates and rgb value.
-    - `Transform`: The will set the position of the object.
+        - `MeshHandle`: This handle refers to a mesh without containing its data
+        - `Primitive`: This will describe the method of rendering the object: **This is important when it comes to object creation**.
+        - `Render`: This component is the most important for rendering; it tells the rendering engine how to render the given `MeshHandle`.
+        - `UploadMesh`: This will send the mesh to the client.
+        - `Vertex`: It contains the coordinates and rgb value and/or texture coordinates for a given vertex.
+    - `Transform`: The will set the position and orientation of the object.
 
 ## Create ID For Each Object
 
