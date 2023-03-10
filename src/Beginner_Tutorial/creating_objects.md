@@ -28,16 +28,16 @@ use cimvr_common::{
 };
 ```
 Some of the crates are familiar from the plugin template such as `make_app_state` or `prelude::*`. Here is a brief summary on the remaining crates.
-- `pkg_namespace`: Name holder of the ID of the entity. We will explain and use this part in more detail.
+- `pkg_namespace`: This allows us to easily and uniquely name component and message data types based on our crate's (plugin's) name.
 - `cimvr_common`: The main crate that handles communcation between server and client.
     - `render`: The main crate for object loading part (the main itself explains that it will render graphics)
         - `Mesh`: This will contain both vertices and indices: **This will be important later on the object creation part**.
-        - `MeshHandle`: This will contain both the Mesh itself and the entity ID.
-        - `Primitive`: This will describe the method of rendering the object: **This is another component that it is important when it comes to object creation**.
-        - `Render`: This will render based on the entity ID and the Mesh that was given.
-        - `UploadMesh`: This will send the mesh to the server or client.
-        - `Vertex`: As the name itself, this is the vertext crate. In this vertex crate, it will contain the coordinates and rgb value.
-    - `Transform`: The will set the position of the object.
+        - `MeshHandle`: This handle refers to a mesh without containing its data
+        - `Primitive`: This will describe the method of rendering the object: **This is important when it comes to object creation**.
+        - `Render`: This component is the most important for rendering; it tells the rendering engine how to render the given `MeshHandle`.
+        - `UploadMesh`: This will send the mesh to the client.
+        - `Vertex`: It contains the coordinates and rgb value and/or texture coordinates for a given vertex.
+    - `Transform`: The will set the position and orientation of the object.
 
 ## Create ID For Each Object
 
@@ -95,17 +95,21 @@ Inside the first Vertex variable, the first array is define as the position of t
 
 For the rgb value, we are using the scale between 0.0 to 1.0 rather than the traditional of 0 to 255. If you want to get the exact value of the rgb value based on the scale between 0 to 255, you can simply do the value desire over 255. For example, if you want to have a certain red value (like 200), the math will be 200/255 which results to 0.7843137255. In this case, we are setting the player object as blue.
 
-Now let's switch our focus to the indices. We need to place the vertex by following the **Left Hand Rule**. For people who do not know what is the Left Hand Rule, it can be explain the image below.
+Now let's switch our focus to the indices. We need to place the vertex by following the **Right Hand Rule**. For people who do not know what is the Right Hand Rule, it can be explain the image below.
 
-![Left Hand Rule In Image](./left_hand_rule.jpeg)
+![Right Hand Rule In Image](./right_hand_rule.jpeg)
 
-Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/counter clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the clockwise order.
+Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the counter clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/ clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the counter clockwise order.
 
 Therefore, the indices variable will be define as below.
 ```rust
-let indices: Vec<u32> = vec![0,3,2,2,1,0];
+let indices: Vec<u32> = vec![0,1,2,2,3,0];
 ```
 The 0, 1, 2, 3 came from the Vertex 0, Vertex 1, Vertex 2, and Vertex 3 that is describe above. Vertex 0 is the bottom left corner; Vertex 1 is the bottom right corner; Vertex 2 is upper right corner; and Vertex 3 is the upper left corner of the square.
+
+Here is an example drawing on how it will be displayed.
+
+![Player_Object_Drawing_Method_In_Image](./vertex_image_rotation.jpg)
 
 Lastly, we need to return the value of Mesh type as the following.
 ```rust 
@@ -125,7 +129,7 @@ fn player() -> Mesh {
         Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 3
     ];
 
-    let indices: Vec<u32> = vec![0,3,2,2,1,0];
+    let indices: Vec<u32> = vec![0,1,2,2,3,0];
 
     Mesh {vertices, indices}
 }
