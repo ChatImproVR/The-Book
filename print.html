@@ -1,0 +1,808 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>The Book</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">2.</strong> Installation</div></li><li class="chapter-item expanded "><a href="dev_env.html"><strong aria-hidden="true">3.</strong> Development environment</a></li><li class="chapter-item expanded "><a href="Core_Concepts/core_concepts.html"><strong aria-hidden="true">4.</strong> Core Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Core_Concepts/wasm.html"><strong aria-hidden="true">4.1.</strong> Webassembly</a></li><li class="chapter-item expanded "><a href="Core_Concepts/client_and_server.html"><strong aria-hidden="true">4.2.</strong> Client and Server</a></li><li class="chapter-item expanded "><a href="Core_Concepts/entity_component_system.html"><strong aria-hidden="true">4.3.</strong> Entity Component System</a></li><li class="chapter-item expanded "><a href="Core_Concepts/crates.html"><strong aria-hidden="true">4.4.</strong> Crates</a></li><li class="chapter-item expanded "><a href="Core_Concepts/names.html"><strong aria-hidden="true">4.5.</strong> Names</a></li><li class="chapter-item expanded "><a href="Core_Concepts/for_plugin_devs.html"><strong aria-hidden="true">4.6.</strong> Plugins</a></li><li class="chapter-item expanded "><a href="Core_Concepts/coordinate_system.html"><strong aria-hidden="true">4.7.</strong> Coordinate system</a></li><li class="chapter-item expanded "><a href="Core_Concepts/api_docs.html"><strong aria-hidden="true">4.8.</strong> API documentation</a></li></ol></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/beginner_plugin_development_tutorial.html"><strong aria-hidden="true">5.</strong> Beginner Plugin Development Tutorial</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Beginner_Tutorial/setting_up_plugin_development_environment.html"><strong aria-hidden="true">5.1.</strong> Setting up Plugin Development Environment</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/understanding_the_plugin_template.html"><strong aria-hidden="true">5.2.</strong> Understanding the Plugin Template</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/creating_objects.html"><strong aria-hidden="true">5.3.</strong> Creating Objects</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/object_movements.html"><strong aria-hidden="true">5.4.</strong> Object Movements</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/adding_object_behaviors.html"><strong aria-hidden="true">5.5.</strong> Adding Object Behaviors</a></li></ol></li><li class="chapter-item expanded "><a href="for_engine_developers.html"><strong aria-hidden="true">6.</strong> For Engine developers</a></li><li class="chapter-item expanded "><a href="quality_of_life.html"><strong aria-hidden="true">7.</strong> Quality Of Life</a></li><li class="chapter-item expanded "><a href="common_fixes.html"><strong aria-hidden="true">8.</strong> Common fixes</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chatimprovr"><a class="header" href="#chatimprovr">ChatImproVR</a></h1>
+<h2 id="what-is-chatimprovr"><a class="header" href="#what-is-chatimprovr">What is ChatImproVR?</a></h2>
+<p>ChatImproVR is a virtual world platform, with goals similar to that of VRChat, Neos, or SecondLife. A virtual world platform is a game engine and a set of tools to create and experience an immersive virtual space. These virtual spaces are then hosted online, where users can join them to socialize and enjoy the activities in the virtual world.</p>
+<p>ChatImproVR will improve on existing virtual world platforms by promoting open source software and prioritizing user control over content, all while featuring excellent flexibility.</p>
+<h2 id="who-is-chatimprovr-for"><a class="header" href="#who-is-chatimprovr-for">Who is ChatImproVR for?</a></h2>
+<p>Everyone! (TODO: Inclusive design)</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setting-up-a-development-environment"><a class="header" href="#setting-up-a-development-environment">Setting up a development environment</a></h1>
+<h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<p>See the project's <a href="https://github.com/ChatImproVR/iteration0/blob/main/README.md">README.md</a> file!</p>
+<h1 id="preparation"><a class="header" href="#preparation">Preparation</a></h1>
+<p>Make sure you have the <code>wasm32-unknown-unknown</code> target installed;</p>
+<pre><code class="language-sh">rustup target add wasm32-unknown-unknown
+</code></pre>
+<p>Dependencies on Ubuntu:</p>
+<pre><code class="language-sh">sudo apt install build-essential cmake libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libspeechd-dev libxkbcommon-dev libssl-dev
+</code></pre>
+<h1 id="compilation"><a class="header" href="#compilation">Compilation</a></h1>
+<p>Build the client and server like so:</p>
+<pre><code class="language-sh">pushd server
+cargo build --release
+popd
+
+pushd client
+cargo build --release
+popd
+</code></pre>
+<p>You can compile all of the example plugins with the <code>compile_all.sh</code> script. If you're on windows, sorry! Please open a PR.</p>
+<p>While most crates <em>are</em> in a workspace, the client crate is unfortunately excluded due to an issue with the <code>openxr</code> crate. </p>
+<h1 id="hosting-a-server"><a class="header" href="#hosting-a-server">Hosting a server</a></h1>
+<p>You may host a server with</p>
+<pre><code class="language-sh">cargo run --release -- &lt;plugins&gt;
+</code></pre>
+<h1 id="connection-to-a-remote-server"><a class="header" href="#connection-to-a-remote-server">Connection to a remote server</a></h1>
+<p>You may use the client to connect to a remote server like so:</p>
+<pre><code class="language-sh">cargo run --release -- --connect &lt;ip&gt;:5031 &lt;plugins&gt;
+</code></pre>
+<p>The default port is 5031, but this can be configured in the server with <code>--bind &lt;bind addr&gt;:&lt;port&gt;</code></p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="how-does-chatimprovr-work"><a class="header" href="#how-does-chatimprovr-work">How does ChatImproVR work?</a></h2>
+<p><strong>ChatImproVR is based</strong> on plugins. <strong>Plugins</strong> run on both the <strong>Client</strong> and the <strong>Server</strong>. Each plugin adds functionality to the virtual world by providing a number of <strong>Systems</strong>.</p>
+<p>We refer to the <strong>Client</strong> or the <strong>Server</strong> a <strong>Plugin</strong> is running on as the <strong>&quot;Host&quot;</strong>. <strong>Systems</strong> communicate with the <strong>Host</strong> via <strong>Channels</strong> and via the Entity Component System (<strong>ECS</strong>). </p>
+<p>The <strong>Host</strong> can communicate with external APIs, and with the <strong>Remote</strong>. From the <strong>Client</strong>'s perspective, the <strong>Remote</strong> is the <strong>Server</strong>. From the <strong>Server</strong>'s perspective, the <strong>Remotes</strong> are the connected <strong>Clients</strong>.</p>
+<h2 id="channels"><a class="header" href="#channels">Channels</a></h2>
+<p><strong>Channels</strong> are modeled after the familiar Pub/Sub pattern. <strong>Systems</strong> subscribe to <strong>Channels</strong>, and receive <strong>Messages</strong> via their <strong>Inbox</strong>. Each <strong>Channel</strong> is referred to by it's <strong>Unique ID</strong>. This ID corresponds to exactly one responsibility and associated datatype. <em>If the underlying datatype changes, the ID must also change</em>. This is to ensure compatability between plugins. Otherwise, plugins may consume corrupted data.</p>
+<p>Each channel is either <strong>Local</strong> or <strong>Remote</strong>. The <strong>Local</strong> <strong>Channels</strong> can only send <strong>Messages</strong> within their <strong>Host</strong>. Conversely, <strong>Remote Channels</strong> can only send messages to the <strong>Remote</strong>. This is to help avoid confusion as to where a message might have originated, and to make optimizing communication easier.</p>
+<h2 id="entity-component-system"><a class="header" href="#entity-component-system">Entity Component System</a></h2>
+<p>ChatImproVR's <strong>ECS</strong> is very similar to other game engines' architectures (Bevy being a notable example). Essentially, the <strong>ECS</strong> acts as a global database, where <strong>Entities</strong> are simply keys and <strong>Components</strong> are sparsely populated columns in the metaphorical database. <strong>Systems</strong> make <strong>Queries</strong> to the <strong>ECS</strong>, which are usually joining one more more <strong>Components</strong>. </p>
+<p>Each <strong>Host</strong> has it's own <strong>ECS</strong>. The <strong>Server</strong>'s <strong>ECS</strong> is intended to contain the state of the world, while the <strong>Client</strong>'s <strong>ECS</strong>' are intended to contain snapshots of the world and locally visible objects such as graphical user interfaces and markers, as well as predictions of motion or action.</p>
+<p>One important difference from other engines is that ChatImproVR handles <strong>Components</strong> via their <strong>Unique ID</strong>, instead of by their datatype. Just like <strong>Channels</strong>, <em>If the underlying datatype changes, the ID must also change</em>. Another important difference is that <strong>Entities</strong> are intended to be <em>universally unique</em>. This means that <strong>Entities</strong> could be transferred between <strong>Servers</strong>, so items in the virtual world can be transferred throughout the metaverse.</p>
+<h2 id="scheduling"><a class="header" href="#scheduling">Scheduling</a></h2>
+<p>Execution of <strong>Systems</strong> on each <strong>Host</strong> is broken up into a number of <strong>Stages</strong>. Currently, the following stages are available (listed in order of execution):</p>
+<ul>
+<li><strong>Init</strong>: Executed once, right after the plugin is initialized.</li>
+<li><strong>Pre-Update</strong>: Executed before each update, once per <strong>Frame</strong>.</li>
+<li><strong>Update</strong>: Executed once per <strong>Frame</strong>.</li>
+<li><strong>Post-Update</strong>: Executed after each update, once per <strong>Frame</strong>.</li>
+</ul>
+<h2 id="synchronization"><a class="header" href="#synchronization">Synchronization</a></h2>
+<p>There is a special <strong>Sychronized</strong> component which, if attached to an <strong>Entity</strong> on the <strong>Server</strong>, will cause the entire <strong>Entity</strong> and all of it's <strong>Components</strong> to be copied to the <strong>Clients</strong>'s <strong>ECS</strong>. This mechanism is intended to make it very easy to create content which is visible to all <strong>Clients</strong> immediately. </p>
+<p>Expect this synchronization to be optimized, so that updates may not be immediate.</p>
+<p>In the future, we may offer lazy/immediate/streamed variants of this component.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="webassembly"><a class="header" href="#webassembly">WebAssembly</a></h1>
+<h2 id="what-is-webassembly"><a class="header" href="#what-is-webassembly">What is WebAssembly?</a></h2>
+<p>WebAssembly (WASM for short) provides a sandboxed environment in which programs written in a variety of languages can interface with a host application. WASM is intended to provide a platform-agnostic and performant alternative to native code.</p>
+<h2 id="limitations-and-features"><a class="header" href="#limitations-and-features">Limitations and features</a></h2>
+<p>Here we will go over some important aspects of working with WebAssembly in Rust. Firstly, that the standard library is available. Kind of. <strong>In general, functions of the stdlib that communicate with the outside world will not work</strong>; this includes but is not limited to: system time, files, sockets. Instead, one must rely on the interfaces provided by ChatImproVR. One exception to this rule is that allocation <em>does</em> work; one can allocate memory with reckless abandon, at least up to 4 GB.</p>
+<h2 id="tips-and-tricks"><a class="header" href="#tips-and-tricks">Tips and tricks</a></h2>
+<h3 id="including-content"><a class="header" href="#including-content">Including content</a></h3>
+<p>If you need to include content with your plugin (e.g. models and textures), you may use the <code>include_bytes!()</code> macro provided in the standard library to embed these files in your WASM binary. For more advanced use-cases, consider the <a href="https://docs.rs/include_dir/latest/include_dir/">include dir</a> crate.</p>
+<h2 id="details"><a class="header" href="#details">Details</a></h2>
+<p>We use the <code>wasm32-unknown-unknown</code> target.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="client-and-server"><a class="header" href="#client-and-server">Client and Server</a></h1>
+<p>The client and server play very different roles in plugin developement. Deciding which code belongs server-side and which code belongs client-side can be challenging.</p>
+<p>A simple description of the difference in semantics between client and server, is that changes made client-side will only be visible for that client, and changes made server-side can be made visible to <strong>all</strong> connected clients.</p>
+<p>For example, let say that a user presses the left key to move an object to the left. If we want that behavior to only be visible for that user, then that code should be part of the client side and we do not need to send a message to the server to change the object. However, if the user wants to move an object which is visible to everyone else in the server, then that movement behavior should happen server-side; The client will send a command to the server requesting that the object must move left.</p>
+<p>Therefore, it is worth thinking about the desired behaviors first; If you are planning to develop a plugin that multiple users will interact at the same time, then it is recommended to develop the bahavior of the event on the server-side. If you are planning to develop a story mode game, for example, that only one user will interect with other objects, developing the code client side would make sense and likely result in simpler code.</p>
+<h1 id="update-cycles-and-the-synchronized-component"><a class="header" href="#update-cycles-and-the-synchronized-component">Update cycles and the Synchronized component</a></h1>
+<p>Many applications in ChatImproVR will have a structure like this:
+<img src="Core_Concepts/./flow_diagram.svg" alt="Flow diagram" /></p>
+<p>We explain each step in this process below:</p>
+<ol>
+<li>On initialization, the client-side plugin uploads mesh data to the render engine, in preperation for the cycle. Note that this will not show anything on screen, because there is no entity in the client-side ECS yet.</li>
+<li>The client-side plugin receives an input event describing e.g. a key press.</li>
+<li>The client-side plugin processes the event, and sends a corresponding message (a movement command) to the server-side plugin.</li>
+<li>The server-side plugin processes the movement command and writes to the server-side ECS database. Note that the entity it writes includes a Render Component and a position, which describe which mesh to render and where it should be displayed in the world. Critically, the entity also includes the <code>Synchronized</code> component, which instructs the server to perform the next step:</li>
+<li>The ECS data on the server is copied to the client-side ECS. Any existing components attatched the corresponding entity client-side will be overwritten. This process is called <strong>Synchronization</strong>, and it happens automatically for entities which include the <code>Synchronized</code> component.</li>
+<li>The render engine queries the client-side ECS database, and displays the entity.</li>
+</ol>
+<p>The responsibilities of the Plugin are as follows:</p>
+<ul>
+<li>Client-side
+<ul>
+<li>Upload mesh data</li>
+<li>Receive input events</li>
+<li>Publish movement commands corresponding to input events</li>
+</ul>
+</li>
+<li>Server-side
+<ul>
+<li>Receive movement commands and update the ECS accordingly</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="entity-component-system-1"><a class="header" href="#entity-component-system-1">Entity Component System</a></h1>
+<p>For general information on the ECS architecture, we recommend looking at <a href="https://en.wikipedia.org/wiki/Entity_component_system">Wikipedia</a>.</p>
+<p>This article contains information specific to ChatImproVR's ECS, and some of the specific features it has.</p>
+<h2 id="entities"><a class="header" href="#entities">Entities</a></h2>
+<p>Entities in ChatImproVR are <strong>universally</strong> unique IDs. As of this writing, this isn't necessarily true in practice, but entities are intended to be treated this way. The point of making universally unique entity IDs is that entities can be transferred client and server, and even between servers without having to worry about collisions. </p>
+<p>Entities are created and deleted plugin-side like so:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let my_entity = io.create_entity();
+io.remove_entity(my_entity);
+<span class="boring">}</span></code></pre></pre>
+<h2 id="components"><a class="header" href="#components">Components</a></h2>
+<p>Components in ChatImproVR are identified by their unique ID and by their (maximum) size. This unique ID corresponds to one and <strong>only one</strong> data schema. If the component data type changes, one must also change the ID of the component to avoid corrupting data for potentially reliant third party plugins. One of the less ergonomic aspects of ChatImproVR's current implementation is that components are fixed-size. This means that <strong>a component must serialize to a data length less than or equal to the size prescribed in its ID</strong>. The reason for this is that it makes manipulating components in memory much easier, and necessitates the association of a data type with its (fixed) size.</p>
+<p>New components data types are declared like so:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Component datatype
+/// Implements Serialize and Deserialize, making it compatible with the Component trait.
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
+struct MyComponent {
+    a: i32,
+    b: f32,
+}
+
+impl Component for MyComponent {
+    const ID: ComponentIdStatic = ComponentIdStatic {
+        // Here we define the universally unique name for this component.
+        // Note that this macro simply concatenates the package name with the name you provide.
+        // We could have written &quot;channels_example/MyMessage&quot; or even &quot;jdasjdlfkjasdjfk&quot; instead.
+        // It's important to make sure your package name is UNIQUE if you use this macro.
+        id: pkg_namespace!(&quot;MyComponent&quot;),
+        // Determined via serialized_size().
+        size: 8,
+    };
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Components may be added to an entity plugin-side:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>io.add_component(ent, &amp;MyComponent { a: 0, b: 0.0 });
+<span class="boring">}</span></code></pre></pre>
+<p>Components on an existing entity may be modified by calling the function above, or by modifying them within a query:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>for entity in query.iter() {
+    query.write(
+        entity,
+        &amp;MyComponent {
+            a: 1.,
+            b: 2312.0,
+        },
+    );
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="systems"><a class="header" href="#systems">Systems</a></h2>
+<p>Systems in ChatImproVR are contained within WebAssembly plugins. Each system corresponds to exactly one ECS query, so that one sets up a System by specifying which components it is associated with. Systems are executed in stages; the <code>Init</code> stage is called when a plugin is initialized, and each frame the <code>PreUpdate</code>, <code>Update</code>, and <code>PostUpdate</code> stages are executed in sequence. </p>
+<p>Systems always have the following function signature:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn my_system(&amp;mut self, io: &amp;mut EngineIo, query: &amp;mut QueryResult) {}
+<span class="boring">}</span></code></pre></pre>
+<p>Systems are in the plugin's constructor:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>sched.add_system(
+    Self::update,
+    SystemDescriptor::new(Stage::Update).query::&lt;MyComponent&gt;(Access::Write),
+);
+<span class="boring">}</span></code></pre></pre>
+<p>See the <a href="https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/ecs/src/lib.rs">ECS example</a> for more details.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="crates"><a class="header" href="#crates">Crates</a></h1>
+<p>The following dependency graph illustrates how the crates in ChatImproVR are laid out:
+<img src="Core_Concepts/./graph.svg" alt="Visual aid for crate graph" /></p>
+<p>Most notably, plugins depend on both <code>cimvr_common</code> and on <code>cimvr_engine_interface</code>. </p>
+<p>The crates in ChatImproVR are as follows:</p>
+<ul>
+<li><code>client</code>: Client application, provides rendering, input, and other user interfacing</li>
+<li><code>server</code>: Server application, a headless service</li>
+<li><code>engine</code>: WASM Plugin, ECS, and messaging layer for use in implementing server and client</li>
+<li><code>engine_interface</code>: Engine interface for use within e.g. plugins</li>
+<li><code>common</code>: Interfacing data types between provided plugin, client, and server e.g. position component</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="names"><a class="header" href="#names">Names</a></h1>
+<p>In order to communicate between plugins, we need some sort of naming scheme for data types. This naming scheme should be unambigious. We should allow plugins to be designed to use interfaces rather than talk exclusively with just one implementation or provider.</p>
+<p>We use strings to identify resources (read: Component and Message datatypes) in ChatImproVR. The convention is to use the pattern <code>MyNamespace/MyResourceName</code>. We provide the <code>pkg_namespace!()</code> macro to automatically prepend your package/crate's name to the given name, allowing you to easily define resource names within the context of your plugin.</p>
+<p>Great care should be taken to ensure that the resource name is <strong>Universally Unique</strong>. </p>
+<p>One and only one data format can be associated with a resource name. <strong>If the data format of a resource changes, then a new name must be picked</strong>. This is to ensure dependent plugins will not consume garbled data. ChatImproVR does not use a self-describing data format (for efficiency), so collisions can cause data to appear corrupted from the consumer's point of view.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="plugins"><a class="header" href="#plugins">Plugins</a></h1>
+<p>One of the most important features behind the engine is the ability to develop a <strong>plugin</strong>. </p>
+<p>Plugins have the ability to talk to other plugins, implement game logic and game behavior.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="coordinate-system"><a class="header" href="#coordinate-system">Coordinate system</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="api-documentation"><a class="header" href="#api-documentation">API documentation</a></h1>
+<p>The two main crates for plugin interfacing are <code>engine_interface</code> and <code>common</code>. </p>
+<p>These two have some API documentation written; you can currently access them by running <code>cargo doc --open</code> in either of their directories in <code>iteration0</code></p>
+<div style="break-before: page; page-break-before: always;"></div><p>TODO: It might worth having another tutorial for advance such as physics engine included plugin (like the bowling one)</p>
+<h1 id="beginner-plugin-development-tutorial"><a class="header" href="#beginner-plugin-development-tutorial">Beginner Plugin Development Tutorial</a></h1>
+<p>In this section, we will go over the basic understanding of plugin development (for beginners). This tutorial will go in depth with strong example codes and explaination of the meaning the syntax. </p>
+<p>It's assumed that you have read through the Core Concepts section.</p>
+<p>By following this tutorial, you will able to create a mock-off version of <strong>Galaga</strong>. The final version can be found in this <a href="https://github.com/ChatImproVR/galaga">repository</a>. </p>
+<p>We are aiming this tutorial for any beginner with some background of Rust language development will easily follow without any issue. If you want a to learn more knowledge regarding Rust, you can refer to the <a href="https://doc.rust-lang.org/book/">Rust Book</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="setting-up-plugin-development-environment"><a class="header" href="#setting-up-plugin-development-environment">Setting up Plugin Development Environment</a></h1>
+<p>Plugins are typically developed in their own repositories or folders.</p>
+<h2 id="using-the-template"><a class="header" href="#using-the-template">Using the template</a></h2>
+<p>The easiest way to get started is to fork the 
+<a href="https://github.com/ChatImproVR/template">plugin template repository</a>.</p>
+<p><a href="https://github.com/ChatImproVR/template"><img src="Beginner_Tutorial/./use_this_template.png" alt="Use this template button" /></a></p>
+<p>If you're using another git service besides github, you can clone the repository and remove the default remote:</p>
+<pre><code class="language-sh">git clone git@github.com:ChatImproVR/template.git
+cd template
+git remote remove origin
+</code></pre>
+<h2 id="setting-up-the-helper-script"><a class="header" href="#setting-up-the-helper-script">Setting up the helper script</a></h2>
+<p>The helper script is intended to make it easy to run the client, server, or both from a single command. The script requires Python 3.</p>
+<h3 id="on-linuxunixmacos-bash"><a class="header" href="#on-linuxunixmacos-bash">On Linux/Unix/MacOS (Bash)</a></h3>
+<p>If your MacOS system is using <code>bash</code> instead of <code>zsh</code>, then please follow this procedure. Otherwise, please follow the MacOS (Zsh) section.</p>
+<p>Assuming you have a copy of <code>iteration0</code> somewhere (in this case, <code>$HOME/Projects/chatimprovr</code>), you can put the following in your <code>~/.bashrc</code>:</p>
+<pre><code class="language-bash">function cimvr() {
+    $HOME/Projects/chatimprovr/cimvr.py $@
+}
+</code></pre>
+<p>This will allow you to access the script as <code>cimvr</code> anywhere.</p>
+<blockquote>
+<p><em>NOTE: If you do not have the .bashrc file, you need to create on in the $HOME directory.</em></p>
+</blockquote>
+<p>let's say we want to develop a plugin called <code>foo</code>, that we're developing at <code>$HOME/Projects/foo</code>. Then we could add this to our <code>~/.bashrc</code>:</p>
+<pre><code class="language-bash">export CIMVR_PLUGINS=&quot;$HOME/Projects/foo/target/wasm32-unknown-unknown/release&quot;
+</code></pre>
+<h3 id="on-macos-zsh"><a class="header" href="#on-macos-zsh">On MacOS (Zsh)</a></h3>
+<p>Assuming you have a copy of <code>iteration0</code> somewhere (in this case,  <code>$HOME/Desktop/Rust/chatimprovr</code>), you can put the following in your <code>~/.zshrc</code>:</p>
+<pre><code class="language-zsh">function cimvr() {
+    $HOME/Desktop/Rust/chatimprovr/cimvr.py $@
+}
+</code></pre>
+<p>This will allow you to access the script as <code>cimvr</code> anywhere.</p>
+<blockquote>
+<p><em>NOTE: If you do not have the .zshrc file, you need to create on in the $HOME directory.</em></p>
+</blockquote>
+<p>let's say we want to develop a plugin called <code>foo</code>, that we're developing at <code>$HOME/Desktop/Rust/foo</code>. Then we could add this to our <code>~/.bashrc</code></p>
+<pre><code class="language-zsh">export CIMVR_PLUGINS=&quot;$HOME/Desktop/Rust/foo/target/wasm32-unknown-unknown/release&quot;
+</code></pre>
+<h3 id="on-windows"><a class="header" href="#on-windows">On Windows</a></h3>
+<p>Assuming you have a copy of <code>iteration0</code> somewhere (in this case, <code>C:\Users\dunca\Documents\iteration0</code>), you can put the following in your <code>$profile</code></p>
+<pre><code class="language-ps1">function cimvr() {
+    $cimvr_path=&quot;C:\Users\dunca\Documents\iteration0&quot;
+    python $cimvr_path\cimvr.py $args
+}
+</code></pre>
+<p>This will allow you to access the script as <code>cimvr</code> anywhere.</p>
+<blockquote>
+<p><em>NOTE: To find the <code>$profile</code> path, open Windows PowerShell and enter <code>$profile</code>. There is a chance that <code>$profile</code> might not exist yet. In that case, you need to create a new file and the directory to match that path. If running scripts is disabled on your machine, consult the common fixes section.</em></p>
+</blockquote>
+<p><img src="Beginner_Tutorial/./profile_path.png" alt="$profile path" /></p>
+<p>Let's say we want to develop a plugin called <code>foo</code>, that we're developing at <code>C:\Users\dunca\Documents\Projects\foo</code>. Then we could add this to our <code>$profile</code>:</p>
+<pre><code class="language-bash">$Env:CIMVR_PLUGINS=&quot;C:\Users\dunca\Documents\Projects\foo\target\wasm32-unknown-unknown\release&quot;
+</code></pre>
+<h3 id="using-the-script-to-launch-plugins"><a class="header" href="#using-the-script-to-launch-plugins">Using the script to launch plugins</a></h3>
+<p>After building both <code>iteration0</code>'s client and server as well as the example plugins, we could launch the cube example included with ChatImproVR using:</p>
+<pre><code class="language-bash">cimvr camera cube
+</code></pre>
+<p>After building our own plugin we could launch it with:</p>
+<pre><code class="language-bash">cimvr foo
+</code></pre>
+<p>This will start the client and the server with our plugin as arguments. Note that this name <code>foo</code> is determined via package name, the one we set earlier.</p>
+<p>The <code>CIMVR_PLUGINS</code> environment variable is a semicolon-seperated list of search paths. We've set it to <code>target/wasm32-unknown-unknown/release</code> under our own plugin, so that it can find <code>foo.wasm</code>.</p>
+<p>Note that the <code>example_plugins</code> directory will be looked for by default, so you don't need to add an environment variable for these.</p>
+<h2 id="tips-and-tricks-1"><a class="header" href="#tips-and-tricks-1">Tips and tricks</a></h2>
+<h3 id="using-the-cargo-watch-crate"><a class="header" href="#using-the-cargo-watch-crate">Using the cargo-watch crate</a></h3>
+<p>Running e.g. <code>cargo watch -x 'build --release'</code> in your plugin's root will compile it automatically when you save the source. In turn, the engine will reload your plugin automatically. This means you can effectively save source or assets and see the result immediately!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="plugin-template"><a class="header" href="#plugin-template">Plugin Template</a></h1>
+<p>Before we start getting creative with plugin development, lets dive deep into the code to gain a better understanding of what is going on.</p>
+<h2 id="plugin-file-structure"><a class="header" href="#plugin-file-structure">Plugin File Structure</a></h2>
+<p>The following list is the file structure of the plugin template:</p>
+<ul>
+<li><code>.cargo</code>
+<ul>
+<li><code>config.toml</code></li>
+</ul>
+</li>
+<li><code>src</code>
+<ul>
+<li><code>lib.rs</code></li>
+</ul>
+</li>
+<li><code>.gitignore</code></li>
+<li><code>Cargo.toml</code></li>
+<li><code>README.md</code></li>
+</ul>
+<p>New rust developers will be primarily familiar with developing code in <code>main.rs</code>, however plugins are a bit different. Plugins are libraries, so we write code starting from <code>lib.rs</code> instead.</p>
+<p>Before we get into the code itself, there is one thing we need to change. This information can be found in the <code>README.md</code> file, but we will go over it here as well.</p>
+<h3 id="update-cargotoml-file"><a class="header" href="#update-cargotoml-file">Update Cargo.toml file</a></h3>
+<p>Because this code is a template, the code is not fully setup for development. Inside the <code>Cargo.toml</code> file, you will find the following code:</p>
+<pre><code class="language-toml">[package]
+name = &quot;template_plugin&quot; # CHANGE ME!
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+
+[lib]
+crate-type = [&quot;cdylib&quot;]
+
+[dependencies] # IMPORTANT!
+cimvr_common = { git = &quot;https://github.com/ChatImproVR/iteration0.git&quot;, branch = &quot;main&quot; }
+cimvr_engine_interface  = { git = &quot;https://github.com/ChatImproVR/iteration0.git&quot;, branch = &quot;main&quot; } 
+serde = { version = &quot;1&quot;, features = [&quot;derive&quot;] }
+</code></pre>
+<p>We need to change the name of the plugin. In this tutorial, it will be <strong>galaga</strong>. If we decide not change the name, the plugin will be compiled as <code>template_plugin.wasm</code>. Not only that, but the name will become important later when we use the <code>pkg_namespace!()</code> macro! <strong>Make sure to pick something descriptive, unique, and long.</strong></p>
+<p>Note that in the future, ChatImproVR may be available on crates.io or change it's name in git, in which case you will need to update the <code>[dependencies]</code> section!</p>
+<p>Therefore, if we are creating the <strong>galaga</strong> plugin, Cargo.toml should look like:</p>
+<pre><code class="language-toml">[package]
+name = &quot;galaga&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+
+[lib]
+crate-type = [&quot;cdylib&quot;]
+
+[dependencies]
+cimvr_common = { git = &quot;https://github.com/ChatImproVR/iteration0.git&quot;, branch = &quot;main&quot; }
+cimvr_engine_interface  = { git = &quot;https://github.com/ChatImproVR/iteration0.git&quot;, branch = &quot;main&quot; }
+serde = { version = &quot;1&quot;, features = [&quot;derive&quot;] }
+</code></pre>
+<h2 id="understanding-librs"><a class="header" href="#understanding-librs">Understanding lib.rs</a></h2>
+<p>Let's switch to the main component, <code>lib.rs</code>. The following code should look similar to <code>lib.rs</code> you have. </p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use cimvr_engine_interface::{make_app_state, prelude::*, println};
+
+// All state associated with client-side behaviour
+struct ClientState;
+
+impl UserState for ClientState {
+    // Implement a constructor
+    fn new(_io: &amp;mut EngineIo, _sched: &amp;mut EngineSchedule&lt;Self&gt;) -&gt; Self {
+        println!(&quot;Hello, client!&quot;);
+
+        // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
+        cimvr_engine_interface::println!(&quot;This prints&quot;);
+        std::println!(&quot;But this doesn't&quot;);
+
+        Self
+    }
+}
+
+// All state associated with server-side behaviour
+struct ServerState;
+
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(_io: &amp;mut EngineIo, _sched: &amp;mut EngineSchedule&lt;Self&gt;) -&gt; Self {
+        println!(&quot;Hello, server!&quot;);
+        Self
+    }
+}
+
+// Defines entry points for the engine to hook into.
+// Calls new() for the appropriate state.
+make_app_state!(ClientState, ServerState);
+<span class="boring">}</span></code></pre></pre>
+<p>Let's go every line in detail what it means in general.</p>
+<h3 id="packages"><a class="header" href="#packages">Packages</a></h3>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use cimvr_engine_interface::{make_app_state, prelude::*, println};
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>cimvr_engine_interface</code> facilitates communication between the plugin and the host. It does not include any interfacing with the specific feature of the client or server; instead these datatyes are relegated to the <code>common</code> crate. Therefore the third line does not print out since it is part of the standard library that cimvr is not using. In simple terms, the <code>cimvr_engine_interface</code> is the connector between plugins and the engine itself. </p>
+<p>TODO: Need more explaination for this area.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>make_app_state!(ClientState, ServerState);
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>make_app_state!</code> will run and compile the plugin code. In other words, it is the main function of the plugin in order to load into the engine itself.</p>
+<h3 id="client"><a class="header" href="#client">Client</a></h3>
+<p>If you are not familiar with the idea of Client versus Server, please refer to this <a href="Beginner_Tutorial/../Core_Concepts/client_and_server.html">page</a> before continue reading this part of the code. At the same time, the implementation utilize the idea of ECS. If you are not familiar with ECS, please refer to this <a href="Beginner_Tutorial/../Core_Concepts/core_concepts.html#entity-component-system">page</a>.</p>
+<p>Before we start implemeting the feature/functionality to the client, we need to declare the client entity. Because there are no required parameter to attached with the client, it will be an empty struct with the name of ClientState. The line below is the method how we will declare it.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct ClientState;
+<span class="boring">}</span></code></pre></pre>
+<p>Now we are going to implement the client side feature/functionality by implementing the idea of UserState. The UserState is define as below.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait UserState: Sized {
+    /// Constructor for this state; called once before the **Init** stage.
+    fn new(io: &amp;mut EngineIo, sched: &amp;mut EngineSchedule&lt;Self&gt;) -&gt; Self;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>All we need to do is to modify the <code>new</code> function with the same parameter. If we want to add more features that correlates to the client side, we can create other functions that are directly implemented to the ClientState entity, but we will walk over when adding behavior to objects and such. At the same time, we will talk more detail regarding the parameter of the new function.</p>
+<p>Within the <code>new</code> function, the template contains the following code.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>println!(&quot;Hello, client!&quot;); // Line 1
+cimvr_engine_interface::println!(&quot;This prints&quot;); // Line 2
+std::println!(&quot;But this doesn't&quot;); // Line 3
+
+Self // Line 4
+<span class="boring">}</span></code></pre></pre>
+<p>The first line will print out in the terminal as how any Rust language will print out: the standard <code>println!</code> statement.
+The second line will print out in the terminal but differently. While the first line prints out on the terminal/client side, the second line prints the text on the engine side itself. </p>
+<p>TODO: explain better with the cimvr_engine_interface part/the line above.</p>
+<p>The last line is the returning the client UserState as the updated the version for the client.</p>
+<p>Which makes up the entire code for the client side itself.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl UserState for ClientState {
+    // Implement a constructor
+    fn new(_io: &amp;mut EngineIo, _sched: &amp;mut EngineSchedule&lt;Self&gt;) -&gt; Self {
+        println!(&quot;Hello, client!&quot;);
+
+        // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
+        cimvr_engine_interface::println!(&quot;This prints&quot;);
+        std::println!(&quot;But this doesn't&quot;);
+
+        Self
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<h3 id="server"><a class="header" href="#server">Server</a></h3>
+<p>If you are not familiar with the idea of Client versus Server, please refer to this <a href="Beginner_Tutorial/../Core_Concepts/client_and_server.html">page</a> before continue reading this part of the code. At the same time, the implementation utilize the idea of ECS. If you are not familiar with ECS, please refer to this <a href="Beginner_Tutorial/../Core_Concepts/core_concepts.html#entity-component-system">page</a>.</p>
+<p>If you have read the client section, the server side present the same idea itself: printing out on the terminal.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// All state associated with server-side behaviour
+struct ServerState;
+
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(_io: &amp;mut EngineIo, _sched: &amp;mut EngineSchedule&lt;Self&gt;) -&gt; Self {
+        println!(&quot;Hello, server!&quot;);
+        Self
+    }
+}
+<span class="boring">}</span></code></pre></pre>
+<p>In conclusion, the template prints out text in the terminal for both client and server side. In the next section, we will discuss on how to create object in the space and focus on creating both 3D and 2D objects.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="creating-objects"><a class="header" href="#creating-objects">Creating Objects</a></h1>
+<p>Now we have our template of the plugin and have some knowledge on what is going on, let's start working on object creation. Without any objects in the environment, we cannot do anything with it.</p>
+<h2 id="review"><a class="header" href="#review">Review</a></h2>
+<p>Before we start adding code into the plugin, let's review what is an ECS. Please refer to this <a href="Beginner_Tutorial/../Core_Concepts/entity_component_system.html">page</a>.</p>
+<p>In short, we need to have ID for each object that is associated with each graphic itself.</p>
+<h2 id="adding-packageslibrariescrates"><a class="header" href="#adding-packageslibrariescrates">Adding packages/libraries/crates</a></h2>
+<p>Insert the following packages/libraries/crates (We will call them crates for now on) into the very top of <code>lib.rs</code> file.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use cimvr_engine_interface::{make_app_state, prelude::*, pkg_namespace};
+
+use cimvr_common::{
+    render::{
+        Mesh,
+        MeshHandle,
+        Primitive,
+        Render,
+        UploadMesh,
+        Vertex,
+    },
+    Transform
+};
+<span class="boring">}</span></code></pre></pre>
+<p>Some of the crates are familiar from the plugin template such as <code>make_app_state</code> or <code>prelude::*</code>. Here is a brief summary on the remaining crates.</p>
+<ul>
+<li><code>pkg_namespace</code>: This allows us to easily and uniquely name component and message data types based on our crate's (plugin's) name.</li>
+<li><code>cimvr_common</code>: The main crate that handles communcation between server and client.
+<ul>
+<li><code>render</code>: The main crate for object loading part (the main itself explains that it will render graphics)
+<ul>
+<li><code>Mesh</code>: This will contain both vertices and indices: <strong>This will be important later on the object creation part</strong>.</li>
+<li><code>MeshHandle</code>: This handle refers to a mesh without containing its data</li>
+<li><code>Primitive</code>: This will describe the method of rendering the object: <strong>This is important when it comes to object creation</strong>.</li>
+<li><code>Render</code>: This component is the most important for rendering; it tells the rendering engine how to render the given <code>MeshHandle</code>.</li>
+<li><code>UploadMesh</code>: This will send the mesh to the client.</li>
+<li><code>Vertex</code>: It contains the coordinates and rgb value and/or texture coordinates for a given vertex.</li>
+</ul>
+</li>
+<li><code>Transform</code>: The will set the position and orientation of the object.</li>
+</ul>
+</li>
+</ul>
+<h2 id="create-id-for-each-object"><a class="header" href="#create-id-for-each-object">Create ID For Each Object</a></h2>
+<p>First, we need to declare the <code>MeshHandle</code> to assign each ID for each object. In the game of galaga, we need to assign four parts: player, enemy, player's bullet, and enemy's bullet.</p>
+<p>We can set up the ID value like the following.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>const PLAYER_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!(&quot;Player&quot;));
+const ENEMY_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!(&quot;Enemy&quot;));
+const PLAYER_BULLET_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!(&quot;Player Bullet&quot;));
+const ENEMY_BULLET_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!(&quot;Enemy Bullet&quot;));
+<span class="boring">}</span></code></pre></pre>
+<p>Each line represents the ID for each entity/object. We will declare a constant value that it is a MeshHandle with the name holder of the object using the <code>pkg_namespace</code>. 
+These variables should not be declare in ServerState nor ClientState.</p>
+<h2 id="setting-up-the-mesh-for-each-object"><a class="header" href="#setting-up-the-mesh-for-each-object">Setting up the Mesh for Each Object</a></h2>
+<p>Now we have declare the MeshHandle, we need to create the Mesh itself, or the object itself.</p>
+<p>Let's start making the player object itself. Our design, since it is a basic model, will be a sqaure for the player.
+First, we declare a function that returns a Mesh type.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn player() -&gt; Mesh {}
+<span class="boring">}</span></code></pre></pre>
+<p>Inside the function, we need to define how big we want to be.
+For now, let's define the size variable inside the player function as 0.5.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn player() -&gt; Mesh {
+    let size = 0.5;
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Inside a Mesh, there is vertices and indices that we need to define and return.
+Let's take a look at the Vertex data type.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct Vertex {
+    /// Local position
+    pub pos: [f32; 3],
+    /// Either u, v, w for textures or r, g, b for colors
+    pub uvw: [f32; 3],
+}
+<span class="boring">}</span></code></pre></pre>
+<p>As you see above, the Vertex takes [x,y,z] position and [r,g,b] color combination.
+The word vertex means a point. We are poviding the point value of the object. Because we decided to make the player as a sqaure rather than fancy object looking, it can define as the following.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
+        Vertex::new([size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 1
+        Vertex::new([size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 2
+        Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 3
+    ];
+<span class="boring">}</span></code></pre></pre>
+<p>The variable vertices is vector that contains several vertext of the object itself.
+Inside the first Vertex variable, the first array is define as the position of the vertex location whereas the second array is the rgb value. Since we define the value <code>size</code> previously, we can use the value in the x and y value. We are not creating a 3D galaga game, which there is no need to insert a z value. Therefore, the z value is <code>0.0</code> rather than some other numerical value.</p>
+<p>For the rgb value, we are using the scale between 0.0 to 1.0 rather than the traditional of 0 to 255. If you want to get the exact value of the rgb value based on the scale between 0 to 255, you can simply do the value desire over 255. For example, if you want to have a certain red value (like 200), the math will be 200/255 which results to 0.7843137255. In this case, we are setting the player object as blue.</p>
+<p>Now let's switch our focus to the indices. We need to place the vertex by following the <strong>Left Hand Rule</strong>. For people who do not know what is the Left Hand Rule, it can be explain the image below.</p>
+<p><img src="Beginner_Tutorial/./left_hand_rule.jpeg" alt="Left Hand Rule In Image" /></p>
+<p>Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/counter clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the clockwise order.</p>
+<p>Therefore, the indices variable will be define as below.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let indices: Vec&lt;u32&gt; = vec![0,3,2,2,1,0];
+<span class="boring">}</span></code></pre></pre>
+<p>The 0, 1, 2, 3 came from the Vertex 0, Vertex 1, Vertex 2, and Vertex 3 that is describe above. Vertex 0 is the bottom left corner; Vertex 1 is the bottom right corner; Vertex 2 is upper right corner; and Vertex 3 is the upper left corner of the square.</p>
+<p>Lastly, we need to return the value of Mesh type as the following.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>Mesh {vertices, indices}
+<span class="boring">}</span></code></pre></pre>
+<p>Therefore the complete version of the player mesh function will be define as following.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn player() -&gt; Mesh {
+    let size: f32 = 0.5;
+
+    let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
+        Vertex::new([size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 1
+        Vertex::new([size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 2
+        Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]), // Vertex 3
+    ];
+
+    let indices: Vec&lt;u32&gt; = vec![0,3,2,2,1,0];
+
+    Mesh {vertices, indices}
+}
+<span class="boring">}</span></code></pre></pre>
+<p>For each object, we need to the followng for the remaining enemy. enemy's bullet, and player's bullet. If you want to learn more depth regarding drawing objects, here is a <a href="https://learnopengl.com/Getting-started/Hello-Triangle">great resource</a> to refer.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="object-movements"><a class="header" href="#object-movements">Object Movements</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="adding-object-behaviors"><a class="header" href="#adding-object-behaviors">Adding Object Behaviors</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="engine-development"><a class="header" href="#engine-development">Engine development</a></h1>
+<p>The current implementation of ChatImproVR's engine is <code>iteration0</code>. It's assumed that you've read the previous sections, and understand how to write plugins for ChatImproVR.</p>
+<p>ChatImproVR is split into a few different parts. The <strong>Engine</strong> is the core of a ChatImproVR <strong>Host</strong>. It is responsible for managing the ECS, facilitating pub/sub messaging, and loading plugin code. The engine contains no code responsible for interacting with the outside world; it has no networking cabablity nor does it render scenes or take user input. That is the responsibility of the rest of the <strong>Host</strong>'s code. </p>
+<p>The <strong>Client</strong> contains a number of subsystems which allow the <strong>Engine</strong> to interact with the user:</p>
+<ul>
+<li><code>desktop</code>: All interfacing with desktop platforms; keyboard and mouse input. Contains the desktop mainloop</li>
+<li><code>vr</code>: All interfacing with virtual reality platforms; controller and headset motion. Contains the VR mainloop</li>
+<li><code>ui</code>: Simple GUI for use from within plugins</li>
+<li><code>render</code>: Putting meshes on the screen, assigning shaders, etc.</li>
+</ul>
+<p>Each of these subsystems interacts with the <strong>Engine</strong> by making ECS queries and checking the message <strong>Inboxes</strong> that they've subscribed to. In this way, creating subsystems is very much like writing plugins.</p>
+<p>The <strong>Server</strong> is a lot simpler, except that it may connect to many <strong>Clients</strong> and is intended to be a headless program. It has a few simple subsystems which e.g. report which clients are connected.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quality-of-life-items"><a class="header" href="#quality-of-life-items">Quality of Life Items</a></h1>
+<p>You can use the derive macro <code>ComponentDerive</code> to automatically set up your component like so:</p>
+<pre><code class="language-rs">#[derive(ComponentDerive, ...snip)]
+#[size(16)]
+struct Foo {
+    a: i32,
+    b: f32
+}
+</code></pre>
+<p>This will automatically set up your struct as a component without as much boilerplate.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="common-fixes"><a class="header" href="#common-fixes">Common fixes</a></h1>
+<h2 id="cannot-find-function-_print_str-in-this-scope"><a class="header" href="#cannot-find-function-_print_str-in-this-scope">cannot find function <code>_print_str</code> in this scope</a></h2>
+<pre><code>error[E0425]: cannot find function `_print_str` in this scope
+  --&gt; src/obj.rs:31:17
+   |
+31 |                 dbg!(pos, uvw);
+   |                 ^^^^^^^^^^^^^^ not found in this scope
+   |
+   = note: this error originates in the macro `$crate::println` which comes from the expansion of the macro `dbg` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: consider importing one of these items
+   |
+1  | use cimvr_engine_interface::prelude::_print_str;
+   |
+1  | use crate::_print_str;
+   |
+</code></pre>
+<h3 id="the-fix"><a class="header" href="#the-fix">The fix:</a></h3>
+<p>Just add the prelude from the engine interface:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use cimvr_engine_interface::prelude::*;
+<span class="boring">}</span></code></pre></pre>
+<h2 id="windows-running-scripts-disabled"><a class="header" href="#windows-running-scripts-disabled">Windows: Running scripts disabled</a></h2>
+<p>If you are on Windows and are trying to run the <code>cimvr</code> script, there is a chance you might run into this issue:</p>
+<pre><code>..\WindowsPowerShell\Microsoft.Powershell_profile.ps1 cannot be loaded because running scripts is disabled on this system.
+</code></pre>
+<h3 id="the-fix-1"><a class="header" href="#the-fix-1">The fix:</a></h3>
+<ol>
+<li>Open Windows PowerShell and run as administrator. </li>
+<li>Run <code>Get-ExecutionPolicy</code> to get the current execution policy applied, such as &quot;Restricted&quot;.</li>
+<li>Run <code>Set-ExecutionPolicy RemoteSigned</code> and press <code>Y</code> when prompted. </li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
