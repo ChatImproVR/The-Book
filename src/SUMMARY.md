@@ -19,4 +19,5 @@
     - [Object Movements](./Beginner_Tutorial/object_movements.md)
     - [Adding Object Behaviors](./Beginner_Tutorial/adding_object_behaviors.md)
 - [For Engine developers](./for_engine_developers.md)
+- [Quality Of Life](./quality_of_life.md)
 - [Common fixes](./common_fixes.md)
