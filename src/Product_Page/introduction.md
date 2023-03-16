@@ -22,9 +22,7 @@ Everyone! (TODO: Inclusive design)
 
 * What's the repository?
 
-## Where can I find help?
-
-![Ferris confused](images/ferris_confused.svg)
+## Where can I find help?   <img src="images/ferris_confused.svg" width="60">
 
 You're pretty much there! The Book is the information hub of ChatImproVR. Here is where you can find How to make your [first plugin](https://chatimprovr.github.io/The-Book/Beginner_Tutorial/beginner_plugin_development_tutorial.html), common issues and their [fixes](https://chatimprovr.github.io/The-Book/common_fixes.html), or even the [core concepts](https://chatimprovr.github.io/The-Book/Core_Concepts/core_concepts.html) of what ChatImproVR is made of.
 
