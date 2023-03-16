@@ -1,8 +1,8 @@
 # Summary
 
-- [Introduction](./Product_Page/introduction.md)
-- [Installation](./Product_Page/installation.md)
-- [Development Environment](./Product_Page/dev_env.md)
+- [Introduction](./introduction.md)
+- [Installation](./installation.md)
+- [Development Environment](./dev_env.md)
 - [Core Concepts](./Core_Concepts/core_concepts.md)
     - [Webassembly](./Core_Concepts/wasm.md)
     - [Client and Server](./Core_Concepts/client_and_server.md)
