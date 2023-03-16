@@ -45,9 +45,22 @@ While this page serves as a product page, it also serves as the documentation pa
 
 However, if you are planning to do some plugin development or engine development (being as a **developer**), then we would recommend to check out in the Development Environment section.
 
-## Where can I find help?
+## Where can I find help?   <img src="images/ferris_confused.svg" width="60">
 
-* Whom can I contact to learn more?
+You're pretty much there! The Book is the information hub of ChatImproVR. Here is where you can find How to make your [first plugin](https://chatimprovr.github.io/The-Book/Beginner_Tutorial/beginner_plugin_development_tutorial.html), common issues and their [fixes](https://chatimprovr.github.io/The-Book/common_fixes.html), or even the [core concepts](https://chatimprovr.github.io/The-Book/Core_Concepts/core_concepts.html) of what ChatImproVR is made of.
 
-* Who are the personnel of this project?
+But just in case The Book doesn't have the help you need, you can also:
+
+* Refer to some of our [example plugins](https://github.com/orgs/ChatImproVR/repositories)
+
+* Report an [issue](https://github.com/ChatImproVR/iteration0/issues) in the ChatImproVR engine repository
+
+* Or, if all else fails, you can contact the devleopers directly:
+
+| Developer Name | Email |
+| ----------- | ----------- |
+| [Duncan Freeman](https://github.com/Masterchef365) | duncan.freeman1@gmail.com |
+| [Rudy Peralta](https://github.com/Exiled1) | rudyperalta831@gmail.com |
+| [Kenneth Kang](https://github.com/MrKangs) | gyhang00@gmail.com |
+| [Grace Todd](https://github.com/toddgr) | grace.miriam.todd@gmail.com|
 
