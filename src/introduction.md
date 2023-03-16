@@ -7,3 +7,22 @@ ChatImproVR will improve on existing virtual world platforms by promoting open s
 
 ## Who is ChatImproVR for?
 Everyone! (TODO: Inclusive design)
+
+## What does ChatImproVR do?
+
+* What problem does it solve for its various audiences?
+
+* Why is the project better than the competition?
+
+## How do I get started?
+
+* Where/ how can I download or use what's being offered?
+
+* What's the repository?
+
+## Where can I find help?
+
+* Whom can I contact to learn more?
+
+* Who are the personnel of this project?
+
