@@ -7,3 +7,5 @@ ChatImproVR will improve on existing virtual world platforms by promoting open s
 
 ## Who is ChatImproVR for?
 Everyone! (TODO: Inclusive design)
+
+## Why
