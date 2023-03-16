@@ -80,6 +80,12 @@ impl Message for MyMessage {
 
 Note how we have specified the `Locality` of this message type. `Local` messages are sent to other plugins on this host. `Remote` messages are sent to the remote host. For example, a `Remote` message sent from a client would be received _only_ at the server.
 
+## Remote communication
+All Remote messages are sent at the end of each frame.
+![Remote messages](./remote_communication.svg)
+
+See the [channels example](https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/channels/src/lib.rs).
+
 ## Local communication:
 Messages are sent between stages, not within stages. Messages may only be received once:
 ![Local communication diagram](./local_communication.svg)
@@ -92,7 +98,3 @@ Messages are broadcasted to all subscribing plugins, including your own plugin:
 
 Systems' order of execution is the same as the order in which they were declared:
 ![Local communication diagram (inside)](./local_communication_inside.svg)
-
-## Remote communication
-All Remote messages are sent at the end of each frame.
-![Remote messages](./remote_communication.svg)
