@@ -21,12 +21,10 @@ We want everyone to be able to use ChatImproVR for every aspect of the game expe
 
 ## What does ChatImproVR do?
 
-Primarily ChatImproVR is a game engine, but it might be a bit different from the game engines that you are used to, like Unity or Unreal.
-
-To break it down, ChatImproVR has a plugin-based architecture. This means that developers can use whatever parts of our engine that they would like, and even add their own features just as easily. 
+Primarily ChatImproVR is a game engine, but it might be a bit different from the game engines that you are used to, like Unity or Unreal. To break it down, ChatImproVR has a plugin-based architecture. This means that developers can use whatever parts of our engine that they would like, and even add their own features just as easily. The hope is that developers will share the features that they create for the engine, and open-source developers can build the engine _together_, instead of providing game builders with a front end and limited back end. 
 
 |                     | ChatImproVR | Professional Game Engine | Typical VR Game |
-| ------------------  | :-----------:  | :------------------------: | :---------------: |
+| ------------------  | :--------:  | :----------------------: | :-------------: |
 | Fully Open Source   |      ✔️     | ✔️  | ❌ |
 | Can create games    |      ✔️     | ✔️  | ❌ |
 | Visually-focused    |      ❌     | ✔️  | ✔️ |
@@ -36,18 +34,7 @@ To break it down, ChatImproVR has a plugin-based architecture. This means that d
 | Made in Rust        |      ✔️     | ❌  | ❌ |
 
 
-
-
-
-
-
-
-What makes ChatImproVR unique than other game engines?
-1. Most of the existing virtual world engines are based on existing game engines, and must work within their specific framework whereas ChatImproVR does not have any limits.
-2. Because the code is open source code rather than licenses/subscription based game engine, anyone who has an interest can play, develop, and share with the community without any legal action such as sharing their own plugins and private servers that are hosted by the players.
-3. Rust is known to be one of the popular programming language that has continous updates to increase efficienty such as security features, memory cleanup compared to C#. On top of that, the Rust community is an very enthusiastic community for developers which provide less friction on converting ideas to plugins.
-
-Here are some example plugins for virtual world environment.
+Here are some examples of games that have been created with ChatImproVR so far:
 
 ![demo_room_rough](images/demo_room_rough.jpg)
 _Demo Room_
