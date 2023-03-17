@@ -103,10 +103,7 @@ Let's go every line in detail what it means in general.
 use cimvr_engine_interface::{make_app_state, prelude::*, println};
 ```
 
-The `cimvr_engine_interface` facilitates communication between the plugin and the host. It does not include any interfacing with the specific feature of the client or server; instead these datatyes are relegated to the `common` crate. Therefore the third line does not print out since it is part of the standard library that cimvr is not using. In simple terms, the `cimvr_engine_interface` is the connector between plugins and the engine itself. 
-
-TODO: Need more explaination for this area.
-
+The `cimvr_engine_interface` facilitates communication between the plugin and the host. It does not include any interfacing with the specific features of the client or server; instead these datatyes are relegated to the `common` crate. The third line does not print out since it is part of the standard library that cimvr is not using. In simple terms, the `cimvr_engine_interface` is the connector between plugins and the engine itself. 
 
 ```rust
 make_app_state!(ClientState, ServerState);
