@@ -1,6 +1,6 @@
 # ChatImproVR
 
-[Insert the FC racing gif to pop off]
+<img src="images/fz.jpg" width="800">
 
 ## What is ChatImproVR?
 ChatImproVR is a virtual world platform, with goals similar to that of VRChat, Neos, or SecondLife. A virtual world platform is a game engine and a set of tools to create and experience an immersive virtual space. These virtual spaces are then hosted online, where users can join them to socialize and enjoy the activities in the virtual world.
@@ -37,9 +37,17 @@ What makes ChatImproVR unique than other game engines are the following:
 
 Here are some example plugins for virtual world environment.
 
-[Demo room or galaga here]
+![demo_room_rough](images/demo_room_rough.jpg)
+_Demo Room_
 
-## How do I get started?
+![cube_example](images/cube_example.jpg)
+_Multiplayer_
+
+<img src="images/fluid_sim.jpg" width="800">
+
+_Fluid Simulation_
+
+## How do I get started?   <img src="images/ferris_getting_started.svg" width="65">
 
 While this page serves as a product page, it also serves as the documentation page as well. The next section will cover the installation for the **players**. 
 
