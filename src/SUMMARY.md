@@ -12,6 +12,7 @@
     - [Names](./Core_Concepts/names.md)
     - [Plugins](./Core_Concepts/for_plugin_devs.md)
     - [Coordinate system](./Core_Concepts/coordinate_system.md)
+    - [Rendering](./Core_Concepts/rendering.md)
     - [API documentation](./Core_Concepts/api_docs.md)
 - [Beginner Plugin Development Tutorial](./Beginner_Tutorial/beginner_plugin_development_tutorial.md)
     - [Setting up Plugin Development Environment](./Beginner_Tutorial/setting_up_plugin_development_environment.md)
