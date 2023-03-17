@@ -1,6 +1,6 @@
 # ChatImproVR
 
-<img src="images/fz.jpg" width="800">
+<img src="images/fz.JPG" width="800">
 
 ## What is ChatImproVR?
 
@@ -36,13 +36,13 @@ Primarily ChatImproVR is a game engine, but it might be a bit different from the
 
 Here are some examples of games that have been created with ChatImproVR so far:
 
-![demo_room_rough](images/demo_room_rough.jpg)
+![demo_room_rough](images/demo_room_rough.JPG)
 _Demo Room_
 
-![cube_example](images/cube_example.jpg)
+![cube_example](images/cube_example.JPG)
 _Multiplayer_
 
-<img src="images/fluid_sim.jpg" width="800">
+<img src="images/fluid_sim.JPG" width="800">
 
 _Fluid Simulation_
 
