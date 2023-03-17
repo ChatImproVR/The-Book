@@ -38,6 +38,15 @@ impl Component for MyComponent {
 }
 ```
 
+**We can take a shortcut!** The `Component` derive macro does this all automatically!
+```rust
+#[derive(Component, Serialize, Deserialize, Clone, Copy, Debug)]
+struct MyComponent {
+    a: i32,
+    b: f32,
+}
+```
+
 Components may be added to an entity plugin-side:
 ```rust
 io.add_component(ent, &MyComponent { a: 0, b: 0.0 });

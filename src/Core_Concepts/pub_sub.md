@@ -80,6 +80,16 @@ impl Message for MyMessage {
 
 Note how we have specified the `Locality` of this message type. `Local` messages are sent to other plugins on this host. `Remote` messages are sent to the remote host. For example, a `Remote` message sent from a client would be received _only_ at the server.
 
+**We can take a shortcut!** The `Message` derive macro does this all automatically!
+```rust
+#[derive(Message, Serialize, Deserialize, Debug)]
+#[locality("Remote")]
+struct MyMessage {
+    a: i32,
+    b: f32,
+}
+```
+
 ## Remote communication
 All Remote messages are sent at the end of each frame.
 ![Remote messages](./remote_communication.svg)
