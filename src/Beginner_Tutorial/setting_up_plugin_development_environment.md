@@ -2,6 +2,9 @@
 
 Plugins are typically developed in their own repositories or folders.
 
+## Before plugin development
+Before we start doing any plugin development, we need to set up the engine into your machine. Please refer to the [Development Environment](../Product_Page/dev_env.md) before we start setting up the plugin development environment.
+
 ## Using the template
 The easiest way to get started is to fork the 
 [plugin template repository](https://github.com/ChatImproVR/template).
@@ -35,7 +38,12 @@ This will allow you to access the script as `cimvr` anywhere.
 
 let's say we want to develop a plugin called `foo`, that we're developing at `$HOME/Projects/foo`. Then we could add this to our `~/.bashrc`:
 ```bash
-export CIMVR_PLUGINS="$HOME/Projects/foo/target/wasm32-unknown-unknown/release"
+export CIMVR_PLUGINS="$HOME/Projects/foo"
+```
+
+If you are developing on several plugins at the same time, for example `foo` and `poo` and `foo` is located in the `$HOME/Projects/foo` whereas the `poo` is located in the `$HOME/Desktop/foo`, then it will be seperated by the `;` sign.
+```bash
+export CIMVR_PLUGINS="$HOME/Projects/foo;$HOME/Desktop/poo"
 ```
 
 ### On MacOS (Zsh)
@@ -54,11 +62,16 @@ This will allow you to access the script as `cimvr` anywhere.
 let's say we want to develop a plugin called `foo`, that we're developing at `$HOME/Desktop/Rust/foo`. Then we could add this to our `~/.bashrc`
 
 ```zsh
-export CIMVR_PLUGINS="$HOME/Desktop/Rust/foo/target/wasm32-unknown-unknown/release"
+export CIMVR_PLUGINS="$HOME/Desktop/Rust/foo"
+```
+
+If you are developing on several plugins at the same time, for example `foo` and `poo` and `foo` is located in the `$HOME/Projects/foo` whereas the `poo` is located in the `$HOME/Desktop/foo`, then it will be seperated by the `;` sign.
+```zsh
+export CIMVR_PLUGINS="$HOME/Desktop/Rust/foo;$HOME/Desktop/poo"
 ```
 
 ### On Windows
-Assuming you have a copy of `iteration0` somewhere (in this case, `C:\Users\dunca\Documents\iteration0`), you can put the following in your `$profile`
+Assuming you have a copy of `iteration0` somewhere (in this case, `C:\Users\dunca\Documents\iteration0`), you can put the following in your `Microsoft.PowerShell_profile.ps1`.
 
 ```ps1
 function cimvr() {
@@ -68,14 +81,19 @@ function cimvr() {
 ```
 This will allow you to access the script as `cimvr` anywhere.
 
-> *NOTE: To find the `$profile` path, open Windows PowerShell and enter `$profile`. There is a chance that `$profile` might not exist yet. In that case, you need to create a new file and the directory to match that path. If running scripts is disabled on your machine, consult the common fixes section.*
+> *NOTE: If you cannot find the `Microsoft.PowerShell_profile.ps1`, you can find the file by typing `$profile` in Windows PowerShell. There is a chance that `Microsoft.PowerShell_profile.ps1` might not exist yet. In that case, you need to create a new file and the directory to match that path. In the image below, the file should be located in `Documents\WindowsPowerShell` under the file name as `Microsoft.PowerShell_profile.ps1`. If running scripts is disabled on your machine, consult the common fixes section.*
 
 ![$profile path](./profile_path.png)
 
 Let's say we want to develop a plugin called `foo`, that we're developing at `C:\Users\dunca\Documents\Projects\foo`. Then we could add this to our `$profile`:
-```bash
-$Env:CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo\target\wasm32-unknown-unknown\release"
+```ps1
+$Env:CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo"
 ```
+If you are developing on several plugins at the same time, for example `foo` and `poo` and `foo` is located in the `C:\Users\dunca\Documents\Projects\foo` whereas the `poo` is located in the `C:\Users\Mr.Kangs\Desktop\poo`, then it will be seperated by the `;` sign.
+```ps1
+export CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo;C:\Users\Mr.Kangs\Desktop\galaga"
+```
+
 
 ### Using the script to launch plugins
 After building both `iteration0`'s client and server as well as the example plugins, we could launch the cube example included with ChatImproVR using:
