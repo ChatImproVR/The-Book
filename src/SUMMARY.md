@@ -1,7 +1,7 @@
 # Summary
 
 - [Introduction](./introduction.md)
-- [Installation](./installation.md)
+- [Installation]()
 - [Development Environment](./dev_env.md)
 - [Core Concepts](./Core_Concepts/core_concepts.md)
     - [Webassembly](./Core_Concepts/wasm.md)
