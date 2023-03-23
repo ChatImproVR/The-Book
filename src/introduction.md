@@ -70,6 +70,6 @@ But just in case The Book doesn't have the help you need, you can also:
 | ----------- | ----------- |
 | [Duncan Freeman](https://github.com/Masterchef365) | duncan.freeman1@gmail.com |
 | [Rudy Peralta](https://github.com/Exiled1) | rudyperalta831@gmail.com |
-| [Kenneth Kang](https://github.com/MrKangs) | gyhang00@gmail.com |
+| [Kenneth Kang](https://github.com/MrKangs) | gykang00@gmail.com |
 | [Grace Todd](https://github.com/toddgr) | grace.miriam.todd@gmail.com|
 
