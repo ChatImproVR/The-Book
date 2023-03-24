@@ -47,4 +47,11 @@ While most crates _are_ in a workspace, the client crate is unfortunately exclud
 
 
 ## Tips and tricks
+### Sparse registries
 Recently, the sparse protocol for cargo registries was stablized. This can help improve initial compile times. See [the rust blog](https://blog.rust-lang.org/2023/03/09/Rust-1.68.0.html#cargos-sparse-protocol).
+
+### Logging
+Wasmtime/Cranelift puts a bunch of junk in the log by default. To disable this, put the following in your RC file:
+```sh
+export RUST_LOG="debug,cranelift=OFF,wasmtime=OFF"
+```
