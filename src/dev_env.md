@@ -1,5 +1,8 @@
 # Setting up a development environment
 ## Preparation
+### Installing Rust
+Go to [Rustup](https://rustup.rs/) and follow the instructions. Alternatively, start at the [rust documentation](https://www.rust-lang.org/learn/get-started).
+
 ### WASM target
 Make sure you have the `wasm32-unknown-unknown` target installed;
 ```sh
