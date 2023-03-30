@@ -17,12 +17,10 @@ io.send(&UploadMesh {
 3. To render a mesh, create an entity with the `Transform` and `Render` components. The `Transform` component specifies the position and orientation of the rendered mesh. This is available in shaders via the `mat4 view` uniform. The `Render` component specifies how the mesh is to be displayed; e.g. which primitive to use, indexing limites, etc. Note how we specify which `MeshHandle` to render!
 
 ```rust
-let cube_ent = io.create_entity();
-io.add_component(cube_ent, Transform::identity());
-io.add_component(
-    cube_ent,
-    Render::new(CUBE_HANDLE).primitive(Primitive::Triangles),
-);
+io.create_entity()
+    .add_component(Transform::identity());
+    .add_component(Render::new(CUBE_HANDLE))
+    .build();
 ```
 
 > NOTE: All rendering data is processed client-side; e.g. UploadMesh should be sent in ClientState.

@@ -6,11 +6,10 @@ Each System subscribes to a number of channels:
 ```rust
 // Schedule the update() system to run every Update,
 // and allow it to receive the MyMessage message
-sched.add_system(
-    Self::update,
-    SystemDescriptor::new(Stage::Update)
-        .subscribe::<MyMessage>(),
-);
+sched.add_system(Self::update)
+    .stage(Stage::Update)
+    .subscribe::<MyMessage>()
+    .build();
 ```
 
 Here we have subscribed to the `MyMessage`, which will be read every Update when `update()` is called. 

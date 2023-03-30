@@ -8,7 +8,9 @@ Entities in ChatImproVR are **universally** unique IDs. As of this writing, this
 
 Entities are created and deleted plugin-side like so:
 ```rust
-let my_entity = io.create_entity();
+let my_entity = io.create_entity()
+    .add_component(Transform::identity())
+    .build();
 io.remove_entity(my_entity);
 ```
 
@@ -26,15 +28,11 @@ struct MyComponent {
 }
 
 impl Component for MyComponent {
-    const ID: ComponentIdStatic = ComponentIdStatic {
-        // Here we define the universally unique name for this component.
-        // Note that this macro simply concatenates the package name with the name you provide.
-        // We could have written "channels_example/MyMessage" or even "jdasjdlfkjasdjfk" instead.
-        // It's important to make sure your package name is UNIQUE if you use this macro.
-        id: pkg_namespace!("MyComponent"),
-        // Determined via serialized_size().
-        size: 8,
-    };
+    // Here we define the universally unique name for this component.
+    // Note that this macro simply concatenates the package name with the name you provide.
+    // We could have written "channels_example/MyMessage" or even "jdasjdlfkjasdjfk" instead.
+    // It's important to make sure your package name is UNIQUE if you use this macro.
+    const ID: &'static str = pkg_namespace!("MyComponent");
 }
 ```
 
@@ -75,10 +73,10 @@ fn my_system(&mut self, io: &mut EngineIo, query: &mut QueryResult) {}
 
 Systems are in the plugin's constructor:
 ```rust
-sched.add_system(
-    Self::update,
-    SystemDescriptor::new(Stage::Update).query::<MyComponent>(Access::Write),
-);
+sched.add_system(Self::update)
+    .stage(Stage::Update)
+    .query::<MyComponent>(Access::Write)
+    .build();
 ```
 
 See the [ECS example](https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/ecs/src/lib.rs) for more details.
