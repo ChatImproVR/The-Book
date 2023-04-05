@@ -65,7 +65,7 @@ struct ClientState;
 
 impl UserState for ClientState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, client!");
 
         // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
@@ -81,7 +81,7 @@ struct ServerState;
 
 impl UserState for ServerState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, server!");
         Self
     }
@@ -150,7 +150,7 @@ Which makes up the entire code for the client side itself.
 ```rust
 impl UserState for ClientState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, client!");
 
         // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
@@ -175,7 +175,7 @@ struct ServerState;
 
 impl UserState for ServerState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, server!");
         Self
     }

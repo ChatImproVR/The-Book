@@ -56,6 +56,8 @@ These variables should not be declare in ServerState nor ClientState.
 ## Setting up the Mesh for Each Object
 Now we have declare the MeshHandle, we need to create the Mesh itself, or the object itself.
 
+If you want to use `Blender` to create an object and upload that as a mesh into the plugin, please refer Setting up the Mesh for Each Object using Object Loader from Blender section that is below this section.
+
 Let's start making the player object itself. Our design, since it is a basic model, will be a sqaure for the player.
 First, we declare a function that returns a Mesh type.
 ```rust
@@ -63,11 +65,11 @@ fn player() -> Mesh {}
 ```
 
 Inside the function, we need to define how big we want to be.
-For now, let's define the size variable inside the player function as 0.5.
+For now, let's define the size variable inside the player function as 5.0.
 
 ```rust
 fn player() -> Mesh {
-    let size = 0.5;
+    let size = 5.0;
 }
 ```
 Inside a Mesh, there is vertices and indices that we need to define and return.
@@ -120,7 +122,7 @@ Therefore the complete version of the player mesh function will be define as fol
 
 ```rust
 fn player() -> Mesh {
-    let size: f32 = 0.5;
+    let size: f32 = 5.0;
 
     let vertices = vec![
         Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
@@ -135,3 +137,110 @@ fn player() -> Mesh {
 }
 ```
 For each object, we need to the followng for the remaining enemy. enemy's bullet, and player's bullet. If you want to learn more depth regarding drawing objects, here is a [great resource](https://learnopengl.com/Getting-started/Hello-Triangle) to refer.
+
+## Sending the Mesh from Client to Server
+Once we have generated the Mesh for each object with the correct entity ID, we need to send that Mesh with the correct ID to the server. Inside the new function below, we need to insert the following command.
+
+```rust
+io.send(&UploadMesh{
+    id: PLAYER_HANDLE,
+    mesh: player(),
+});
+
+```
+Let's take a deep look into this command itself.
+
+The command will send to the EngineIo as a `UploadMesh` struct that contains the entity ID and the mesh itself. We know both of the id (`PLAYER_HANDLE`) and the mesh (`player()`). 
+
+That is all for sending mesh from the client to the server. Pretty easy. The complete code will be looking similar below.
+
+```rust
+fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        io.send(&UploadMesh{
+            id: PLAYER_HANDLE,
+            mesh: player(),
+        });
+
+        Self
+}
+```
+You do the same process for all the remaining objects such as the enemy, enemy_bullets, and the player_bullets.
+
+## Setting up the Mesh for Each Object using Object Loader from Blender
+While using Mesh is great by declearing a type and modify from there, it is very limited to the extend of creating more unique objects. Therefore, we have a different method to implement mesh into the plugin using `Blender`!
+
+First, please download the file from this [repository](https://github.com/ChatImproVR/obj-parser). In this repository, you will get a source code something similar to the following below.
+```rust
+use cimvr_common::render::{Mesh, Vertex};
+use cimvr_engine_interface::{dbg, prelude::*};
+use std::{io::Read, str::FromStr};
+
+use cimvr_engine_interface::{make_app_state, prelude::*, println};
+
+/// Read OBJ lines into the mesh
+/// OBJ line specs: https://all3dp.com/1/obj-file-format-3d-printing-cad/
+pub fn obj_lines_to_mesh(obj: &str) -> Mesh {
+    "and the remaining code..."
+}
+```
+
+We primarily want to use the `obj_lines_to_mesh` function. We want to store this code into a seperate file. Let's call it `obj.rs`.
+Here is the following outline now your repository should look like.
+- `.cargo`
+    - `config.toml`
+- `src`
+    - `assets`
+        - `circle.obj`
+        - `circle.blend`
+    - `lib.rs`
+    - `obj.rs`
+- `.gitignore`
+- `Cargo.toml`
+- `README.md`
+
+In order to add the `obj_lines_to_mesh` function into our plugin, all we need to add the following statement: `mod obj;`. The following will be the up-to-date version of packages and libraries.
+
+```rust
+use cimvr_engine_interface::{make_app_state, prelude::*, pkg_namespace};
+
+use cimvr_common::{
+    render::{
+        Mesh,
+        MeshHandle,
+        Primitive,
+        Render,
+        UploadMesh,
+        Vertex,
+    },
+    Transform
+};
+
+mod obj;
+```
+
+## How to create an Object in Blender (Very Important)
+
+There is a certain step that must happen in order to load the object correctly. However, I forgot to do this. Therefore, can someone else write this part of the documentation? You do not need to load how to cut an object, make a shape, or the extra. But we need the export process part.
+
+## How to send an Object from Blender from Client to Server
+The process of sending a object mesh from Blender from client to server is very similar like how you send a mesh that is created inside the plugin. Inside the `new` function, insert the following code.
+```rust
+io.send(&UploadMesh {
+            id: ENEMY_HANDLE,
+            mesh: obj::obj_lines_to_mesh(include_str!("assets/circle.obj")),
+        });
+```
+
+The only difference between the previous method and this method is the `mesh` component: instead of custom created mesh, we are using the `obj.rs`'s function to load the mesh. All you need to add into the parameter for the `obj_lines_to_mesh` function is the path of the object we want to load for that entity. Since we have created a circle object for the enemy, we want to load the `circle.obj` file.
+
+Once that is complete, then we have sent the entity ID and mesh to the server. For this plugin, I am going to use player and enemy from the object loader function whereas all the bullet related are from the plugin/coded.
+
+## How to display the Object from the Server
+
+## Wait...? What about the bullets?
+
+## Configuring the Camera Angle
+
+## Configuring the Camera Angle (Advanced)
+
+## Summary/Current Code Progress
