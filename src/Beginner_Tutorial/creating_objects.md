@@ -16,15 +16,9 @@ Insert the following packages/libraries/crates (We will call them crates for now
 use cimvr_engine_interface::{make_app_state, prelude::*, pkg_namespace};
 
 use cimvr_common::{
-    render::{
-        Mesh,
-        MeshHandle,
-        Primitive,
-        Render,
-        UploadMesh,
-        Vertex,
-    },
-    Transform
+    glam::{EulerRot, Quat, Vec3},
+    render::{Mesh, MeshHandle, Primitive, Render, UploadMesh, Vertex},
+    Transform,
 };
 ```
 Some of the crates are familiar from the plugin template such as `make_app_state` or `prelude::*`. Here is a brief summary on the remaining crates.
@@ -139,7 +133,7 @@ fn player() -> Mesh {
 For each object, we need to the followng for the remaining enemy. enemy's bullet, and player's bullet. If you want to learn more depth regarding drawing objects, here is a [great resource](https://learnopengl.com/Getting-started/Hello-Triangle) to refer.
 
 ## Sending the Mesh from Client to Server
-Once we have generated the Mesh for each object with the correct entity ID, we need to send that Mesh with the correct ID to the server. Inside the new function below, we need to insert the following command.
+Once we have generated the Mesh for each object with the correct Render ID, we need to send that Mesh with the correct ID to the server. Inside the new function below, we need to insert the following command.
 
 ```rust
 io.send(&UploadMesh{
@@ -150,9 +144,9 @@ io.send(&UploadMesh{
 ```
 Let's take a deep look into this command itself.
 
-The command will send to the EngineIo as a `UploadMesh` struct that contains the entity ID and the mesh itself. We know both of the id (`PLAYER_HANDLE`) and the mesh (`player()`). 
+The command will send to the EngineIo as a `UploadMesh` struct that contains the Render ID and the mesh itself. We know both of the id (`PLAYER_HANDLE`) and the mesh (`player()`). 
 
-That is all for sending mesh from the client to the server. Pretty easy. The complete code will be looking similar below.
+That is all for sending mesh from the client to the server. Pretty easy. The complete code will be looking similar below. This implementation is inside the `ClientState` `new` function. 
 
 ```rust
 fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
@@ -166,60 +160,28 @@ fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
 ```
 You do the same process for all the remaining objects such as the enemy, enemy_bullets, and the player_bullets.
 
-## Setting up the Mesh for Each Object using Object Loader from Blender
+## Blender
 While using Mesh is great by declearing a type and modify from there, it is very limited to the extend of creating more unique objects. Therefore, we have a different method to implement mesh into the plugin using `Blender`!
 
-First, please download the file from this [repository](https://github.com/ChatImproVR/obj-parser). In this repository, you will get a source code something similar to the following below.
+The object loader is already part of CimVR that we just need to update the `Cargo.toml` file. Inside the `Cargo.toml` file of your plugin, add a new line under dependencies.
+
 ```rust
-use cimvr_common::render::{Mesh, Vertex};
-use cimvr_engine_interface::{dbg, prelude::*};
-use std::{io::Read, str::FromStr};
-
-use cimvr_engine_interface::{make_app_state, prelude::*, println};
-
-/// Read OBJ lines into the mesh
-/// OBJ line specs: https://all3dp.com/1/obj-file-format-3d-printing-cad/
-pub fn obj_lines_to_mesh(obj: &str) -> Mesh {
-    "and the remaining code..."
-}
+obj_reader = {path = "../iteration0/obj_loader"} // The path might look different 
 ```
+You can declare whatever you want, but make sure the path is located in the right file that will read the file. 
 
-We primarily want to use the `obj_lines_to_mesh` function. We want to store this code into a seperate file. Let's call it `obj.rs`.
-Here is the following outline now your repository should look like.
-- `.cargo`
-    - `config.toml`
-- `src`
-    - `assets`
-        - `circle.obj`
-        - `circle.blend`
-    - `lib.rs`
-    - `obj.rs`
-- `.gitignore`
-- `Cargo.toml`
-- `README.md`
+Once that is complete, you need to use that crate to load the function `obj_lines_to_mesh`.
 
-In order to add the `obj_lines_to_mesh` function into our plugin, all we need to add the following statement: `mod obj;`. The following will be the up-to-date version of packages and libraries.
+At the beginning of the `lib.rs` file where you declare crates, add the following line.
 
 ```rust
-use cimvr_engine_interface::{make_app_state, prelude::*, pkg_namespace};
-
-use cimvr_common::{
-    render::{
-        Mesh,
-        MeshHandle,
-        Primitive,
-        Render,
-        UploadMesh,
-        Vertex,
-    },
-    Transform
-};
-
-mod obj;
+// Add libraries from the obj_reader crate
+use obj_reader::obj::obj_lines_to_mesh;
+// If you name the dependency differently, then change the name accordingly
 ```
 
 ## How to create an Object in Blender (Very Important)
-
+// TODO: Need to update this section (Convert the object to mesh --> select the right option for it then export it as an object file)
 There is a certain step that must happen in order to load the object correctly. However, I forgot to do this. Therefore, can someone else write this part of the documentation? You do not need to load how to cut an object, make a shape, or the extra. But we need the export process part.
 
 ## How to send an Object from Blender from Client to Server
@@ -227,15 +189,79 @@ The process of sending a object mesh from Blender from client to server is very 
 ```rust
 io.send(&UploadMesh {
             id: ENEMY_HANDLE,
-            mesh: obj::obj_lines_to_mesh(include_str!("assets/circle.obj")),
+            mesh: obj_lines_to_mesh(include_str!("assets/circle.obj")),
         });
 ```
 
-The only difference between the previous method and this method is the `mesh` component: instead of custom created mesh, we are using the `obj.rs`'s function to load the mesh. All you need to add into the parameter for the `obj_lines_to_mesh` function is the path of the object we want to load for that entity. Since we have created a circle object for the enemy, we want to load the `circle.obj` file.
+The only difference between the previous method and this method is the `mesh` component: instead of custom created mesh, we are using the `obj_lines_to_mesh` function to load the mesh. In the example above, by inserting the `obj_lines_to_mesh` function with the argument of the path of object file (in this case will be the `circle.obj` file), it will load properlly.
 
-Once that is complete, then we have sent the entity ID and mesh to the server. For this plugin, I am going to use player and enemy from the object loader function whereas all the bullet related are from the plugin/coded.
+Once that is complete, then we have sent the Render ID and mesh to the server. For this plugin, we will using the player and enemies as of now. We will add more objects mesh as we continue the tutorial.
 
 ## How to display the Object from the Server
+Based on the client side code, we are just sending the Render ID to the server, not the mesh data itself. Therefore, in order to render the entity we want to display, we need to call the Render ID while we are creating the entity.
+
+## So, how do you create an entity?
+In the `ServerState` implementation, we will add the following commands inside the `new` function for creating the player entity.
+
+```rust
+// Create Player entity with components
+        io.create_entity()
+            // Add the render component to draw the player with lines
+            .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+            // Add the synchronized component to synchronize the entity with the client side
+            .add_component(Synchronized)
+            // Add the transform component for movement
+            .add_component(Transform::default())
+            // Build the entity
+            .build();
+```
+We can split into (technically two) three functions when creating the entity using `io`. The first line `.create_entity()` tells the server that we are creating an entity. The second to fourth line that contains the function `.add_component` is the method of adding component as name states. In layman terms, we are adding characteristics to the entity. The last line that contains the `.build();` tells the server that we are done adding component to this entity and build it.
+
+The most important function when creating is `.add_component()` function call. In the code/example above, there are three unique calls, which will cover each part in depth.
+
+### Render
+When you add this component to a certain entity, it indicates that we are giving an render data to this entity that could appear on the client side. This is where we use the Render ID to render the entity that was sent from the client side. In the given example, we are going to render this entity as a player by providing the `PLAYER_HANDLE` Render ID to the entity. This explains up to the part of `.add_component(Render::new(PLAYER_HANDLE))`.
+
+The `.primitive(Primitive::Lines)` part explains what method are we going to render. There are three methods to render the entity: `Lines`, `Points`, or `Triangles`. The name itself explains how it will be render except `Triangles`. The `Triangles` method use the idea of the right hand rule that by providing the three vertices to format as a triangle will fill out the area with the given color. In this case, because the player ship is created over blender with only lines, the example says Lines, but if you want to render in a different method, you are welcome to do so.
+
+### Synchronized
+When you add this component to a certain entity, it indicates that whatever happens to the server will also update on the client side as well. We want to have this component; for example, if the player is hit from the enemy's bullet, then the player must be deleted, but if we do not have this component, the client will never know when it should be deleted or not.
+
+If the client do not care regarding updates from the server side, then you do not need to add this component. Otherwise, must add this component.
+### Transform
+When you add this component to a certain entity, it indicates that this entity will be display on the client side whether or not it has a mesh data. This component seems somewhat redundent and useless at first because the entity will be display even without any render data; in other words, why would call this component if you do not need to render something. However, the transform allows you to do a lot of customization when it comes to positioning and rotation, which will cover in the next section.
+
+
+## Customizing the render settings
+Take a good look at the following example code below.
+```rust
+// Create Player entity with components
+        io.create_entity()
+            // Add the transform component for movement
+            .add_component(
+                // Add the default transform component
+                Transform::default()
+                    // Set the bottom middle of the screen as the initial position
+                    .with_position(Vec3::new(0.0, -50.0, 0.0))
+                    // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+            )
+            // Add the render component to draw the player with lines
+            .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+            // Add the synchronized component to synchronize the entity with the client side
+            .add_component(Synchronized)
+            // Build the entity
+            .build();
+```
+There are two things you have noticed:
+1. The order of adding the component is different than the previous example. This tells that adding the component order does not matter what so ever. 
+2. There are more functions from the `Transform` component.
+
+Within each call for adding new components, you can set even more options in depth of the entity. In this example, we want to set the component location below the screen, where the player should be located. Therefore, we add te `.with_position()` function call with a `Vec3` input value of the position. Since it should be display in the bottom middle screen, the position will be `Vec3(0.,-50.,0.)`.
+
+Because the object is created by Blender with the `xyz` reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines. Therefore, we also need to call `.with_roation()` with the value of `Quat::from_euler(EulorRot::XYZ,90.,0.,0.))`.
+
+We will create entities for enemy as well: NOT THE BULLET.
 
 ## Wait...? What about the bullets?
 

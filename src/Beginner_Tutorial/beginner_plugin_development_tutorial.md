@@ -6,6 +6,8 @@ In this section, we will go over the basic understanding of plugin development (
 
 It's assumed that you have read through the Core Concepts section.
 
-By following this tutorial, you will able to create a mock-off version of **Galaga**. The final version can be found in this [repository](https://github.com/ChatImproVR/galaga). 
+By following this tutorial, you will able to create a mock-off version of **Galaga**. The final version can be found in this [repository](https://github.com/ChatImproVR/galaga). The complete game view we be something similar as the image below.
+
+![Complete Galaga View](galaga_complete_view.PNG)
 
 We are aiming this tutorial for any beginner with some background of Rust language development will easily follow without any issue. If you want a to learn more knowledge regarding Rust, you can refer to the [Rust Book](https://doc.rust-lang.org/book/).
