@@ -264,9 +264,269 @@ Because the object is created by Blender with the `xyz` reference is relative ra
 We will create entities for enemy as well: NOT THE BULLET.
 
 ## Wait...? What about the bullets?
+In the new function inside the ServerState, we have generated the entities for Player and Enemy, but not the bullets. Why?
+
+The new function will generate the entity when the program starts. In other words, when the program starts, the entity (if we add the componenet to display) will display at the beginning, which it is not the case for bullets. We want to create and remove the bullets when the player press a certain button to shoot the bullet or the enemy decides to shoot the bullet. 
+
+Therefore, we are going to generate the bullet based on certain function input. We will go in depth about it, but we can simply ignore the bullet at this point.
 
 ## Configuring the Camera Angle
+Inside the engine's example plugins, there are several plugins that you can refer to. One of the example plugin that we are using is `camera2d` plugin. This plugin will automatically set the camera angle as a 2D angle. Therefore, if you want to see the current progress, all you need to do (after compiling the galaga code) is entering the following.
 
-## Configuring the Camera Angle (Advanced)
+`cimvr galaga camera2d` or `cimvr camera2d galaga`. The order does not matter when it comes to calling the plugin.
+
+If you want to customize the camera in your own angle, please refer the documentation in the camera utility.
 
 ## Summary/Current Code Progress
+The following code should be similar to the code that is provided.
+
+```rust
+// Add libraries from the cimvr_engine_interface crate
+use cimvr_engine_interface::{make_app_state, pkg_namespace, prelude::*};
+
+// Add libraries from the cimvr_common crate
+use cimvr_common::{
+    glam::{EulerRot, Quat, Vec3},
+    render::{Mesh, MeshHandle, Primitive, Render, UploadMesh, Vertex},
+    Transform,
+};
+
+// Add libraries from the obj_reader crate
+use obj_reader::obj::obj_lines_to_mesh;
+
+// Create some constant value for Windows
+const WITDH: f32 = 80.;
+const HEIGHT: f32 = 120.;
+
+// Create some constant values for Enemy
+const ENEMY_SIZE: f32 = 3.; 
+
+// Create some constant values for Player
+const PLAYER_SIZE: f32 = 3.; // Because of the obj file, this value is not used (update this value after changing the obj size)
+
+// Create some constant values for Bullet
+const BULLET_SIZE: f32 = 0.5;
+
+
+// Create mesh handleer based on each object's name
+const PLAYER_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Player"));
+const ENEMY_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy"));
+const PLAYER_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Player Bullet"));
+const ENEMY_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy Bullet"));
+const WINDOW_SIZE_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Window Size"));
+
+// Create Meshes for each object
+
+// Create the Player Mesh --> This is commented out because we are using obj file
+// fn player() -> Mesh {
+//     let size: f32 = PLAYER_SIZE;
+
+//     let vertices = vec![
+//         Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
+//         Vertex::new([size, -size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 1
+//         Vertex::new([size, size, 0.0], [0.0, 0.0, 1.0]),   // Vertex 2
+//         Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 3
+//     ];
+
+//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+//     Mesh { vertices, indices }
+// }
+
+// // Create the Enemy Mesh --> This is commented out because we are using obj file
+// fn enemy() -> Mesh {
+//     let size: f32 = ENEMY_SIZE;
+
+//     let vertices = vec![
+//         Vertex::new([-size, -size, 0.0], [1.0, 0.0, 0.0]), // Vertex 0
+//         Vertex::new([size, -size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 1
+//         Vertex::new([size, size, 0.0], [1.0, 0.0, 0.0]),   // Vertex 2
+//         Vertex::new([-size, size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 3
+//     ];
+
+//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+//     Mesh { vertices, indices }
+// }
+
+// Create Player Bullet Mesh as a sqaure green
+fn player_bullet() -> Mesh {
+    let size: f32 = BULLET_SIZE;
+
+    let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([size, -size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([size, size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([-size, size, 0.0], [0.0, 1.0, 0.0]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+    Mesh { vertices, indices }
+}
+
+// Create Enemy Bullet Mesh as a sqaure red
+fn enemy_bullet() -> Mesh {
+    let size: f32 = BULLET_SIZE;
+
+    let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([size, -size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([size, size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([-size, size, 0.0], [1.0, 0.0, 0.0]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+    Mesh { vertices, indices }
+}
+
+// Create Window Mesh so that the users will know what is the limit of movement
+fn window_size() -> Mesh {
+    let vertices = vec![
+        Vertex::new([-WITDH / 2., -HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([WITDH / 2., -HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([WITDH / 2., HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([-WITDH / 2., HEIGHT / 2., 0.0], [1.; 3]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 0, 1, 1, 2, 2, 3];
+
+    Mesh { vertices, indices }
+}
+
+#[derive(Default)]
+struct ClientState;
+
+impl UserState for ClientState {
+    // Implement a constructor
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Declare the player color as green
+        let player_color = [0., 1., 0.];
+
+        // Read the player object file from the assets folder (that is created from blender)
+        let mut new_player_mesh = obj_lines_to_mesh(&include_str!("assets/galagaship.obj"));
+
+        // Update the player object/mesh with the player color
+        new_player_mesh
+            .vertices
+            .iter_mut()
+            .for_each(|v| v.uvw = player_color);
+
+        // Declare the enemy color as red
+        let enemy_color = [1., 0., 0.];
+
+        // Read the enemy object file from the assets folder (that is created from blender)
+        let mut new_enemy_mesh = obj_lines_to_mesh(&include_str!("assets/galaga_enemy.obj"));
+
+        // Update the enemy object/mesh with the enemy color
+        new_enemy_mesh
+            .vertices
+            .iter_mut()
+            .for_each(|v| v.uvw = enemy_color);
+
+        // Send the player mesh and the player mesh handler to the server side
+        io.send(&UploadMesh {
+            id: PLAYER_HANDLE,
+            mesh: new_player_mesh,
+        });
+
+        // Send the enemy mesh and the enemy mesh handler to the server side
+        io.send(&UploadMesh {
+            id: ENEMY_HANDLE,
+            mesh: new_enemy_mesh,
+        });
+
+        // Send the player bullet mesh and the player bullet mesh handler to the server side
+        io.send(&UploadMesh {
+            id: PLAYER_BULLET_HANDLE,
+            mesh: player_bullet(),
+        });
+
+        // Send the enemy bullet mesh and the enemy bullet mesh handler to the server side
+        io.send(&UploadMesh {
+            id: ENEMY_BULLET_HANDLE,
+            mesh: enemy_bullet(),
+        });
+
+        // Send the window mesh and the window mesh handler to the server side
+        io.send(&UploadMesh {
+            id: WINDOW_SIZE_HANDLE,
+            mesh: window_size(),
+        });
+
+        Self::default()
+    }
+}
+
+// All state associated with server-side behaviour
+struct ServerState;
+
+// Implement server only side functions that will update on the server side
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+
+        // Create Player entity with components
+        io.create_entity()
+            // Add the transform component for movement
+            .add_component(
+                // Add the default transform component
+                Transform::default()
+                    // Set the bottom middle of the screen as the initial position
+                    .with_position(Vec3::new(0.0, -50.0, 0.0))
+                    // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+            )
+            // Add the render component to draw the player with lines
+            .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+            // Add the synchronized component to synchronize the entity with the client side
+            .add_component(Synchronized)
+            // Build the entity
+            .build();
+
+        // Create Enemy with components
+        io.create_entity()
+            // Add the transform component for movement, firing, and displaying
+            .add_component(
+                // Add the default transform component
+                Transform::default()
+                    // Set the top middle of the screen as the initial position
+                    .with_position(Vec3::new(0.0, 50.0, 0.0))
+                    // Set the initial rotation to be facing towards to the player based on the camera angle
+                    // (no needed if you create the object facing a different direction or differen angle rotation)
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+            )
+            // Add the render component to draw the enemy with lines
+            .add_component(Render::new(ENEMY_HANDLE).primitive(Primitive::Lines))
+            // Add the synchronized component to synchronize the entity with the client side
+            .add_component(Synchronized)
+            // Build the entity
+            .build();
+
+        // Create the Window entity with components
+        io.create_entity()
+            // Add the transform component for displaying the window
+            .add_component(Transform::default())
+            // Add the render component to draw the window with lines
+            .add_component(Render::new(WINDOW_SIZE_HANDLE).primitive(Primitive::Lines))
+            // Add the synchronized component to synchronize the entity with the client side
+            .add_component(Synchronized)
+            // Build the entity
+            .build();
+    Self
+    }
+}
+
+// Defines entry points for the engine to hook into.
+// Calls new() for the appropriate state.
+make_app_state!(ClientState, ServerState);
+```
+
+By having this code, you should get something similar like the following.
+
+
+![Complete Object Creation Galaga View](Complete_view_of_object_creation.png)
+
+
+If you are not getting similar view, then please let us know so that we can help you out. Otherwise, we are ready to move to the next section.
