@@ -75,7 +75,12 @@ Systems are in the plugin's constructor:
 ```rust
 sched.add_system(Self::update)
     .stage(Stage::Update)
-    .query::<MyComponent>(Access::Write)
+    .query(
+            "Query Name", 
+            Query::new()
+                .intersect::<MyComponent>(Access::Write)
+                .intersect::<MyAnotherComponent>(Access::Read)
+    )
     .build();
 ```
 
