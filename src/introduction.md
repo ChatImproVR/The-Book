@@ -52,7 +52,7 @@ While this page serves as a product page, it also serves as the documentation pa
 
 However, if you are planning to do some plugin development or engine development (being as a **developer**), then we would recommend to check out in the Development Environment section.
 
-If you are interested in the repository, check out [here](https://github.com/ChatImproVR/iteration0).
+If you are interested in the repository, check out [here](https://github.com/ChatImproVR/chatimprovr).
 
 ## Where can I find help?   <img src="images/ferris_confused.svg" width="60">
 
@@ -62,7 +62,7 @@ But just in case The Book doesn't have the help you need, you can also:
 
 * Refer to some of our [example plugins](https://github.com/orgs/ChatImproVR/repositories)
 
-* Report an [issue](https://github.com/ChatImproVR/iteration0/issues) in the ChatImproVR engine repository
+* Report an [issue](https://github.com/ChatImproVR/chatimprovr/issues) in the ChatImproVR engine repository
 
 * Or, if all else fails, you can contact the devleopers directly:
 

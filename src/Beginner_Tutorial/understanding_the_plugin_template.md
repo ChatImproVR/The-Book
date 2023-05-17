@@ -28,8 +28,8 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies] # IMPORTANT!
-cimvr_common = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" }
-cimvr_engine_interface  = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" } 
+cimvr_common = { git = "https://github.com/ChatImproVR/chatimprovr.git", branch = "main" }
+cimvr_engine_interface  = { git = "https://github.com/ChatImproVR/chatimprovr.git", branch = "main" } 
 serde = { version = "1", features = ["derive"] }
 ```
 
@@ -48,8 +48,8 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-cimvr_common = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" }
-cimvr_engine_interface  = { git = "https://github.com/ChatImproVR/iteration0.git", branch = "main" }
+cimvr_common = { git = "https://github.com/ChatImproVR/chatimprovr.git", branch = "main" }
+cimvr_engine_interface  = { git = "https://github.com/ChatImproVR/chatimprovr.git", branch = "main" }
 serde = { version = "1", features = ["derive"] }
 ```
 

@@ -25,7 +25,7 @@ The helper script is intended to make it easy to run the client, server, or both
 
 If your MacOS system is using `bash` instead of `zsh`, then please follow this procedure. Otherwise, please follow the MacOS (Zsh) section.
 
-Assuming you have a copy of `iteration0` somewhere (in this case, `$HOME/Projects/chatimprovr`), you can put the following in your `~/.bashrc`:
+Assuming you have a copy of `chatimprovr` somewhere (in this case, `$HOME/Projects/chatimprovr`), you can put the following in your `~/.bashrc`:
 
 ```bash
 function cimvr() {
@@ -48,7 +48,7 @@ export CIMVR_PLUGINS="$HOME/Projects/foo;$HOME/Desktop/poo"
 
 ### On MacOS (Zsh)
 
-Assuming you have a copy of `iteration0` somewhere (in this case,  `$HOME/Desktop/Rust/chatimprovr`), you can put the following in your `~/.zshrc`:
+Assuming you have a copy of `chatimprovr` somewhere (in this case,  `$HOME/Desktop/Rust/chatimprovr`), you can put the following in your `~/.zshrc`:
 
 ```zsh
 function cimvr() {
@@ -71,11 +71,11 @@ export CIMVR_PLUGINS="$HOME/Desktop/Rust/foo;$HOME/Desktop/poo"
 ```
 
 ### On Windows
-Assuming you have a copy of `iteration0` somewhere (in this case, `C:\Users\dunca\Documents\iteration0`), you can put the following in your `Microsoft.PowerShell_profile.ps1`.
+Assuming you have a copy of `chatimprovr` somewhere (in this case, `C:\Users\dunca\Documents\chatimprovr`), you can put the following in your `Microsoft.PowerShell_profile.ps1`.
 
 ```ps1
 function cimvr() {
-    $cimvr_path="C:\Users\dunca\Documents\iteration0"
+    $cimvr_path="C:\Users\dunca\Documents\chatimprovr"
     python $cimvr_path\cimvr.py $args
 }
 ```
@@ -96,7 +96,7 @@ export CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo;C:\Users\Mr.Kangs\De
 
 
 ### Using the script to launch plugins
-After building both `iteration0`'s client and server as well as the example plugins, we could launch the cube example included with ChatImproVR using:
+After building both `chatimprovr`'s client and server as well as the example plugins, we could launch the cube example included with ChatImproVR using:
 ```bash
 cimvr camera cube
 ```

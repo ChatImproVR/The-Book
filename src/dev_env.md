@@ -15,9 +15,9 @@ sudo apt install build-essential cmake libxcb-render0-dev libxcb-shape0-dev libx
 ```
 
 ## Repository
-Clone the `iteration0` repository, available [here](https://github.com/ChatImproVR/iteration0).
+Clone the `chatimprovr` repository, available [here](https://github.com/ChatImproVR/chatimprovr).
 ```sh
-git clone https://github.com/ChatImproVR/iteration0.git
+git clone https://github.com/ChatImproVR/chatimprovr.git
 ```
 
 ## Compilation

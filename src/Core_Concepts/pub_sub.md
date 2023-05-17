@@ -93,7 +93,7 @@ struct MyMessage {
 All Remote messages are sent at the end of each frame.
 ![Remote messages](./remote_communication.svg)
 
-See the [channels example](https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/channels/src/lib.rs).
+See the [channels example](https://github.com/ChatImproVR/chatimprovr/blob/main/example_plugins/channels/src/lib.rs).
 
 ## Local communication:
 Messages are sent between stages, not within stages. Messages may only be received once:
