@@ -141,8 +141,6 @@ Self // Line 4
 The first line will print out in the terminal as how any Rust language will print out: the standard `println!` statement.
 The second line will print out in the terminal but differently. While the first line prints out on the terminal/client side, the second line prints the text on the engine side itself. 
 
-TODO: explain better with the cimvr_engine_interface part/the line above.
-
 The last line is the returning the client UserState as the updated the version for the client.
 
 Which makes up the entire code for the client side itself.

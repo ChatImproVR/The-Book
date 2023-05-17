@@ -50,7 +50,7 @@ These variables should not be declare in ServerState nor ClientState.
 ## Setting up the Mesh for Each Object
 Now we have declare the MeshHandle, we need to create the Mesh itself, or the object itself.
 
-If you want to use `Blender` to create an object and upload that as a mesh into the plugin, please refer Setting up the Mesh for Each Object using Object Loader from Blender section that is below this section.
+If you want to use `Blender` to create an object and upload that as a mesh into the plugin, please refer the [Blender](/Beginner_Tutorial/creating_objects.md#blender) section that is below this section.
 
 Let's start making the player object itself. Our design, since it is a basic model, will be a sqaure for the player.
 First, we declare a function that returns a Mesh type.
@@ -76,6 +76,9 @@ pub struct Vertex {
     pub uvw: [f32; 3],
 }
 ```
+From this point, we will deviate into two sections: 2D and 3D. First we will cover the 2D section. If you want to get information regarding 3D, please refer to [this section](/Beginner_Tutorial/creating_objects.md#3d), but we highly recommend to read the 2D section first.
+
+### 2D
 As you see above, the Vertex takes [x,y,z] position and [r,g,b] color combination.
 The word vertex means a point. We are poviding the point value of the object. Because we decided to make the player as a sqaure rather than fancy object looking, it can define as the following.
 ```rust
@@ -131,6 +134,37 @@ fn player() -> Mesh {
 }
 ```
 For each object, we need to the followng for the remaining enemy. enemy's bullet, and player's bullet. If you want to learn more depth regarding drawing objects, here is a [great resource](https://learnopengl.com/Getting-started/Hello-Triangle) to refer.
+
+### 3D
+With the same approach as creating 2D objects, we need to increase more vertex and identify which indices will connect to which indices. The following code will make a cube instead of a sqaure.
+
+```rust
+/// Defines the mesh data fro a cube
+fn cube() -> Mesh {
+    // Size of the cube mesh
+    let size = 0.25;
+
+    // List of vertex positions and colors
+    let vertices = vec![
+        Vertex::new([-size, -size, -size], [0.0, 1.0, 1.0]),
+        Vertex::new([size, -size, -size], [1.0, 0.0, 1.0]),
+        Vertex::new([size, size, -size], [1.0, 1.0, 0.0]),
+        Vertex::new([-size, size, -size], [0.0, 1.0, 1.0]),
+        Vertex::new([-size, -size, size], [1.0, 0.0, 1.0]),
+        Vertex::new([size, -size, size], [1.0, 1.0, 0.0]),
+        Vertex::new([size, size, size], [0.0, 1.0, 1.0]),
+        Vertex::new([-size, size, size], [1.0, 0.0, 1.0]),
+    ];
+
+    // Each 3 indices (indexing into vertices) define a triangle
+    let indices = vec![
+        3, 1, 0, 2, 1, 3, 2, 5, 1, 6, 5, 2, 6, 4, 5, 7, 4, 6, 7, 0, 4, 3, 0, 7, 7, 2, 3, 6, 2, 7,
+        0, 5, 4, 1, 5, 0,
+    ];
+
+    Mesh { vertices, indices }
+}
+```
 
 ## Sending the Mesh from Client to Server
 Once we have generated the Mesh for each object with the correct Render ID, we need to send that Mesh with the correct ID to the server. Inside the new function below, we need to insert the following command.
@@ -259,7 +293,7 @@ There are two things you have noticed:
 
 Within each call for adding new components, you can set even more options in depth of the entity. In this example, we want to set the component location below the screen, where the player should be located. Therefore, we add te `.with_position()` function call with a `Vec3` input value of the position. Since it should be display in the bottom middle screen, the position will be `Vec3(0.,-50.,0.)`.
 
-Because the object is created by Blender with the `xyz` reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines. Therefore, we also need to call `.with_roation()` with the value of `Quat::from_euler(EulorRot::XYZ,90.,0.,0.))`.
+Because the object is created by Blender with the `xyz` reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines. Therefore, we also need to call `.with_roation()` with the value of `Quat::from_euler(EulorRot::XYZ,90.,0.,0.)`.
 
 We will create entities for enemy as well: NOT THE BULLET.
 
@@ -528,5 +562,6 @@ By having this code, you should get something similar like the following.
 
 ![Complete Object Creation Galaga View](Complete_view_of_object_creation.png)
 
+The bottom object in the screen is the player whereas the red object that is near the top of the screen is the enemy. It does not have to be the same shape, but if each object is define as player and enemy, then we are good shape.
 
 If you are not getting similar view, then please let us know so that we can help you out. Otherwise, we are ready to move to the next section.
