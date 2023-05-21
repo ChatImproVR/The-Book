@@ -329,7 +329,7 @@ fn cube() -&gt; Mesh {
 <p>The object loader is already part of CimVR that we just need to update the <code>Cargo.toml</code> file. Inside the <code>Cargo.toml</code> file of your plugin, add a new line under dependencies.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>obj_reader = {path = &quot;../iteration0/obj_loader&quot;} // The path might look different 
+</span>obj_reader = {path = &quot;../chatimprovr/obj_loader&quot;} // The path might look different 
 <span class="boring">}</span></code></pre></pre>
 <p>You can declare whatever you want, but make sure the path is located in the right file that will read the file. </p>
 <p>Once that is complete, you need to use that crate to load the function <code>obj_lines_to_mesh</code>.</p>
@@ -340,13 +340,35 @@ fn cube() -&gt; Mesh {
 use obj_reader::obj::obj_lines_to_mesh;
 // If you name the dependency differently, then change the name accordingly
 <span class="boring">}</span></code></pre></pre>
-<h2 id="differences-between-blender-and-chatimprovr-axis"><a class="header" href="#differences-between-blender-and-chatimprovr-axis">Differences Between Blender and ChatImproVR Axis</a></h2>
-<p>Take a look in the follwing image below.
-<img src="./xyz_references.png" alt="XYZ_references" />
-<img src="./blender_export_option.png" alt="Blender_Export_Option" /></p>
-<h2 id="how-to-create-an-object-in-blender-very-important"><a class="header" href="#how-to-create-an-object-in-blender-very-important">How to create an Object in Blender (Very Important)</a></h2>
-<p>// TODO: Need to update this section (Convert the object to mesh --&gt; select the right option for it then export it as an object file)
-There is a certain step that must happen in order to load the object correctly. However, I forgot to do this. Therefore, can someone else write this part of the documentation? You do not need to load how to cut an object, make a shape, or the extra. But we need the export process part.</p>
+<h2 id="differences-between-blender-and-chatimprovr"><a class="header" href="#differences-between-blender-and-chatimprovr">Differences between Blender and ChatImproVR</a></h2>
+<p>The biggest differences between Blender and ChatImproVR is axes are different. Take a look at the following image below.</p>
+<p><img src="./xyz_reference.png" alt="XYZ_Reference" /></p>
+<p>The color lines represent axes in ChatImproVR whereas the solid white lines with the labels for each axes represent the axes in Blender.
+For people who are not familiar with the color line axes representation, here is a summary about it.</p>
+<ul>
+<li>Red Line represents the <strong>X-axis</strong></li>
+<li>Green Line represents the <strong>Y-axis</strong></li>
+<li>Blue Line represents the <strong>Z-axis</strong></li>
+<li>The Solid Lines represent <strong>positive</strong> direction</li>
+<li>The Dotted Lines represent <strong>negative</strong> direction</li>
+</ul>
+<p>As you see, the blender axes does not match with the ChatImproVR axes; for example, the Y-axis for blender is on the Z-axis for ChatImproVR. Therefore, we need to make sure to export the object correctly so that we do not need to modify the object viewing inside the code (In this tutorial, we had to modify to show other features; hence, we highly recommed to follow this section.)</p>
+<p>For the biggest difference is that the <strong>negative Y-axis</strong> in <strong>Blender</strong> is <strong>positive Z-axis</strong> in <strong>ChatImproVR</strong> whereas <strong>positive Z-axis</strong> in <strong>Blender</strong> is <strong>positive Y-axis</strong> in <strong>ChatImproVR</strong>.</p>
+<h2 id="how-to-create-an-object-in-blender-and-export-correctly"><a class="header" href="#how-to-create-an-object-in-blender-and-export-correctly">How to Create an Object in Blender and Export Correctly</a></h2>
+<p>Now we know what is the major differences, how do we export the object correctly using blender? First, we need to create an object in Blender. There are many tutorials on how to make an object of whatever design you prefer. Once the object has been created in Blender, follow the next steps.</p>
+<ol>
+<li>In <strong>File</strong>, select <strong>Export</strong>, then select <strong>Wavefront</strong> like the image below. It should have the file type as <strong>(.obj)</strong></li>
+</ol>
+<p><img src="./Blender_Export_Step_1.png" alt="Step 1" /></p>
+<ol start="2">
+<li>
+<p>Match the option as the image below.
+<img src="./blender_export_option.png" alt="Step 2" /></p>
+</li>
+<li>
+<p>Once that settings is correct, then select export to your desired location with the desired object file name. In our case, we are going to save it in <code>src/assets</code>.</p>
+</li>
+</ol>
 <h2 id="how-to-send-an-object-from-blender-from-client-to-server"><a class="header" href="#how-to-send-an-object-from-blender-from-client-to-server">How to send an Object from Blender from Client to Server</a></h2>
 <p>The process of sending a object mesh from Blender from client to server is very similar like how you send a mesh that is created inside the plugin. Inside the <code>new</code> function, insert the following code.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -398,7 +420,7 @@ There is a certain step that must happen in order to load the object correctly. 
                     // Set the bottom middle of the screen as the initial position
                     .with_position(Vec3::new(0.0, -50.0, 0.0))
                     // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
-                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI/2., 0., 0.)),
             )
             // Add the render component to draw the player with lines
             .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
@@ -413,7 +435,7 @@ There is a certain step that must happen in order to load the object correctly. 
 <li>There are more functions from the <code>Transform</code> component.</li>
 </ol>
 <p>Within each call for adding new components, you can set even more options in depth of the entity. In this example, we want to set the component location below the screen, where the player should be located. Therefore, we add te <code>.with_position()</code> function call with a <code>Vec3</code> input value of the position. Since it should be display in the bottom middle screen, the position will be <code>Vec3(0.,-50.,0.)</code>.</p>
-<p>Because the object is created by Blender with the <code>xyz</code> reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines. Therefore, we also need to call <code>.with_roation()</code> with the value of <code>Quat::from_euler(EulorRot::XYZ,90.,0.,0.)</code>.</p>
+<p>Because the object is created by Blender with the <code>xyz</code> reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines (which it is PI/2). Therefore, we also need to call <code>.with_roation()</code> with the value of <code>Quat::from_euler(EulorRot::XYZ,PI/2.,0.,0.)</code>. At the same time, we need to add the PI value from the standard libary. Therefore, add the <code>use std::{f32::consts::PI};</code> in the beginning of the file.</p>
 <p>We will create entities for enemy as well: NOT THE BULLET.</p>
 <h2 id="wait-what-about-the-bullets"><a class="header" href="#wait-what-about-the-bullets">Wait...? What about the bullets?</a></h2>
 <p>In the new function inside the ServerState, we have generated the entities for Player and Enemy, but not the bullets. Why?</p>
@@ -427,7 +449,9 @@ There is a certain step that must happen in order to load the object correctly. 
 <p>The following code should be similar to the code that is provided.</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>// Add libraries from the cimvr_engine_interface crate
+</span>use std::{f32::consts::PI};
+
+// Add libraries from the cimvr_engine_interface crate
 use cimvr_engine_interface::{make_app_state, pkg_namespace, prelude::*};
 
 // Add libraries from the cimvr_common crate
@@ -622,7 +646,7 @@ impl UserState for ServerState {
                     // Set the bottom middle of the screen as the initial position
                     .with_position(Vec3::new(0.0, -50.0, 0.0))
                     // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
-                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI/2., 0., 0.)),
             )
             // Add the render component to draw the player with lines
             .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))

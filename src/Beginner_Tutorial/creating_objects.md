@@ -200,7 +200,7 @@ While using Mesh is great by declearing a type and modify from there, it is very
 The object loader is already part of CimVR that we just need to update the `Cargo.toml` file. Inside the `Cargo.toml` file of your plugin, add a new line under dependencies.
 
 ```rust
-obj_reader = {path = "../iteration0/obj_loader"} // The path might look different 
+obj_reader = {path = "../chatimprovr/obj_loader"} // The path might look different 
 ```
 You can declare whatever you want, but make sure the path is located in the right file that will read the file. 
 
@@ -214,9 +214,36 @@ use obj_reader::obj::obj_lines_to_mesh;
 // If you name the dependency differently, then change the name accordingly
 ```
 
-## How to create an Object in Blender (Very Important)
-// TODO: Need to update this section (Convert the object to mesh --> select the right option for it then export it as an object file)
-There is a certain step that must happen in order to load the object correctly. However, I forgot to do this. Therefore, can someone else write this part of the documentation? You do not need to load how to cut an object, make a shape, or the extra. But we need the export process part.
+## Differences between Blender and ChatImproVR
+The biggest differences between Blender and ChatImproVR is axes are different. Take a look at the following image below.
+
+![XYZ_Reference](./xyz_reference.png)
+
+The color lines represent axes in ChatImproVR whereas the solid white lines with the labels for each axes represent the axes in Blender.
+For people who are not familiar with the color line axes representation, here is a summary about it.
+- Red Line represents the **X-axis**
+- Green Line represents the **Y-axis**
+- Blue Line represents the **Z-axis**
+- The Solid Lines represent **positive** direction
+- The Dotted Lines represent **negative** direction
+
+As you see, the blender axes does not match with the ChatImproVR axes; for example, the Y-axis for blender is on the Z-axis for ChatImproVR. Therefore, we need to make sure to export the object correctly so that we do not need to modify the object viewing inside the code (In this tutorial, we had to modify to show other features; hence, we highly recommed to follow this section.)
+
+For the biggest difference is that the **negative Y-axis** in **Blender** is **positive Z-axis** in **ChatImproVR** whereas **positive Z-axis** in **Blender** is **positive Y-axis** in **ChatImproVR**.
+
+## How to Create an Object in Blender and Export Correctly
+Now we know what is the major differences, how do we export the object correctly using blender? First, we need to create an object in Blender. There are many tutorials on how to make an object of whatever design you prefer. Once the object has been created in Blender, follow the next steps.
+1. In **File**, select **Export**, then select **Wavefront** like the image below. It should have the file type as **(.obj)**
+
+
+![Step 1](./Blender_Export_Step_1.png)
+
+
+2. Match the option as the image below.
+![Step 2](./blender_export_option.png)
+
+
+3. Once that settings is correct, then select export to your desired location with the desired object file name. In our case, we are going to save it in `src/assets`.
 
 ## How to send an Object from Blender from Client to Server
 The process of sending a object mesh from Blender from client to server is very similar like how you send a mesh that is created inside the plugin. Inside the `new` function, insert the following code.
@@ -278,7 +305,7 @@ Take a good look at the following example code below.
                     // Set the bottom middle of the screen as the initial position
                     .with_position(Vec3::new(0.0, -50.0, 0.0))
                     // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
-                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI/2., 0., 0.)),
             )
             // Add the render component to draw the player with lines
             .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
@@ -293,7 +320,7 @@ There are two things you have noticed:
 
 Within each call for adding new components, you can set even more options in depth of the entity. In this example, we want to set the component location below the screen, where the player should be located. Therefore, we add te `.with_position()` function call with a `Vec3` input value of the position. Since it should be display in the bottom middle screen, the position will be `Vec3(0.,-50.,0.)`.
 
-Because the object is created by Blender with the `xyz` reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines. Therefore, we also need to call `.with_roation()` with the value of `Quat::from_euler(EulorRot::XYZ,90.,0.,0.)`.
+Because the object is created by Blender with the `xyz` reference is relative rather than objective, there is a need to rotate the object based on the X-axis by 90 degrees in radines (which it is PI/2). Therefore, we also need to call `.with_roation()` with the value of `Quat::from_euler(EulorRot::XYZ,PI/2.,0.,0.)`. At the same time, we need to add the PI value from the standard libary. Therefore, add the `use std::{f32::consts::PI};` in the beginning of the file.
 
 We will create entities for enemy as well: NOT THE BULLET.
 
@@ -315,6 +342,8 @@ If you want to customize the camera in your own angle, please refer the document
 The following code should be similar to the code that is provided.
 
 ```rust
+use std::{f32::consts::PI};
+
 // Add libraries from the cimvr_engine_interface crate
 use cimvr_engine_interface::{make_app_state, pkg_namespace, prelude::*};
 
@@ -510,7 +539,7 @@ impl UserState for ServerState {
                     // Set the bottom middle of the screen as the initial position
                     .with_position(Vec3::new(0.0, -50.0, 0.0))
                     // Set the initial rotation to be facing towards to the player based on the camera angle (no needed if you create the object facing a different direction)
-                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI/2., 0., 0.)),
             )
             // Add the render component to draw the player with lines
             .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
