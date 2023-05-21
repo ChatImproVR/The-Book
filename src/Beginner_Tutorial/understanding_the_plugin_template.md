@@ -65,7 +65,7 @@ struct ClientState;
 
 impl UserState for ClientState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, client!");
 
         // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
@@ -81,7 +81,7 @@ struct ServerState;
 
 impl UserState for ServerState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, server!");
         Self
     }
@@ -141,8 +141,6 @@ Self // Line 4
 The first line will print out in the terminal as how any Rust language will print out: the standard `println!` statement.
 The second line will print out in the terminal but differently. While the first line prints out on the terminal/client side, the second line prints the text on the engine side itself. 
 
-TODO: explain better with the cimvr_engine_interface part/the line above.
-
 The last line is the returning the client UserState as the updated the version for the client.
 
 Which makes up the entire code for the client side itself.
@@ -150,7 +148,7 @@ Which makes up the entire code for the client side itself.
 ```rust
 impl UserState for ClientState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, client!");
 
         // NOTE: We are using the println defined by cimvr_engine_interface here, NOT the standard library!
@@ -175,7 +173,7 @@ struct ServerState;
 
 impl UserState for ServerState {
     // Implement a constructor
-    fn new(_io: &mut EngineIo, _sched: &mut EngineSchedule<Self>) -> Self {
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         println!("Hello, server!");
         Self
     }
