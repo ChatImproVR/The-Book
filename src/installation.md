@@ -1,4 +1,4 @@
-# Installation
+# Installation & How do you Run
 This section primarly focus on installing our ChatImproVR engine and how to run the engine as an user.
 
 ## Minimum Requirement
@@ -38,5 +38,5 @@ Common Sense Duh
 ## Our Engine
 Easy Shit
 
-# How to Run our Engine as an User
+## How to Run our Engine as an User
 Easy Stuff

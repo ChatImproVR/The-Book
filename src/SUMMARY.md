@@ -1,7 +1,7 @@
 # Summary
 
 - [Introduction](./introduction.md)
-- [Installation](./installation.md)
+- [Installation & How do you Run](./installation.md)
 - [Development Environment](./dev_env.md)
 - [Core Concepts](./Core_Concepts/core_concepts.md)
     - [Plugins](./Core_Concepts/plugin.md)
