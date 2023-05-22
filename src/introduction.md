@@ -1,6 +1,6 @@
 # ChatImproVR
 
-<img src="images/fz.JPG" width="800">
+![FZ demo program](images/FZ.png)
 
 ## What is ChatImproVR?
 
