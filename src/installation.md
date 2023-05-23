@@ -21,10 +21,13 @@ There are four softwares to download in order to use the ChatImproVR.
    2. [Steam VR](https://store.steampowered.com/app/250820/SteamVR/)
 4. [Our Engine](https://github.com/ChatImproVR/chatimprovr)
 
-We will guide you how to install for each software to be ready to use our engine.
+We will guide you how to install for each software to be ready to use our engine. Before you go into the installaion, please open the links that are provided above.
 
 ## Rust
-Duh...
+When you visit the page for Rust, it will greet you the screen as below.
+![Rust Install Page](/images/rust_install_page.png)
+
+Please follow the instructions as they stated. The page might look slighlty different based on operating system.
 
 ## CMake
 Duhhhhh
