@@ -71,3 +71,10 @@ Select the `Download Oculus Rift Software` button. By selecting the button will 
 //TODO: someone test this out/write this part. I have no idea what is a major difference when it comes to Steam VR application.
 
 ## Our Engine
+There are two methods to use our engine: the stable version and most advanced version.
+
+### Stable Version
+Use the Release Code Version
+
+### Most Advanced Version
+Clone the repository
