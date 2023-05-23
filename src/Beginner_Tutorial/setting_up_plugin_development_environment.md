@@ -9,7 +9,7 @@ Before we start doing any plugin development, we need to set up the engine into 
 The easiest way to get started is to fork the 
 [plugin template repository](https://github.com/ChatImproVR/template).
 
-[![Use this template button](./use_this_template.png)](https://github.com/ChatImproVR/template)
+[![Use this template button](./images/use_this_template.png)](https://github.com/ChatImproVR/template)
 
 If you're using another git service besides github, you can clone the repository and remove the default remote:
 ```sh
@@ -83,7 +83,7 @@ This will allow you to access the script as `cimvr` anywhere.
 
 > *NOTE: If you cannot find the `Microsoft.PowerShell_profile.ps1`, you can find the file by typing `$profile` in Windows PowerShell. There is a chance that `Microsoft.PowerShell_profile.ps1` might not exist yet. In that case, you need to create a new file and the directory to match that path. In the image below, the file should be located in `Documents\WindowsPowerShell` under the file name as `Microsoft.PowerShell_profile.ps1`. If running scripts is disabled on your machine, consult the common fixes section.*
 
-![$profile path](./profile_path.png)
+![$profile path](./images/profile_path.png)
 
 Let's say we want to develop a plugin called `foo`, that we're developing at `C:\Users\dunca\Documents\Projects\foo`. Then we could add this to our `$profile`:
 ```ps1

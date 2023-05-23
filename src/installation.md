@@ -65,7 +65,7 @@ Once you open the page, you will be greet the follow page as below.
 
 ![Oculus Download Page](/images/oculus_download_page.png)
 
-Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installer instruction/
+Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installer instruction.
 
 ## Steam VR
 //TODO: someone test this out/write this part. I have no idea what is a major difference when it comes to Steam VR application.

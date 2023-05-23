@@ -217,7 +217,7 @@ use obj_reader::obj::obj_lines_to_mesh;
 ## Differences between Blender and ChatImproVR
 The biggest differences between Blender and ChatImproVR is axes are different. Take a look at the following image below.
 
-![XYZ_Reference](./xyz_reference.png)
+![XYZ_Reference](./images/xyz_reference.png)
 
 The color lines represent axes in ChatImproVR whereas the solid white lines with the labels for each axes represent the axes in Blender.
 For people who are not familiar with the color line axes representation, here is a summary about it.
@@ -236,11 +236,11 @@ Now we know what is the major differences, how do we export the object correctly
 1. In **File**, select **Export**, then select **Wavefront** like the image below. It should have the file type as **(.obj)**
 
 
-![Step 1](./Blender_Export_Step_1.png)
+![Step 1](./images/Blender_Export_Step_1.png)
 
 
 2. Match the option as the image below.
-![Step 2](./blender_export_option.png)
+![Step 2](./images/blender_export_option.png)
 
 
 3. Once that settings is correct, then select export to your desired location with the desired object file name. In our case, we are going to save it in `src/assets`.
@@ -589,7 +589,7 @@ make_app_state!(ClientState, ServerState);
 By having this code, you should get something similar like the following.
 
 
-![Complete Object Creation Galaga View](Complete_view_of_object_creation.png)
+![Complete Object Creation Galaga View](./images/Complete_view_of_object_creation.png)
 
 The bottom object in the screen is the player whereas the red object that is near the top of the screen is the enemy. It does not have to be the same shape, but if each object is define as player and enemy, then we are good shape.
 
