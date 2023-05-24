@@ -30,6 +30,8 @@ Once you [open the page](https://www.oculus.com/Setup/), you will be greet the f
 
 Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installer instruction.
 
+// Need to write more
+
 ## Steam VR
 Open the [Download Link](https://store.steampowered.com/app/250820/SteamVR/), and install the Steam VR application.
 
