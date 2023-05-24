@@ -3,7 +3,7 @@
 Plugins are typically developed in their own repositories or folders.
 
 ## Before plugin development
-Before we start doing any plugin development, we need to set up the engine into your machine. Please refer to the [Installation](../installation.md) as beginning installation and [Development Environment](../installation.md#most-advanced-version-development-environment-version) to set up the development environment.
+Before we start doing any plugin development, we need to set up the engine into your machine. Please refer to the [Installation](../installation.md) as beginning installation and [Development Environment](../development_environment.md) to set up the development environment.
 
 ## Using the template
 The easiest way to get started is to fork the 
