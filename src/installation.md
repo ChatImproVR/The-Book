@@ -31,8 +31,7 @@ Once you [open the page](https://www.oculus.com/Setup/), you will be greet the f
 Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installer instruction.
 
 ## Steam VR
-//TODO: someone test this out/write this part. I have no idea what is a major difference when it comes to Steam VR application.
-[Download Link](https://store.steampowered.com/app/250820/SteamVR/)
+Open the [Download Link](https://store.steampowered.com/app/250820/SteamVR/), and install the Steam VR application.
 
 ## Our Engine
 If you want to use the stable version, we recommend to download the engine from releases. You can download from [here](https://github.com/ChatImproVR/chatimprovr/releases). If you are a **Windows** user, please download the `.exe`. If you are a **Linux** or **Mac**, please download the file that is stated in the release note (The application that has no extension).From there, you can run the `cimvr_server.exe` to host your own server whereas the `cimvr_client.exe` to connect server based on the address of the server.

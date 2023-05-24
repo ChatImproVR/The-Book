@@ -96,7 +96,7 @@ For the rgb value, we are using the scale between 0.0 to 1.0 rather than the tra
 
 Now let's switch our focus to the indices. We need to place the vertex by following the **Right Hand Rule**. For people who do not know what is the Right Hand Rule, it can be explain the image below.
 
-![Right Hand Rule In Image](./right_hand_rule.jpeg)
+![Right Hand Rule In Image](./images/right_hand_rule.jpeg)
 
 Let's say the green arrow represents the x-axis, the blue arrow represents the y-axis, and the red arrow represents the z-axis. If we place the vertex in the counter clockwise order for both x and y values, then the z value will be positive that will be facing us. If we place the order of the vertex in the opposite order/ clockwise, then it will face down. Since we want to place the object facing toward us, we need to place the vertices in the counter clockwise order.
 
@@ -108,7 +108,7 @@ The 0, 1, 2, 3 came from the Vertex 0, Vertex 1, Vertex 2, and Vertex 3 that is 
 
 Here is an example drawing on how it will be displayed.
 
-![Player_Object_Drawing_Method_In_Image](./vertex_image_rotation.jpg)
+![Player_Object_Drawing_Method_In_Image](./images/vertex_image_rotation.jpg)
 
 Lastly, we need to return the value of Mesh type as the following.
 ```rust 

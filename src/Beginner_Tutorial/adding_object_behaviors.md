@@ -50,10 +50,42 @@ With the same approach for Movement Input Message, we also need to establish the
 #[locality("Remote")]
 struct FireCommand(bool);
 ```
-
 ## Movement
+Now we need to create functions from both client side and server side for movement input. The client side will need to send the message to the server whereas the server side need to update the entity. The next two section will describe each side of the code. 
+
+### Before we start working on it...
+We need to add more crates into the plugin to add features such as keyboard/control input and frametime. In the beginning of the code, add/update the following code.
+```rust
+// Add libraries from the cimvr_engine_interface crate
+use cimvr_engine_interface::{make_app_state, pcg::Pcg, pkg_namespace, prelude::*, FrameTime};
+
+// Add libraries from the cimvr_common crate
+use cimvr_common::{
+    desktop::{InputEvent, KeyCode},
+    gamepad::{Axis, Button, GamepadState},
+    glam::{EulerRot, Quat, Vec3},
+    render::{Mesh, MeshHandle, Primitive, Render, UploadMesh, Vertex},
+    utils::input_helper::InputHelper,
+    Transform,
+};
+```
 
 ### Client Side
+Inside the `new` function of the `ClientState`, we will be using the `EngineSchedule` argument to connect the functions to the engine.
+
+Insert the following lines inside the `new` function.
+```rust
+// Add player movement input based on keyboard/controller input
+        sched
+            .add_system(Self::player_input_movement_update)
+            .subscribe::<InputEvent>()
+            .subscribe::<GamepadState>()
+            .subscribe::<FrameTime>()
+            .build();
+```
+The first line is calling the `EngineSchedule` as `sched`. The second line will add the system to the engine schedule. We will write about the `player_input_movement_update` function in the next paragraph. But that function is declared inside the `ClientState`. The third line to fifth line, we will attach other feeatures. The last line will build that system with those feature attachments.
+
+
 
 ### Server Side
 
