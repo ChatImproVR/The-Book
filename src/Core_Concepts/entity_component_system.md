@@ -84,4 +84,4 @@ sched.add_system(Self::update)
     .build();
 ```
 
-See the [ECS example](https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/ecs/src/lib.rs) for more details.
+See the [ECS example](https://github.com/ChatImproVR/chatimprovr/blob/main/example_plugins/ecs/src/lib.rs) for more details.

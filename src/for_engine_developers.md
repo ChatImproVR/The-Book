@@ -1,5 +1,5 @@
 # Engine development
-The current implementation of ChatImproVR's engine is `iteration0`. It's assumed that you've read the previous sections, and understand how to write plugins for ChatImproVR.
+The current implementation of ChatImproVR's engine is `chatimprovr`. It's assumed that you've read the previous sections, and understand how to write plugins for ChatImproVR.
 
 ChatImproVR is split into a few different parts. The **Engine** is the core of a ChatImproVR **Host**. It is responsible for managing the ECS, facilitating pub/sub messaging, and loading plugin code. The engine contains no code responsible for interacting with the outside world; it has no networking cabablity nor does it render scenes or take user input. That is the responsibility of the rest of the **Host**'s code. 
 

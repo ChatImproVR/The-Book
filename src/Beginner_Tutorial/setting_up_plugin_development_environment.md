@@ -55,8 +55,6 @@ export CIMVR_PLUGINS="C:\Users\dunca\Documents\Projects\foo;C:\Users\Mr.Kangs\De
 ```
 
 ### Using the script to launch plugins
-After building our own plugin and updating the helper script, we could launch it with:
-
 ```bash
 cimvr foo
 ```

@@ -25,7 +25,7 @@ io.create_entity()
 
 > NOTE: All rendering data is processed client-side; e.g. UploadMesh should be sent in ClientState.
 
-See the [cube example](https://github.com/ChatImproVR/iteration0/blob/main/example_plugins/cube/src/lib.rs)!
+See the [cube example](https://github.com/ChatImproVR/chatimprovr/blob/main/example_plugins/cube/src/lib.rs)!
 
 ## Defining meshes
 Meshes are defined using vertices and indices. The default shader uses `Vertex`'s `uvw` field to represent vertex color.
