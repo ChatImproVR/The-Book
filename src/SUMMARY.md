@@ -2,8 +2,6 @@
 
 - [Introduction](./introduction.md)
 - [Installation](./installation.md)
-- [How do you Run](./execuation.md)
-- [Development Environment](./dev_env.md)
 - [Core Concepts](./Core_Concepts/core_concepts.md)
     - [Plugins](./Core_Concepts/plugin.md)
     - [Webassembly](./Core_Concepts/wasm.md)
