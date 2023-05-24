@@ -1,5 +1,5 @@
 # Development Environment Version
-If you want to get the most up-to-date version that might have some bugs within the engine but has more features than the stable version and develop new plugins or engine features, then we recommend to clone our repository from [here](https://github.com/ChatImproVR/chatimprovr). There are additional steps that need to finish in order to use this version.
+If you want to develop new plugins or engine features with a version that might have some bugs, but has more features than the stable version, then you can clone our repository from [here](https://github.com/ChatImproVR/chatimprovr). To use this version, there are a few additional steps that need to be completed:
 
 ## Additional Software Download
 There are two additional software to download to set up the development environment.
