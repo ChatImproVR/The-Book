@@ -1,16 +1,14 @@
 # Creating Objects
 
-Now we have our template of the plugin and have some knowledge on what is going on, let's start working on object creation. Without any objects in the environment, we cannot do anything with it.
+Without any objects in the environment, we cannot do anything with it. Now we have our plugin template, let's start working on object creation.
 
 ## Review
 
-Before we start adding code into the plugin, let's review what is an ECS. Please refer to this [page](../Core_Concepts/entity_component_system.md).
-
-In short, we need to have ID for each object that is associated with each graphic itself.
+Before we start adding code to the plugin, review what an ECS is by referring to this [page](../Core_Concepts/entity_component_system.md). In short, we need to have a unique ID for each object that is associated with each graphic itself.
 
 ## Adding packages/libraries/crates
 
-Insert the following packages/libraries/crates (We will call them crates for now on) into the very top of `lib.rs` file.
+Insert the following packages/libraries/crates (we will call them crates for now on) into the very top of `lib.rs` file.
 
 ```rust
 use cimvr_engine_interface::{make_app_state, prelude::*, pkg_namespace};
@@ -21,7 +19,7 @@ use cimvr_common::{
     Transform,
 };
 ```
-Some of the crates are familiar from the plugin template such as `make_app_state` or `prelude::*`. Here is a brief summary on the remaining crates.
+Some of the crates will be familiar from the plugin template such as `make_app_state` or `prelude::*`. Here is a brief summary on the remaining crates.
 - `pkg_namespace`: This allows us to easily and uniquely name component and message data types based on our crate's (plugin's) name.
 - `cimvr_common`: The main crate that handles communcation between server and client.
     - `render`: The main crate for object loading part (the main itself explains that it will render graphics)
@@ -35,9 +33,9 @@ Some of the crates are familiar from the plugin template such as `make_app_state
 
 ## Create ID For Each Object
 
-First, we need to declare the `MeshHandle` to assign each ID for each object. In the game of galaga, we need to assign four parts: player, enemy, player's bullet, and enemy's bullet.
+First, we need to declare the `MeshHandle` to assign each ID for each object. In the game of Galaga, we need to assign four parts: player, enemy, player's bullet, and enemy's bullet.
 
-We can set up the ID value like the following.
+We can set up the ID values like the following.
 ```rust
 const PLAYER_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!("Player"));
 const ENEMY_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!("Enemy"));
@@ -45,14 +43,14 @@ const PLAYER_BULLET_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!("Player
 const ENEMY_BULLET_HANDLE : MeshHandle = MeshHandle::new(pkg_namespace!("Enemy Bullet"));
 ```
 Each line represents the ID for each entity/object. We will declare a constant value that it is a MeshHandle with the name holder of the object using the `pkg_namespace`. 
-These variables should not be declare in ServerState nor ClientState.
+These variables should not be declared in ServerState nor ClientState.
 
 ## Setting up the Mesh for Each Object
-Now we have declare the MeshHandle, we need to create the Mesh itself, or the object itself.
+Now that we have declare the MeshHandle, we need to create the Mesh itself, or the object itself.
 
-If you want to use `Blender` to create an object and upload that as a mesh into the plugin, please refer the [Blender](/Beginner_Tutorial/creating_objects.md#blender) section that is below this section.
+If you want to use `Blender` to create an object and upload that as a mesh into the plugin, please refer the [Blender](/Beginner_Tutorial/creating_objects.md#blender) section of this tutorial.
 
-Let's start making the player object itself. Our design, since it is a basic model, will be a sqaure for the player.
+Let's start making the player object itself. Our design, since it is a basic model, will be a square for the player.
 First, we declare a function that returns a Mesh type.
 ```rust
 fn player() -> Mesh {}
@@ -66,7 +64,7 @@ fn player() -> Mesh {
     let size = 5.0;
 }
 ```
-Inside a Mesh, there is vertices and indices that we need to define and return.
+Inside a mesh, there is vertices and indices that we need to define and return.
 Let's take a look at the Vertex data type.
 ```rust
 pub struct Vertex {
