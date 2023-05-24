@@ -26,7 +26,7 @@ We will guide you how to install for each software to be ready to use our engine
 ## Oculus VR
 Once you [open the page](https://www.oculus.com/Setup/), you will be greet the follow page as below.
 
-![Oculus Download Page](/images/oculus_download_page.png)
+![Oculus Download Page](./images/oculus_download_page.png)
 
 Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installer instruction.
 
