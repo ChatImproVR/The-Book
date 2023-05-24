@@ -1,12 +1,12 @@
 # Setting up Plugin Development Environment
 
-Plugins are typically developed in their own repositories or folders.
+Plugins are typically developed in their own repositories or folders, separate from the engine repository.
 
 ## Before plugin development
-Before we start doing any plugin development, we need to set up the engine into your machine. Please refer to the [Installation](../installation.md) as beginning installation and [Development Environment](../development_environment.md) to set up the development environment.
+Before we start doing any plugin development, you need to set up the engine on your machine. Please refer to the [Installation](../installation.md) and [Development Environment](../development_environment.md) to set up the development environment before proceeding.
 
 ## Using the template
-The easiest way to get started is to fork the 
+The easiest way to get started with a new plugin is to use the 
 [plugin template repository](https://github.com/ChatImproVR/template).
 
 [![Use this template button](./images/use_this_template.png)](https://github.com/ChatImproVR/template)
@@ -18,7 +18,7 @@ cd template
 git remote remove origin
 ```
 ## Modifying the helper script
-We need to update the helpder script to locate where the plugin path is located. For the next section, we will help you out how to modify the helper script based on each terminal.
+We need to update the plugin path to match the path on your personal machine. For the next section, we will help you out how to modify the helper script based on each terminal.
 > Note that all the additional change is inserting line(s) outside of the `cimvr` function call.
 
 ### On Linux/Unix/MacOS (Bash)
