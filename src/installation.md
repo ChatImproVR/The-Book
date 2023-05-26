@@ -13,7 +13,7 @@ While we said that it only works on Windows operating system for the two VR head
 When it comes to hardware requirements, your PC must able to support VR software. For example, the Oculus/Meta headset must need to connect the PC. (Trust us... our primary developers tested this on a weak laptop, and it says that it cannot run that application to connect the headset). Please make sure that the headset supported software is able to run and connect the headset. 
 
 ## Softwares to Download
-There are two softwares to download: the VR connector app and our engine. There are four softwares to download in order to use the engine:
+There are two softwares to download: the VR connector app and our engine. 
 
 ## Oculus VR
 Once you [open the page](https://www.oculus.com/Setup/), you will be greet the follow page as below.

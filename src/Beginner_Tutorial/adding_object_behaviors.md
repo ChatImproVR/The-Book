@@ -9,7 +9,112 @@ There are several things we need to add behavior for each object. Here is a list
 - Bullet Interaction between each entity (spawning, collision)
 
 ## Before We Start...
-Talk about adding more components to the entities so that it is differnet than others (make them and how to attach them)
+Let's review the code that we have at the current moment. We have a "player", "enemy", and window screen. While the window screen does that matter that much, how can we differentiate between player and enemy? Based on the code, we can say they are graphically different (when we look at it while computers cannot), but what else is different? Sure, the position is different, but that is pretty much. Therefore, we need to add component (characteristics) to make it unique to each other. Before we get start working on these behaviors, let's add characteristics to each entity.
+
+## Creating additional Component (Creating Characteristics)
+Until now, we have a high chance that we share mostly similar code structure. However, from here, there is a high chance that the code will look very different because we might add different characteristics to the entity. Therefore, if you do not agree the logic of this tutorial, you can modify in your own way. In other words, from here and now on, I would recommend to understand the concept/syntax of the engine rather than copy and pasting the entire code and call it good. That being said...
+
+### Player Component
+First, we will work on the "Player" component. We need to have the current player position so that the server can change based on the user input.
+```rust
+// Add Player Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Player {
+    pub current_position: Vec3,
+}
+
+// Implement Default for Player Component
+impl Default for Player {
+    fn default() -> Self {
+        Self {
+            current_position: Vec3::new(0.0, -50.0, 0.0),
+        }
+    }
+}
+```
+
+The struct declares the component of the Player whereas the implementation of the Player will initilize the default component. We know we want the player to be at -50 at the Y position when the player spawns (as a default).
+
+### Enemy Component
+Unlike the Player component, we want to add another character than just current position of the enemy.
+```rust
+// Add Enemy Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Enemy {
+    pub current_position: Vec3,
+    pub bullet_count: u32,
+}
+
+// Implement Default for Enemy Component
+impl Default for Enemy {
+    fn default() -> Self {
+        Self {
+            current_position: Vec3::new(0.0, 50.0, 0.0),
+            bullet_count: 0,
+        }
+    }
+}
+```
+The struct will have not only the default position of the enemy, it will have bullet count. The bullet count represents how many bullets from that enemy is on the screen. With that description, the default value of the Enemy is 50 unit in the y value while no/0 bullets on screen when first loaded the scene.
+
+You might asking why not for the Player component does not have a bullet limit? You can certainly add into it, but I choose not to do so. Then when you add the bullet count limit, then why can we not use the same component for enemy and player? Well, the main goal of having different component to differentiate between each entity. In other words, if they share the same struct, the name itself makes them different to each other if you add the component to each entity.
+
+### Bullet Component
+From now until a different section appears, I will just add snipt of code. If there is any explaination with certain value, I will add after the code.
+
+```rust
+// Add Bullet Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Bullet {
+    from_player: bool,
+    from_enemy: bool,
+    entity_id: EntityId,
+}
+
+// Implement Default for Bullet Component
+impl Default for Bullet {
+    fn default() -> Self {
+        Self {
+            from_player: false,
+            from_enemy: false,
+            entity_id: EntityId(0),
+        }
+    }
+}
+```
+The `entity_id` represents the parent of the entity. For example, the player entity's id or enemy entity's id will be in the `entity_id` to identify which entity of the player/enemy it came from. We will have more than one enemy, so we need to keep track which enemy entity is it from.
+
+### PlayerStatus Component
+```rust
+// Add Player Status Component; this is used as a spwan timer for Player
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct PlayerStatus {
+    pub status: bool,
+    pub dead_time: f32,
+}
+
+// Implement Default for Player Status Component
+impl Default for PlayerStatus {
+    fn default() -> Self {
+        Self {
+            status: true,
+            dead_time: 0.0,
+        }
+    }
+}
+```
+This component is for tracking the spawn time for the player and checking the status of the player whether it is dead or not.
+
+### EnemyStatus Component
+```rust
+// Add Enemy Status Component; this is used as a spwan timer for Enemy
+#[derive(Component, Serialize, Deserialize, Copy, Clone, Default)]
+pub struct EnemyStatus(f32);
+```
+As the comment says, this component will track the spawn timer for the enemy.
+
+## Adding the component(characteristics) to the right entity
+Add the right entity, duh...
 
 ## Communication from Client to Server
 The most common method that we will be using is communication from client to server. We have in depth documentation regarding [how it works](/Core_Concepts/client_and_server.md). The method we will be using is called [subscribe/publish method](/Core_Concepts/pub_sub.md). In short summary, the client will send a message to the server, and the server will update based on that message call. This method involves serializing and deserializing the message: the client will serialize the message before it sends to the server, and the server will deserialize the message to read the message. Therefore, we will need to use the following library.
@@ -53,7 +158,7 @@ struct FireCommand(bool);
 ## Movement
 Now we need to create functions from both client side and server side for movement input. The client side will need to send the message to the server whereas the server side need to update the entity. The next two section will describe each side of the code. 
 
-### Before we start working on it...
+### Before we start working on client side...
 We need to add more crates into the plugin to add features such as keyboard/control input and frametime. In the beginning of the code, add/update the following code.
 ```rust
 // Add libraries from the cimvr_engine_interface crate
@@ -71,6 +176,15 @@ use cimvr_common::{
 ```
 
 ### Client Side
+Before we get into client side, we need to update the ClientState that will contain the keyboard input value. Update the component part of the `ClientState` as following.
+
+```rust
+#[derive(Default)]
+struct ClientState {
+    input: InputHelper,
+}
+```
+
 Inside the `new` function of the `ClientState`, we will be using the `EngineSchedule` argument to connect the functions to the engine.
 
 Insert the following lines inside the `new` function.
@@ -83,9 +197,75 @@ Insert the following lines inside the `new` function.
             .subscribe::<FrameTime>()
             .build();
 ```
-The first line is calling the `EngineSchedule` as `sched`. The second line will add the system to the engine schedule. We will write about the `player_input_movement_update` function in the next paragraph. But that function is declared inside the `ClientState`. The third line to fifth line, we will attach other feeatures. The last line will build that system with those feature attachments.
+The first line is calling the `EngineSchedule` as `sched`. The second line will add the system to the engine schedule. We will write about the `player_input_movement_update` function in the next paragraph. But that function is declared inside the `ClientState`. The third line to fifth line, we will attach other feeatures. The features we are adding are `InputEvent`, `GamepadState`, and `FrameTime`. `InputEvent` is the connector between the client and the keyboard input. `GamepadState` is the connector between **xBox** controller and the client.  Lastly, `FrameTime` will read the frames based on the system setting; each system has their own framerate that it will change based on the frame rate. The last line will build that system with those feature attachments.
 
+>Note: As of now, we only support **xBox** controller at this time; there are some controllers that might work, but we have not tested fully. Therefore, if there is an controller you want us to implement, please check out this [issue](https://github.com/ChatImproVR/chatimprovr/issues/85). 
 
+Now, lets implement the `player_input_movement_update` function. First, we need to implement in the `ClientState`. Within the `ClientState`, we will declare the function. The function default will take three arguments: `self`, `EngineIo`, and `QueryResult`. In this case, we are not using the `QueryResult` argument, so we can ignore the usage of that argument. You should have somthing similar as the following code.
+
+```rust
+impl ClientState{
+    fn player_input_movement_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult){
+
+    }
+}
+```
+Now, let's fill the function. The following code will have some part of the function.
+
+```rust
+impl ClientState{
+    fn player_input_movement_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult){
+        let mut direction = Vec3::ZERO;
+
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        self.input.handle_input_events(io);
+
+        let deadzone = 0.3;
+    }
+}
+```
+The direction is declare as mutable since that value will change based on the input. The second line will read the frametime based on the `FrameTime` feature; it use the idea of [subscribe and publish](https://chatimprovr.github.io/The-Book/Core_Concepts/pub_sub.html).In short, it will read the first message that contains the `FrameTime` feature and will save it as `frame_time`. The thrid line initilize the input from keyboard. If you are planning to take input from the keyboard, then you need to declare that statement before calling any keyboard input related function.The value `input` is from the updated struct on the `ClientState`. The last line set a deadzone for the controller. Controller deadzone is the amount your control stick can move before it’s recognized in game.
+
+Now, let's focus on input listener part. Look at the next following code.
+```rust
+// Block 1
+if let Some(GamepadState(gamepads)) = io.inbox_first() {
+    if let Some(gamepad) = gamepads.into_iter().next() {
+        if gamepad.axes[&Axis::LeftStickX] < -deadzone {
+            direction += Vec3::new(-1.0, 0.0, 0.0);
+        }
+        if gamepad.axes[&Axis::LeftStickX] > deadzone {
+                direction += Vec3::new(1.0, 0.0, 0.0);
+        }
+    }
+}
+// Block 2
+else{
+    if self.input.key_held(KeyCode::A) {
+        direction += Vec3::new(-1.0, 0.0, 0.0);
+    }
+
+    if self.input.key_held(KeyCode::D) {
+        direction += Vec3::new(1.0, 0.0, 0.0);
+    }
+}
+```
+Block 1 focuses on controller input whereas Block 2 focuses on keyboard input.
+
+Block 1 states that if there is message input that has the `GamepadState`, we will iter `Vec` of input of the gamepad. Inside that `Vec`, if there is a input from the left input from the left stick `gamepad.axes[&Axis::LeftStickX]` and the value is more than the deadzone, it will update the `direction` by one unit to the left (x-axis). Same idea for positive value. We only want the player to only move left or right (no up and down). 
+
+With that same idea of Block 1, Block 2 use the same logic, but instead of gamepad, it will be `a` and `d` keyboard button to move left and right respectivly.
+
+Now the last part of the client side. We need to create a message so that we will send it to the server. Take a look at the following code.
+```rust
+if direction != Vec3::ZERO {
+    let distance = direction.normalize() * frame_time.delta * PLAYER_SPEED;
+    let command = MoveCommand(distance);
+    io.send(&command);
+    }
+```
+If the direction value is non zero vector, then we will create a message since there was a player input. First, we need to update the value based on the frametime; let it called as `distance`. Next, we will use the custom made `MoveCommand` message and attach the `distance` value. Once that value is attached, then will will send that command to the engine which will transfer to the server. With all that, we have finished writing the movement function on the client side. Now we need to work on the server side.
 
 ### Server Side
 
