@@ -112,9 +112,93 @@ This component is for tracking the spawn time for the player and checking the st
 pub struct EnemyStatus(f32);
 ```
 As the comment says, this component will track the spawn timer for the enemy.
+<!-- 
+### Score Component
+```rust
+// Add Score Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Score {
+    pub score: u32,
+    pub second_digit: u32,
+    pub first_digit: u32,
+    pub second_digit_entity: EntityId,
+    pub first_digit_entity: EntityId,
+}
+
+impl Default for Score {
+    fn default() -> Self {
+        Self {
+            score: 0,
+            second_digit: 10,
+            first_digit: 10,
+            second_digit_entity: EntityId(0),
+            first_digit_entity: EntityId(0),
+        }
+    }
+}
+```
+I don't want to add this at this point since this implementation will change soon. -->
 
 ## Adding the component(characteristics) to the right entity
-Add the right entity, duh...
+Let's take a look at the following code.
+
+```rust
+// All state associated with server-side behaviour
+struct ServerState;
+
+// Implement server only side functions that will update on the server side
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Create a player status entity (not player entity)
+        io.create_entity()
+            .add_component(PlayerStatus::default())
+            .build();
+
+        // Create an enemy status entity (not enemy entity)
+        io.create_entity().add_component(EnemyStatus(0.0)).build();
+
+        // Create a score entity (TBD)
+        io.create_entity()
+            .add_component(Score::default())
+            .build();
+
+        // Create Player entity with components
+        io.create_entity()
+            .add_component(
+                Transform::default()
+                    .with_position(Vec3::new(0.0, -50.0, 0.0))
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+            )
+            .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+            .add_component(Player::default())
+            .add_component(Synchronized)
+            .build();
+
+        // Create Enemy with components
+        io.create_entity()
+            .add_component(
+                Transform::default()
+                    .with_position(Vec3::new(0.0, 50.0, 0.0))
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, 90., 0., 0.)),
+            )
+            .add_component(Render::new(ENEMY_HANDLE).primitive(Primitive::Lines))
+            .add_component(Synchronized)
+            .add_component(Enemy::default())
+            .build();
+
+        // Create the Window entity with components
+        io.create_entity()
+            .add_component(Transform::default())
+            .add_component(Render::new(WINDOW_SIZE_HANDLE).primitive(Primitive::Lines))
+            .add_component(Synchronized)
+            .build();
+    }
+}
+```
+As you might noticed, it is the same implementation like how we add `Render`, `Transform`, and `Synchronized`. The only difference is that if we declare a default setting for the component, we can call default, otherwise, we need to fill out the struct when it is initilize. For example, the `EnemyStatus` does not have a default implementation; therefore, we need to add a `f32` value into that component. Since `EnemyStatus` is a timer of the spawn time, it should initilize as `0.0`. However, we can implement a default value, but in this demonstration, I would like to share that part with you to know there is a difference.
+
+There is one component that you have not seen above; it is a `Score` component. This updated version will be out soon; in fact, we will talk about that in the next page of this tutorial.
 
 ## Communication from Client to Server
 The most common method that we will be using is communication from client to server. We have in depth documentation regarding [how it works](/Core_Concepts/client_and_server.md). The method we will be using is called [subscribe/publish method](/Core_Concepts/pub_sub.md). In short summary, the client will send a message to the server, and the server will update based on that message call. This method involves serializing and deserializing the message: the client will serialize the message before it sends to the server, and the server will deserialize the message to read the message. Therefore, we will need to use the following library.
