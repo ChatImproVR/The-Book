@@ -349,9 +349,108 @@ if direction != Vec3::ZERO {
     io.send(&command);
     }
 ```
-If the direction value is non zero vector, then we will create a message since there was a player input. First, we need to update the value based on the frametime; let it called as `distance`. Next, we will use the custom made `MoveCommand` message and attach the `distance` value. Once that value is attached, then will will send that command to the engine which will transfer to the server. With all that, we have finished writing the movement function on the client side. Now we need to work on the server side.
+If the direction value is non zero vector, then we will create a message since there was a player input. First, we need to update the value based on the frametime; let it called as `distance`. Next, we will use the custom made `MoveCommand` message and attach the `distance` value. Once that value is attached, then will will send that command to the engine which will transfer to the server. With all that, we have finished writing the movement function on the client side. The following code the complete side of the `ClientState` implementation.
+```rust
+impl ClientState{
+    // Send the player movement input to the server side
+    fn player_input_movement_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult) {
+        let mut direction = Vec3::ZERO;
+
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        self.input.handle_input_events(io);
+
+        let deadzone = 0.3;
+
+        if let Some(GamepadState(gamepads)) = io.inbox_first() {
+            if let Some(gamepad) = gamepads.into_iter().next() {
+                if gamepad.axes[&Axis::LeftStickX] < -deadzone {
+                    direction += Vec3::new(-1.0, 0.0, 0.0);
+                }
+                if gamepad.axes[&Axis::LeftStickX] > deadzone {
+                    direction += Vec3::new(1.0, 0.0, 0.0);
+                }
+            }
+        } else {
+            if self.input.key_held(KeyCode::A) {
+                direction += Vec3::new(-1.0, 0.0, 0.0);
+            }
+            if self.input.key_held(KeyCode::D) {
+                direction += Vec3::new(1.0, 0.0, 0.0);
+            }
+        }
+        if direction != Vec3::ZERO {
+            let distance = direction.normalize() * frame_time.delta * PLAYER_SPEED;
+            let command = MoveCommand(distance);
+            io.send(&command);
+        }
+    }
+}
+```
+Now we need to work on the server side.
 
 ### Server Side
+With the same idea for the client side, we need to attach the function to the engine scheduler inside the `new` function on the `ServerState`. Take a look at the following code.
+
+```rust
+        // Attach Player Movement Function to the Engine schedule
+        sched
+            .add_system(Self::player_movement_update)
+            .subscribe::<MoveCommand>()
+            .query(
+                "Player_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Player>(Access::Write),
+            )
+            .build();
+```
+The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add an **query**. Query is one of the most important concept when it comes to server side implementation;it will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the next system. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
+
+First, we are going to implement the function inside the `ServerState` as the following code. 
+
+```rust
+impl ServerState{
+    fn player_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult){
+
+    }
+}
+```
+From there, we need to add the first condition such that we are going to execute the function if the message inbox has the `MoveCommand` like the following line.
+```rust
+for player_movement in io.inbox::<MoveCommand>(){
+
+}
+```
+The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`.
+
+```rust
+impl ServerState{
+    // The function that will handle the player movement
+    fn player_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for player_movement in io.inbox::<MoveCommand>() {
+            for entity in query.iter("Player_Movement") {
+                let x_limit = WITDH / 2.0;
+                if query.read::<Player>(entity).current_position.x + player_movement.0.x - 3.
+                    < -x_limit
+                    || query.read::<Player>(entity).current_position.x + player_movement.0.x + 3.
+                        > x_limit
+                {
+                    return;
+                }
+
+                query.modify::<Transform>(entity, |transform| {
+                    transform.pos += player_movement.0;
+                });
+                query.modify::<Player>(entity, |player| {
+                    player.current_position += player_movement.0;
+                });
+            }
+        }
+    }
+}
+```
+
 
 ## Fire
 
