@@ -239,11 +239,11 @@ With the same approach for Movement Input Message, we also need to establish the
 #[locality("Remote")]
 struct FireCommand(bool);
 ```
-## Movement
+## User Input Movement
 Now we need to create functions from both client side and server side for movement input. The client side will need to send the message to the server whereas the server side need to update the entity. The next two section will describe each side of the code. 
 
 ### Before we start working on client side...
-We need to add more crates into the plugin to add features such as keyboard/control input and frametime. In the beginning of the code, add/update the following code.
+We need to add more crates into the plugin to add features such as keyboard/control input, frametime, and random number generator. In the beginning of the code, add/update the following code.
 ```rust
 // Add libraries from the cimvr_engine_interface crate
 use cimvr_engine_interface::{make_app_state, pcg::Pcg, pkg_namespace, prelude::*, FrameTime};
@@ -405,7 +405,7 @@ With the same idea for the client side, we need to attach the function to the en
             )
             .build();
 ```
-The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add an **query**. Query is one of the most important concept when it comes to server side implementation;it will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the next system. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
+The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add an **query**. Query is one of the most important concept when it comes to server side implementation;it will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the other systems such as collision. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
 
 First, we are going to implement the function inside the `ServerState` as the following code. 
 
@@ -422,7 +422,41 @@ for player_movement in io.inbox::<MoveCommand>(){
 
 }
 ```
-The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`.
+The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`. Since this statement is saying that we have an input from the client, we then need to modify the player movement. Now we need to go every entity that qualifies the condition. In the previous part, we have indicated that all entities that has the `Player` component and the `Transform` component will be modified. There is only one entity has those components which is the Player entity. ßßßß
+
+
+```rust
+for entity in query.iter("Player_Movement"){}
+```
+
+If we have multiple quries (not in this case but for future cases), then we can differentiate based on the name of the query. There is more detailed information in [here](../Core_Concepts/entity_component_system.md) or in the system development. From there on, we can add conditions before actually moving the entity inside the query; for example, if the player is about to go out of bounds, then we need to stop that.
+
+```rust
+let x_limit = WITDH / 2.0;
+if query.read::<Player>(entity).current_position.x + player_movement.0.x - PLAYER_SIZE < -x_limit
+    || query.read::<Player>(entity).current_position.x + player_movement.0.x + PLAYER_SIZE > x_limit
+    {
+        return;
+    }
+```
+
+If the player is about to go out of bound, then we will do nothing with that input; otherwise, we will change the player position based on the input like the following statement.
+
+```rust
+query.modify::<Transform>(entity, |transform| {
+    transform.pos += player_movement.0;
+});
+```
+
+At the same time, we will also update the Player current position by modifying the `Player` component value.
+
+```rust
+query.modify::<Player>(entity, |player| {
+    player.current_position += player_movement.0;
+});
+```
+
+With all that, we have completed set up the player movements for both server and client. The following code is the final part of the server side code.
 
 ```rust
 impl ServerState{
@@ -431,9 +465,9 @@ impl ServerState{
         for player_movement in io.inbox::<MoveCommand>() {
             for entity in query.iter("Player_Movement") {
                 let x_limit = WITDH / 2.0;
-                if query.read::<Player>(entity).current_position.x + player_movement.0.x - 3.
+                if query.read::<Player>(entity).current_position.x + player_movement.0.x - PLAYER_SIZE
                     < -x_limit
-                    || query.read::<Player>(entity).current_position.x + player_movement.0.x + 3.
+                    || query.read::<Player>(entity).current_position.x + player_movement.0.x + PLAYER_SIZE
                         > x_limit
                 {
                     return;
@@ -450,22 +484,122 @@ impl ServerState{
     }
 }
 ```
+## Random Movement
+If we can make movements for the player, then we should add movements for the enemies as well. While we could set it up as client sending a message to the server side, for this purpose, let's set up only on the server side. In other words, we do not need to do use the `MoveCommand` message.
 
+First, we need to attach the system call to the engine. The following would look very similar to the Player movement system.
 
-## Fire
+```rust
+// Attach Enemy Movement Function to the Engine schedule
+sched
+    .add_system(Self::enemy_movement_update)
+    .subscribe::<FrameTime>()
+    .query(
+        "Enemy_Movement",
+        Query::new()
+            .intersect::<Transform>(Access::Write)
+            .intersect::<Enemy>(Access::Write),
+    )
+    .build();
+```
+The only differences are that there is no `subscribe` for `MoveCommand` but `subscribe` for `Frametime` and the query filter changed from `Player` to `Enemy`. I will not go more depth about this code since we have seen this pattern before. In fact, most of the attachment to the engine will be the same except the query part which will be highlighted if needed in other systems.
+
+Let's switch our focus to `enemy_movement_update` function that will be implemented in the `ServerState`. Because we are not looking at the inbox messages, we will look at every entities that qualifies the condition (the entity contains the `Transform' and `Enemy` component and mutable).
+
+```rust
+impl ServerState{
+    fn enemy_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity in query.iter("Enemy_Movement"){
+
+        }
+    }
+}
+```
+From there, we want to get the `Frametime`; therefore, we will use this statement. This is the same line we used for the User Input Movement on the client side, but this time only for the server side.
+
+```rust
+let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+```
+
+Next, we need to initilize our random number generators using the `Pcg` crate. Check out [here](https://docs.rs/pcg/latest/pcg/) to learn more about `Pcg`, but it will be something like the following.
+
+```rust
+let mut pcg_random_move = Pcg::new();
+let mut pcg_random_direction = Pcg::new();
+```
+
+I created two seperated random generator so that each part will have a different seed for different character of the movement: one random generator will be the magnitude the whereas the other one will be for the direction.
+
+From there, we need to get values for `x` and `y` positions using the random generator. 
+
+```rust
+    // The function that will handle the enemy movement
+    fn enemy_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        // For every entity that qualify from the query "Enemy_Movement" will be processed
+        for entity in query.iter("Enemy_Movement") {
+            // Get the FrameTime event
+            let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+            // Set pcg for random movement and direction (random generator)
+            let mut pcg_random_move = Pcg::new();
+            let mut pcg_random_direction = Pcg::new();
+
+            // Based on the random value, the enemty will move in a random x direction
+            let x = if pcg_random_direction.gen_bool() {
+                pcg_random_move.gen_f32() * 1.
+            } else {
+                pcg_random_move.gen_f32() * -1.
+            };
+
+            // Based on the random value, the enemty will move in a random y direction
+            let y = if pcg_random_direction.gen_bool() {
+                pcg_random_move.gen_f32() * 1.
+            } else {
+                pcg_random_move.gen_f32() * -1.
+            };
+
+            // Declare the enemy direction that will be used for the next frame
+            let speed = Vec3::new(x, y, 0.);
+
+            // Update the enemy speed based on the frame_time delta value
+            let direction = speed.normalize() * frame_time.delta * ENEMY_SPEED;
+
+            // Declare the out of bound limits
+            let x_limit = WITDH / 2.0;
+            let y_upper_limit = HEIGHT / 2.;
+            let y_limit = HEIGHT / 5.;
+
+            // Read the current enemy position
+            let current_position = query.read::<Enemy>(entity).current_position;
+
+            // If the enemy is about to go out of bound
+            if (current_position.x + direction.x - ENEMY_SIZE < -x_limit)
+                || (current_position.x + direction.x + ENEMY_SIZE > x_limit)
+                || (current_position.y + direction.y >= y_upper_limit)
+                || (current_position.y + direction.y < y_limit)
+            {
+                // Do not move the enemy and conclude the function
+                return;
+            }
+            // Otherwise, move the enemy
+            query.modify::<Transform>(entity, |transform| {
+                transform.pos += direction;
+            });
+            // Update the new enemy position
+            query.modify::<Enemy>(entity, |enemy| {
+                enemy.current_position += direction;
+            });
+        }
+    }
+    ```
+
+## Fire System
 
 ## Internal Functions within the Server
-
-### Random Generated Values
-
-### Movement & Fire
 
 ## Interaction between Entities
 
 ### Collision
 
 ### Respawning
-
-#### Adding more entities
 
 ## Summary/Current Code Progress

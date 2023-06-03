@@ -16,7 +16,11 @@ When it comes to hardware requirements, your PC must able to support VR software
 There are two softwares to download: our engine and the VR connector app. 
 
 ## Our Engine
-If you want to use the stable version, we recommend to download the engine from releases. You can download from [here](https://github.com/ChatImproVR/chatimprovr/releases). If you are a **Windows** user, please download the `.exe`. If you are a **Linux** or **Mac**, please download the file that is stated in the release note (The application that has no extension). From there, you can either run the `cimvr_server.exe` to host your own server, or the `cimvr_client.exe` to connect server based on the address of the server.
+If you want to use the stable version, we recommend to download the engine from releases. Click the Download Button!
+
+[![Download Button](./images/download_buttom.png)](https://github.com/ChatImproVR/chatimprovr/releases). 
+
+If you are a **Windows** user, please download the `.exe`. If you are a **Linux** or **Mac**, please download the file that is stated in the release note (The application that has no extension). From there, you can either run the `cimvr_server.exe` to host your own server, or the `cimvr_client.exe` to connect server based on the address of the server.
 
 If you want to use the most up-to-date with some minor bugs, check out the experimental version on the [development environment page](./development_environment.md).
 
@@ -27,7 +31,7 @@ Once you [open the page](https://www.oculus.com/Setup/), you will be greet the f
 
 Select the `Download Oculus Rift Software` button. By selecting the button will open an `.exe`. Please follow the installation instructions provided on the Oculus website.
 
-// Need to write more
+Once you have completed the installation of the Oculus Rift Software, connect with your VR headset to the Computer using AirLink or cable connection.
 
 ## Steam VR
 Open the [Download Link](https://store.steampowered.com/app/250820/SteamVR/), and install the Steam VR application.
