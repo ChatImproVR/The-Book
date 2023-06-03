@@ -429,7 +429,7 @@ The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`. S
 for entity in query.iter("Player_Movement"){}
 ```
 
-If we have multiple quries (not in this case but for future cases), then we can differentiate based on the name of the query. There is more detailed information in [here](../Core_Concepts/entity_component_system.md) or in the system development. From there on, we can add conditions before actually moving the entity inside the query; for example, if the player is about to go out of bounds, then we need to stop that.
+If we have multiple quries (not in this case but for future cases), then we can differentiate based on the name of the query. There is more detailed information in [here](../Core_Concepts/entity_component_system.md) or in the system development. From there on, we can add conditions before actually moving the entity inside the query; for example, if the player is about to go out of bounds, then we need to stop that. We will first the current position of the player from the `Player` component.
 
 ```rust
 let x_limit = WITDH / 2.0;
@@ -530,67 +530,78 @@ let mut pcg_random_direction = Pcg::new();
 
 I created two seperated random generator so that each part will have a different seed for different character of the movement: one random generator will be the magnitude the whereas the other one will be for the direction.
 
-From there, we need to get values for `x` and `y` positions using the random generator. 
+From there, we need to get values for `x` and `y` positions using the random generator. We will conditions to generate these values like the following code.
 
 ```rust
+let x = if pcg_random_direction.gen_bool() {
+    pcg_random_move.gen_f32() * 1.
+} else {
+    pcg_random_move.gen_f32() * -1.
+};
+
+let y = if pcg_random_direction.gen_bool() {
+    pcg_random_move.gen_f32() * 1.
+} else {
+    pcg_random_move.gen_f32() * -1.
+};
+
+let speed = Vec3::new(x, y, 0.);
+
+let direction = speed.normalize() * frame_time.delta * ENEMY_SPEED;
+```
+
+Once the `x` and `y` values are automatically generated, then we will declare the direction as a `Vec3` format while considering the `frame_time` and `ENEMY_SPEED`.
+
+With the same logic as `player_movement_update`, we will read the current position of that enemy and check whether that move is valid within bound (and vertical limitations). If it is valid, then we will move accordingly by modifying the `Transform` component and update the new position of the enemy in the `Enemy` component. Otherwise, nothing will happen. That being said, the following code will be the complete side of the random movement.
+
+```rust
+imple ServerState{
     // The function that will handle the enemy movement
     fn enemy_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
-        // For every entity that qualify from the query "Enemy_Movement" will be processed
         for entity in query.iter("Enemy_Movement") {
-            // Get the FrameTime event
             let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
-            // Set pcg for random movement and direction (random generator)
             let mut pcg_random_move = Pcg::new();
             let mut pcg_random_direction = Pcg::new();
 
-            // Based on the random value, the enemty will move in a random x direction
             let x = if pcg_random_direction.gen_bool() {
                 pcg_random_move.gen_f32() * 1.
             } else {
                 pcg_random_move.gen_f32() * -1.
             };
 
-            // Based on the random value, the enemty will move in a random y direction
             let y = if pcg_random_direction.gen_bool() {
                 pcg_random_move.gen_f32() * 1.
             } else {
                 pcg_random_move.gen_f32() * -1.
             };
 
-            // Declare the enemy direction that will be used for the next frame
             let speed = Vec3::new(x, y, 0.);
 
-            // Update the enemy speed based on the frame_time delta value
             let direction = speed.normalize() * frame_time.delta * ENEMY_SPEED;
 
-            // Declare the out of bound limits
             let x_limit = WITDH / 2.0;
             let y_upper_limit = HEIGHT / 2.;
             let y_limit = HEIGHT / 5.;
 
-            // Read the current enemy position
             let current_position = query.read::<Enemy>(entity).current_position;
 
-            // If the enemy is about to go out of bound
             if (current_position.x + direction.x - ENEMY_SIZE < -x_limit)
                 || (current_position.x + direction.x + ENEMY_SIZE > x_limit)
                 || (current_position.y + direction.y >= y_upper_limit)
                 || (current_position.y + direction.y < y_limit)
             {
-                // Do not move the enemy and conclude the function
                 return;
             }
-            // Otherwise, move the enemy
             query.modify::<Transform>(entity, |transform| {
                 transform.pos += direction;
             });
-            // Update the new enemy position
             query.modify::<Enemy>(entity, |enemy| {
                 enemy.current_position += direction;
             });
         }
     }
-    ```
+}
+```
 
 ## Fire System
 
