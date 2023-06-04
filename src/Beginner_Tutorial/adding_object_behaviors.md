@@ -273,6 +273,8 @@ Inside the `new` function of the `ClientState`, we will be using the `EngineSche
 
 Insert the following lines inside the `new` function.
 ```rust
+impl UserState for ClientState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
 // Add player movement input based on keyboard/controller input
         sched
             .add_system(Self::player_input_movement_update)
@@ -280,6 +282,9 @@ Insert the following lines inside the `new` function.
             .subscribe::<GamepadState>()
             .subscribe::<FrameTime>()
             .build();
+        Self::default()
+    }
+}
 ```
 The first line is calling the `EngineSchedule` as `sched`. The second line will add the system to the engine schedule. We will write about the `player_input_movement_update` function in the next paragraph. But that function is declared inside the `ClientState`. The third line to fifth line, we will attach other feeatures. The features we are adding are `InputEvent`, `GamepadState`, and `FrameTime`. `InputEvent` is the connector between the client and the keyboard input. `GamepadState` is the connector between **xBox** controller and the client.  Lastly, `FrameTime` will read the frames based on the system setting; each system has their own framerate that it will change based on the frame rate. The last line will build that system with those feature attachments.
 
@@ -393,6 +398,8 @@ Now we need to work on the server side.
 With the same idea for the client side, we need to attach the function to the engine scheduler inside the `new` function on the `ServerState`. Take a look at the following code.
 
 ```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
         // Attach Player Movement Function to the Engine schedule
         sched
             .add_system(Self::player_movement_update)
@@ -404,6 +411,9 @@ With the same idea for the client side, we need to attach the function to the en
                     .intersect::<Player>(Access::Write),
             )
             .build();
+        Self
+    }
+}
 ```
 The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add an **query**. Query is one of the most important concept when it comes to server side implementation;it will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the other systems such as collision. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
 
@@ -490,6 +500,8 @@ If we can make movements for the player, then we should add movements for the en
 First, we need to attach the system call to the engine. The following would look very similar to the Player movement system.
 
 ```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
 // Attach Enemy Movement Function to the Engine schedule
 sched
     .add_system(Self::enemy_movement_update)
@@ -501,6 +513,9 @@ sched
             .intersect::<Enemy>(Access::Write),
     )
     .build();
+    Self
+    }
+}
 ```
 The only differences are that there is no `subscribe` for `MoveCommand` but `subscribe` for `Frametime` and the query filter changed from `Player` to `Enemy`. I will not go more depth about this code since we have seen this pattern before. In fact, most of the attachment to the engine will be the same except the query part which will be highlighted if needed in other systems.
 
@@ -555,7 +570,7 @@ Once the `x` and `y` values are automatically generated, then we will declare th
 With the same logic as `player_movement_update`, we will read the current position of that enemy and check whether that move is valid within bound (and vertical limitations). If it is valid, then we will move accordingly by modifying the `Transform` component and update the new position of the enemy in the `Enemy` component. Otherwise, nothing will happen. That being said, the following code will be the complete side of the random movement.
 
 ```rust
-imple ServerState{
+impl ServerState{
     // The function that will handle the enemy movement
     fn enemy_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
         for entity in query.iter("Enemy_Movement") {
@@ -604,13 +619,423 @@ imple ServerState{
 ```
 
 ## Fire System
+We can implement the same method for User Input for player fire system whereas the enemy will have the same idea for random movement but fire rate. However, we do not have the bullet entity. Let's take a look into these systems for both player and enemy.
 
-## Internal Functions within the Server
+### Player Fire Client System
+```rust
+impl UserState for ClientState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {   
+        // Add player fire input based on keyboard/controller input
+        sched
+            .add_system(Self::player_input_fire_update)
+            .subscribe::<InputEvent>()
+            .subscribe::<GamepadState>()
+            .build();
+        Self::default()
+    }
+}
+```
+With the same idea of movement input, we will subscribe the `InputEvent` and `GamepadState` to take input for both controller and keyboard. This code will be in the `new` function in the `ClientState`.
+
+```rust
+impl ClientState{
+    // Send the player fire input to the server side
+    fn player_input_fire_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult) {
+        self.input.handle_input_events(io);
+
+        if let Some(GamepadState(gamepads)) = io.inbox_first() {
+            if let Some(gamepad) = gamepads.into_iter().next() {
+                if gamepad.buttons[&Button::East] {
+                    let command = FireCommand(true);
+                    io.send(&command);
+                }
+            }
+        }
+
+        if self.input.key_pressed(KeyCode::Space) {
+            let command = FireCommand(true);
+            io.send(&command);
+        }
+    }
+}
+```
+In the code above, we set the client side if the space bar was triggered or the east side button on the right side is triggered. The `gamepad.buttons[&Button::East]` indicates the east button on the right side. You can find more button information in the engine implementation.
+
+### Player Fire Server System
+For bullets, we need to implement two functions on the `ServerState`: a function for generating the bullets and a function for moving the bullets. Therefore, we have two system to attach the engine.
+
+```rust
+impl UserState for ServerState{
+        fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Attach Player Fire Function to the Engine schedule
+        sched
+            .add_system(Self::player_fire_update)
+            .subscribe::<FireCommand>()
+            .query(
+                "Player_Fire_Input",
+                Query::new().intersect::<Player>(Access::Read),
+            )
+            .build();
+
+        // Attach Player Bullet Movement Function to the Engine schedule
+        sched
+            .add_system(Self::player_bullet_movement_update)
+            .subscribe::<FrameTime>()
+            .query(
+                "Player_Bullet_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .build();
+        Self
+    }
+}
+
+```
+The first system is reading if there is a `FireCommand` from the client side in order to fire the system. The query for the first system only needs to read the player's current position in order ot shoot the bullet from player's current position from the `Player` component. The second system is moving the player's bullet. The query for this system will be the same idea for any movement system: the system needs `Transform` component and `Bullet` component. Let's take a look at the `player_fire_update` function first.
+
+```rust
+impl ServerState{
+    // The function that will handle the player fire
+    fn player_fire_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        if let Some(FireCommand(_value)) = io.inbox_first() {
+            for entity in query.iter("Player_Fire_Input") {
+                // Create the bullet entity from the plauyer position (the left bullet)
+                io.create_entity()
+                    .add_component(
+                        Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
+                    )
+                    .add_component(Synchronized)
+                    .add_component(Bullet {
+                        from_enemy: false,
+                        from_player: true,
+                        entity_id: entity,
+                    })
+                    .add_component(Transform::default().with_position(
+                        query.read::<Player>(entity).current_position
+                            + Vec3::new(-PLAYER_SIZE / 2., PLAYER_SIZE / 2., 0.0),
+                    ))
+                    .build();
+
+                // Create the bullet entity from the plauyer position (the right bullet)
+                io.create_entity()
+                    .add_component(
+                        Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
+                    )
+                    .add_component(Synchronized)
+                    .add_component(Bullet {
+                        from_enemy: false,
+                        from_player: true,
+                        entity_id: entity,
+                    })
+                    .add_component(Transform::default().with_position(
+                        query.read::<Player>(entity).current_position
+                            + Vec3::new(PLAYER_SIZE / 2., PLAYER_SIZE / 2., 0.0),
+                    ))
+                    .build();
+            }
+        }
+    }
+}
+```
+As you can see the code above, we can create new entities inside the function; therefore, we do not need to create the bullet entities inside the `new` function because we do not need to load the bullet in the scene at the beginning. We created two bullet entities so that the player can shoot from top left and top right side of the player's current position. Now, let's take a look at the player's bullet movement.
+
+```rust
+impl ServerState{
+    // The function that will handle the player bullet movement
+    fn player_bullet_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        for entity in query.iter("Player_Bullet_Movement") {
+            if query.read::<Bullet>(entity).from_player {
+                if query.read::<Transform>(entity).pos.y > HEIGHT / 2. - 2.5 {
+                    io.remove_entity(entity);
+                }
+                query.modify::<Transform>(entity, |transform| {
+                    transform.pos +=
+                        Vec3::new(0.0, 1.0, 0.0) * frame_time.delta * PLAYER_BULLET_SPEED;
+                });
+            }
+        }
+    }
+}
+```
+The first line inside the function is the same line to read the `frame_time` value. For the every bullet from the player, if the bullet is out of bound from the scene, then remove that bullet from the screen; otherwise, we will move the bullet one unit up to the y-axis with the custom set speed for the player's bullet. As you read the code, it is very similar to movement for player and enemy. Let's switch our intention to `Enemy` since I have added some complexity to bullet fire rate.
+
+
+### Enemy Fire Server System
+```rust
+impl UserState for ServerState{
+        fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Attach Enemy Fire Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_fire_update)
+            .query(
+                "Enemy_Fire_Input",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+
+        // Attach Enemy Bullet Movement Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_bullet_movement_update)
+            .subscribe::<FrameTime>()
+            .query(
+                "Enemy_Bullet_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Enemy_Bullet_Count_Update",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+        Self
+    }
+}
+```
+In the first system attachment, it is the same idea what we did for player's bullet. The only difference is that we are reading from `Enemy` component rather than `Player` component. The second system attachment is very different; rather not having one query, but two quries. The first query will fetch all entities that has the `Bullet` and `Transform` components and modify it whereas the second query will only read from the `Enemy` component. Let's take a look at the `enemy_fire_update` function.
+
+```rust
+impl ServerState{
+    // The function that will handle the enemy fire update
+    fn enemy_fire_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let mut pcg_fire = Pcg::new();
+
+        for entity in query.iter("Enemy_Fire_Input") {
+            if pcg_fire.gen_bool() {
+                if query.read::<Enemy>(entity).bullet_count < ENEMY_MAX_BULLET {
+                    // Increase the bullet count that are on screen from that enemy by 1
+                    query.modify::<Enemy>(entity, |value| {
+                        value.bullet_count += 1;
+                    });
+                    io.create_entity()
+                        .add_component(
+                            Render::new(ENEMY_BULLET_HANDLE).primitive(Primitive::Triangles),
+                        )
+                        .add_component(Synchronized)
+                        .add_component(Bullet {
+                            from_enemy: true,
+                            from_player: false,
+                            entity_id: entity,
+                        })
+                        .add_component(Transform::default().with_position(
+                            query.read::<Enemy>(entity).current_position
+                                + Vec3::new(0., -ENEMY_SIZE / 2., 0.),
+                        ))
+                        .build();
+                }
+            }
+        }
+    }
+}
+```
+When you first look at this function, you will notice a lot of similarity from the `player_fire_update` function such as create an entity as bullet that is from the enemy rather than the player. However, before creating the enemy's bullet entity, we have additional condition on enemy's bullet display limit. We have this limitation because it will be almost impossible to play since it will continously spamming bullets that the player will not even have a chance to score. Therefore, if there is more bullets than `ENEMY_MAX_BULLET` value from each enemy, then it will not generate a new one until the bullet is gone from the scene (either from hitting the player or going out of bound). Therefore, we will read the current bullet amount on the screen from the `Enemy` component. We will modify that value in the next function. At the same time, when we generate the bullet, we will store the `parent entities id`. This value is important in the next function.
+
+```rust
+impl ServerState{
+    // The function that will handle the enemy bullet movement
+    fn enemy_bullet_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        if let Some(frame_time) = io.inbox_first::<FrameTime>() {
+            for entity in query.iter("Enemy_Bullet_Movement") {
+                if query.read::<Bullet>(entity).from_enemy {
+                    if query.read::<Transform>(entity).pos.y < -HEIGHT / 2. + 2.5 {
+                        if query
+                            .iter("Enemy_Bullet_Count_Update")
+                            .any(|id| id == query.read::<Bullet>(entity).entity_id)
+                        {
+                            query.modify::<Enemy>(
+                                query.read::<Bullet>(entity).entity_id,
+                                |value| {
+                                    value.bullet_count -= 1;
+                                },
+                            );
+                        }
+                        io.remove_entity(entity);
+                    }
+                    query.modify::<Transform>(entity, |transform| {
+                        transform.pos +=
+                            Vec3::new(0.0, -1.0, 0.0) * frame_time.delta * ENEMY_BULLET_SPEED;
+                    });
+                }
+            }
+        }
+    }
+}
+```
+This function is similar as `player_bullet_movement_update` function but having an additional bullet counter on screen and updater. Let's look at the query that states for `Enemy_Bullet_Count_Update`. The condition states that find the parent(the enemy) and see if that enemy is alive. If the enemy is alive, then update the `bullet_count` value by 1; otherwise, ignore it since that enemy is dead. Once that is complete, then remove the bullet from the screen. You can customize the option on how to implement the limitation of the bullet, but we need to use the idea of parenting between entities.
+
 
 ## Interaction between Entities
+Now we got a system that can shoot and move, but what is fun is that? We need to add collision between each entities. If a bullet hit a player or enemy, then it should get removed. After a certain time is passed from its death, then the player or enemy should respawn. Once that is set up, we have a game-like Galaga in our hand.
 
 ### Collision
+First, let's work on collision. There are two type of collision in Galaga: player bullet hitting the enemy or the enemy's bullet htting the player. But before that, lets make a collision function so that we do not need to write the same collision code multiple times.
 
+### Collision Function
+This function is based off from standard, classic game logic of collision.
+
+```rust
+// The function that will handle the collision detection
+fn collision_detection(
+    obj1_x_position: f32,
+    obj1_y_position: f32,
+    obj1_size: f32,
+    obj2_x_position: f32,
+    obj2_y_position: f32,
+    obj2_size: f32,
+) -> bool {
+    // If the object 1 is within the object 2 based on the sqaure hitbox intersection
+    if obj1_x_position - (obj1_size / 2.) <= obj2_x_position + (obj2_size / 2.)
+        && obj1_x_position + (obj1_size / 2.) >= obj2_x_position - (obj2_size / 2.)
+        && (obj1_y_position - (obj1_size / 2.) <= obj2_y_position + (obj2_size / 2.))
+        && (obj1_y_position + (obj1_size / 2.) >= obj2_y_position - (obj2_size / 2.))
+    {
+        // Return true if the object 1 is within the object 2, or vice versa
+        return true;
+    }
+    // Otherwise, return false
+    return false;
+}
+```
+We do not need to fully understand how the logic works, but we need to understand the input/argument of the function. The `x` and `y` positions of the object/entity is define as the center (not at the bottom left which most engine does). The `size` argument identifies the legnth between left side to the right side. In other words, we are defining the entity/object as a sqaure. If these two squares overlap each other, then we consider as collision and return that they are hitting each other; otherwise, it is not a collision.
+
+### Player Bullet to Enemy
+```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self{
+        // Attach Player Bullet to Enemy Collision Function to the Engine schedule
+        sched
+            .add_system(Self::player_bullet_to_enemy_collision)
+            .query(
+                "Player_Bullet",
+                Query::new()
+                    .intersect::<Transform>(Access::Read)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Enemy",
+                Query::new()
+                    .intersect::<Enemy>(Access::Write)
+                    .intersect::<Transform>(Access::Read),
+            )
+            .build();
+        Self
+    }
+}
+```
+
+
+```rust
+impl ServerState{
+    // The function that will handle the collision from player bullet to enemy
+    fn player_bullet_to_enemy_collision(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity1 in query.iter("Player_Bullet") {
+            if query.read::<Bullet>(entity1).from_player {
+                for entity2 in query.iter("Enemy") {
+                    let current_player_bullet = query.read::<Transform>(entity1).pos;
+                    let current_enemy = query.read::<Transform>(entity2).pos;
+
+                    // If the bullet hit the enemy
+                    if collision_detection(
+                        current_player_bullet.x,
+                        current_player_bullet.y,
+                        BULLET_SIZE,
+                        current_enemy.x,
+                        current_enemy.y,
+                        ENEMY_SIZE,
+                    ) {
+                        io.remove_entity(entity1);
+                        io.remove_entity(entity2);
+                    }
+                }
+            }
+        }
+    }
+}
+
+```
+### Enemy Bullet to Player
+
+
+```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self{
+        // Attach Enemy Bullet to Player Collision Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_bullet_to_player_collision)
+            .query(
+                "Enemy_Bullet",
+                Query::new()
+                    .intersect::<Transform>(Access::Read)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Player",
+                Query::new()
+                    .intersect::<Player>(Access::Write)
+                    .intersect::<Transform>(Access::Read),
+            )
+            .query(
+                "Player_Status_Update",
+                Query::new().intersect::<PlayerStatus>(Access::Write),
+            )
+            .query(
+                "Enemy_Bullet_Count_Update",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+        Self
+    }
+}
+```
+
+```rust
+impl ServerState{
+        // The function that will handle the collision from enemy bullet to player
+    fn enemy_bullet_to_player_collision(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity1 in query.iter("Enemy_Bullet") {
+            if query.read::<Bullet>(entity1).from_enemy {
+                for entity2 in query.iter("Player") {
+                    let current_enemy_bullet = query.read::<Transform>(entity1).pos;
+                    let current_player = query.read::<Transform>(entity2).pos;
+
+                    // If the bullet hit the player
+                    if collision_detection(
+                        current_enemy_bullet.x,
+                        current_enemy_bullet.y,
+                        BULLET_SIZE,
+                        current_player.x,
+                        current_player.y,
+                        PLAYER_SIZE,
+                    ) {
+                        if query
+                            .iter("Enemy_Bullet_Count_Update")
+                            .any(|id| id == query.read::<Bullet>(entity1).entity_id)
+                        {
+                            query.modify::<Enemy>(
+                                query.read::<Bullet>(entity1).entity_id,
+                                |value| {
+                                    value.bullet_count -= 1;
+                                },
+                            );
+                        }
+                        io.remove_entity(entity1);
+                        io.remove_entity(entity2);
+                        for entity3 in query.iter("Player_Status_Update") {
+                            query.modify::<PlayerStatus>(entity3, |value| {
+                                value.status = false;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
 ### Respawning
 
 ## Summary/Current Code Progress
