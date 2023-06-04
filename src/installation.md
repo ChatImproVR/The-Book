@@ -16,7 +16,7 @@ When it comes to hardware requirements, your PC must able to support VR software
 There are two softwares to download: our engine and the VR connector app. 
 
 ## Our Engine
-If you want to use the stable version, we recommend to download the engine from releases. Click the Download Button!
+If you want to use the stable version, we recommend to [downloading the engine from releases](https://github.com/ChatImproVR/chatimprovr/releases). 
 
 [![Download Button](./images/download_buttom.png)](https://github.com/ChatImproVR/chatimprovr/releases). 
 
