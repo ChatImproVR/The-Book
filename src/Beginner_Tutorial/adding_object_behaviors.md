@@ -158,11 +158,6 @@ impl UserState for ServerState {
         // Create an enemy status entity (not enemy entity)
         io.create_entity().add_component(EnemyStatus(0.0)).build();
 
-        // Create a score entity (TBD)
-        io.create_entity()
-            .add_component(Score::default())
-            .build();
-
         // Create Player entity with components
         io.create_entity()
             .add_component(
@@ -198,7 +193,7 @@ impl UserState for ServerState {
 ```
 As you might noticed, it is the same implementation like how we add `Render`, `Transform`, and `Synchronized`. The only difference is that if we declare a default setting for the component, we can call default, otherwise, we need to fill out the struct when it is initilize. For example, the `EnemyStatus` does not have a default implementation; therefore, we need to add a `f32` value into that component. Since `EnemyStatus` is a timer of the spawn time, it should initilize as `0.0`. However, we can implement a default value, but in this demonstration, I would like to share that part with you to know there is a difference.
 
-There is one component that you have not seen above; it is a `Score` component. This updated version will be out soon; in fact, we will talk about that in the next page of this tutorial.
+<!-- There is one component that you have not seen above; it is a `Score` component. This updated version will be out soon; in fact, we will talk about that in the next page of this tutorial. -->
 
 ## Communication from Client to Server
 The most common method that we will be using is communication from client to server. We have in depth documentation regarding [how it works](/Core_Concepts/client_and_server.md). The method we will be using is called [subscribe/publish method](/Core_Concepts/pub_sub.md). In short summary, the client will send a message to the server, and the server will update based on that message call. This method involves serializing and deserializing the message: the client will serialize the message before it sends to the server, and the server will deserialize the message to read the message. Therefore, we will need to use the following library.
@@ -832,7 +827,7 @@ impl ServerState{
     }
 }
 ```
-When you first look at this function, you will notice a lot of similarity from the `player_fire_update` function such as create an entity as bullet that is from the enemy rather than the player. However, before creating the enemy's bullet entity, we have additional condition on enemy's bullet display limit. We have this limitation because it will be almost impossible to play since it will continously spamming bullets that the player will not even have a chance to score. Therefore, if there is more bullets than `ENEMY_MAX_BULLET` value from each enemy, then it will not generate a new one until the bullet is gone from the scene (either from hitting the player or going out of bound). Therefore, we will read the current bullet amount on the screen from the `Enemy` component. We will modify that value in the next function. At the same time, when we generate the bullet, we will store the `parent entities id`. This value is important in the next function.
+When you first look at this function, you will notice a lot of similarity from the `player_fire_update` function such as create an entity as bullet that is from the enemy rather than the player. However, before creating the enemy's bullet entity, we have additional condition on enemy's bullet display limit. We have this limitation because it will be almost impossible to play since it will continously spamming bullets that the player will not even have a chance to kill the enemy. Therefore, if there is more bullets than `ENEMY_MAX_BULLET` value from each enemy, then it will not generate a new one until the bullet is gone from the scene (either from hitting the player or going out of bound). Therefore, we will read the current bullet amount on the screen from the `Enemy` component. We will modify that value in the next function. At the same time, when we generate the bullet, we will store the `parent entities id`. This value is important in the next function.
 
 ```rust
 impl ServerState{
@@ -867,11 +862,9 @@ impl ServerState{
 ```
 This function is similar as `player_bullet_movement_update` function but having an additional bullet counter on screen and updater. Let's look at the query that states for `Enemy_Bullet_Count_Update`. The condition states that find the parent(the enemy) and see if that enemy is alive. If the enemy is alive, then update the `bullet_count` value by 1; otherwise, ignore it since that enemy is dead. Once that is complete, then remove the bullet from the screen. You can customize the option on how to implement the limitation of the bullet, but we need to use the idea of parenting between entities.
 
-
-## Interaction between Entities
 Now we got a system that can shoot and move, but what is fun is that? We need to add collision between each entities. If a bullet hit a player or enemy, then it should get removed. After a certain time is passed from its death, then the player or enemy should respawn. Once that is set up, we have a game-like Galaga in our hand.
 
-### Collision
+## Collision
 First, let's work on collision. There are two type of collision in Galaga: player bullet hitting the enemy or the enemy's bullet htting the player. But before that, lets make a collision function so that we do not need to write the same collision code multiple times.
 
 ### Collision Function
@@ -903,6 +896,7 @@ fn collision_detection(
 We do not need to fully understand how the logic works, but we need to understand the input/argument of the function. The `x` and `y` positions of the object/entity is define as the center (not at the bottom left which most engine does). The `size` argument identifies the legnth between left side to the right side. In other words, we are defining the entity/object as a sqaure. If these two squares overlap each other, then we consider as collision and return that they are hitting each other; otherwise, it is not a collision.
 
 ### Player Bullet to Enemy
+First, we need to attach the function with the right quries. We need two quries for collision: one for the player bullet and the enemy. The following code will capture those entities.
 ```rust
 impl UserState for ServerState{
     fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self{
@@ -926,7 +920,10 @@ impl UserState for ServerState{
     }
 }
 ```
+There is nothing much unique than other system attachment as the previous one. Therefore, we are not going in depth about this code anymore due to the redundancy. 
 
+
+Now, lets take a look at the `player_bullet_to_enemy_collision` function as below.
 
 ```rust
 impl ServerState{
@@ -955,10 +952,12 @@ impl ServerState{
         }
     }
 }
-
 ```
-### Enemy Bullet to Player
+First we read if player bullet exist. If it does, then we check if the enemy entity exist. After that, we check those positions of those entities and see if they have a collision from the previous function `collsion_detection`. If so, then we remove it. Very simply and no abstract meaning behind. `entity1` is the player bullet whereas `entity2` is the enemy.
 
+### Enemy Bullet to Player
+However, enemy bullet to player collision is slightly different because not only we need to handle bullet limitation, but also respawning part for the player. Take a look at the following code below.
+> Note: Respawning for the enemy is coded differently so that the previous code do not need to modify as the following; however, you are welcome to do in that way.
 
 ```rust
 impl UserState for ServerState{
@@ -991,6 +990,7 @@ impl UserState for ServerState{
     }
 }
 ```
+Rather than having two quries from previous example, we need to use four different quries: one for the enemy bullet, one for the player, one for the player status (which we will talk about it in a moment), and the enemy for counting the bullet on screen. Let's take a look at the following code for `enemy_bullet_to_player_collision` function.
 
 ```rust
 impl ServerState{
@@ -1036,6 +1036,1014 @@ impl ServerState{
     }
 }
 ```
-### Respawning
+We can find similarities between the `player_bullet_to_enemy_collision` function; however, there is more code than that function. First, if collision is detected, then we need to update the bullet count for that enemy by one since that bullet will be remove from the collision of the player. Another thing we have a difference is the status of the player is consider as dead, which it is `False`. This value will be used for respawning the player entity. `entity1` is the enemy bullet whereas `entity2` is the player.
+
+### Respawning Player
+For attaching the respawning the player, we only need to check teh PlayerStatus; we just need to know if the player is dead or alive.
+```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Attach Spawn Player Function to the Engine schedule
+        sched
+            .add_system(Self::spawn_player)
+            .subscribe::<FrameTime>()
+            .query(
+                "Player",
+                Query::new().intersect::<PlayerStatus>(Access::Write),
+            )
+            .build();
+    }
+}
+```
+Let's take a look at the `spawn_player` function below.
+
+```rust
+impl ServerState{
+    // The function that will spawn the player
+    fn spawn_player(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+        for entity in query.iter("Player") {
+            if !(query.read::<PlayerStatus>(entity).status) {
+                let mut dead_time = query.read::<PlayerStatus>(entity).dead_time;
+                if dead_time == 0.0 {
+                    dead_time = frame_time.time;
+                }
+                if dead_time + PLAYER_SPAWN_TIME < frame_time.time {
+                    io.create_entity()
+                        .add_component(
+                            Transform::default()
+                                .with_position(Vec3::new(0.0, -50.0, 0.0))
+                                .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+                        )
+                        .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+                        .add_component(Player::default())
+                        .add_component(Synchronized)
+                        .build();
+                    io.remove_entity(entity);
+                    io.create_entity()
+                        .add_component(PlayerStatus::default())
+                        .build();
+                }
+                else {
+                    query.modify::<PlayerStatus>(entity, |value| {
+                        value.dead_time = dead_time;
+                    })
+                }
+            }
+        }
+    }
+}
+```
+First, we are setting up a timer. This function will first trigger (or pass the first condition) if the player status is dead (`False`). We will store the time when the player is dead in the `PlayerStatus` component. Then will will re-run the funciton since there is a `PlayerStatus` component that is `False` with the actual time that the player is dead. If a certain amount of time has passed since the player has been dead, then it will respawn at its original position. At the same time, we throw away the old `PlayerStatus` entity and create a new one with its default values. Otherwise, we will re-run the function again over and over. If you have not noticed, all the functions on the server and client side are continously running back of the scene and see if there are any changes that will trigger certain functions based on each entity conditions.
+
+### Respawning Enemy
+Let's switch our focus on the Enemy respawning part. Rather than reading the one query, we need to read two quries. 
+
+```rust
+impl UserState for ServerState{
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self{
+        // Attach Spawn Enemy Function to the Engine schedule
+        sched
+            .add_system(Self::spawn_enemy)
+            .subscribe::<FrameTime>()
+            .query(
+                "Enemy_Count",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .query(
+                "Enemy_Status",
+                Query::new().intersect::<EnemyStatus>(Access::Write),
+            )
+            .build();
+    }
+}
+```
+The `Enemy_Count` query will count how many enemies exist on the scene. The `Enemy_Status` is the timer for respawning; same idea as the `PlayerStatus` component.
+
+```rust
+impl ServerState{
+    // The function that will spawn the enemy
+    fn spawn_enemy(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return }
+        if (query.iter("Enemy_Count").count() as u32) < ENEMY_COUNT {
+            for entity in query.iter("Enemy_Status") {
+                let mut dead_time = query.read::<EnemyStatus>(entity).0;
+
+                if dead_time == 0.0 {
+                    dead_time = frame_time.time;
+                }
+
+                if dead_time + ENEMY_SPAWN_TIME < frame_time.time {
+                    io.create_entity()
+                        .add_component(
+                            Transform::default()
+                                .with_position(Vec3::new(0.0, 50.0, 0.0))
+                                .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+                        )
+                        .add_component(Render::new(ENEMY_HANDLE).primitive(Primitive::Lines))
+                        .add_component(Synchronized)
+                        .add_component(Enemy::default())
+                        .build();
+                    io.remove_entity(entity);
+                    io.create_entity().add_component(EnemyStatus(0.0)).build();
+                }
+                else {
+                    query.modify::<EnemyStatus>(entity, |value| {
+                        value.0 = dead_time;
+                    })
+                }
+            }
+        }
+    }
+}
+```
+Compare to the `spawn_player` function, the `spawn_enemy` will check how enemies exist on the scene. If there is less than maximum amount of enemies on the scene (`ENEMY_COUNT`), then we need to spawn a new enemy. Nevertheless, we do not want to spawn the enemy immediately after its death from a different enemy; we want some cool down time for the enemy as well. Therefore, we will use the `EnemyStatus` component as a timer. With the same logic as the `PlayerStatus` component, we will record the time when the enemy is dead and check if a certain amount of time has passed. If so, then generate a new enemy and reset (delete and set a new one) the `EnemyStatus` entity.
 
 ## Summary/Current Code Progress
+That being said, we are mostly done with the Galaga game development. You should have something similar to this code below.
+```rust
+use std::f32::consts::PI;
+
+// Add libraries from the cimvr_engine_interface crate
+use cimvr_engine_interface::{make_app_state, pcg::Pcg, pkg_namespace, prelude::*, FrameTime};
+
+// Add libraries from the cimvr_common crate
+use cimvr_common::{
+    desktop::{InputEvent, KeyCode},
+    gamepad::{Axis, Button, GamepadState},
+    glam::{EulerRot, Quat, Vec3},
+    render::{Mesh, MeshHandle, Primitive, Render, UploadMesh, Vertex},
+    utils::input_helper::InputHelper,
+    Transform,
+};
+
+// Add libraries from the obj_reader crate
+use obj_reader::obj::obj_lines_to_mesh;
+
+// Add libraries from the serde crate
+use serde::{Deserialize, Serialize};
+
+// Create some constant value for Windows
+const WITDH: f32 = 80.;
+const HEIGHT: f32 = 120.;
+
+// Create some constant values for Enemy
+const ENEMY_COUNT: u32 = 2;
+const ENEMY_MAX_BULLET: u32 = 5;
+const ENEMY_SPAWN_TIME: f32 = 0.5;
+const ENEMY_BULLET_SPEED: f32 = 100.;
+const ENEMY_SPEED: f32 = 50.;
+const ENEMY_SIZE: f32 = 3.; // Because of the obj file, this value is not used (update this value after changing the obj size)
+
+// Create some constant values for Player
+const PLAYER_SPAWN_TIME: f32 = 3.0;
+const PLAYER_BULLET_SPEED: f32 = 100.;
+const PLAYER_SPEED: f32 = 100.;
+const PLAYER_SIZE: f32 = 3.; // Because of the obj file, this value is not used (update this value after changing the obj size)
+
+// Create some constant values for Bullet
+const BULLET_SIZE: f32 = 0.5;
+
+// All state associated with client-side behaviour
+#[derive(Default)]
+struct ClientState {
+    input: InputHelper,
+}
+
+// Add movement command as message from client to server
+#[derive(Message, Serialize, Deserialize)]
+#[locality("Remote")]
+struct MoveCommand(Vec3);
+
+// Add fire command as a message from client to server
+#[derive(Message, Serialize, Deserialize)]
+#[locality("Remote")]
+struct FireCommand(bool);
+
+// Add Player Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Player {
+    pub current_position: Vec3,
+}
+
+// Implement Default for Player Component
+impl Default for Player {
+    fn default() -> Self {
+        Self {
+            current_position: Vec3::new(0.0, -50.0, 0.0),
+        }
+    }
+}
+
+// Add Enemy Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Enemy {
+    pub current_position: Vec3,
+    pub bullet_count: u32,
+}
+
+// Implement Default for Enemy Component
+impl Default for Enemy {
+    fn default() -> Self {
+        Self {
+            current_position: Vec3::new(0.0, 50.0, 0.0),
+            bullet_count: 0,
+        }
+    }
+}
+
+// Add Bullet Component
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct Bullet {
+    from_player: bool,
+    from_enemy: bool,
+    entity_id: EntityId,
+}
+
+// Implement Default for Bullet Component
+impl Default for Bullet {
+    fn default() -> Self {
+        Self {
+            from_player: false,
+            from_enemy: false,
+            entity_id: EntityId(0),
+        }
+    }
+}
+
+// Add Player Status Component; this is used as a spwan timer for Player
+#[derive(Component, Serialize, Deserialize, Copy, Clone)]
+pub struct PlayerStatus {
+    pub status: bool,
+    pub dead_time: f32,
+}
+
+// Implement Default for Player Status Component
+impl Default for PlayerStatus {
+    fn default() -> Self {
+        Self {
+            status: true,
+            dead_time: 0.0,
+        }
+    }
+}
+
+// Add Enemy Status Component; this is used as a spwan timer for Enemy
+#[derive(Component, Serialize, Deserialize, Copy, Clone, Default)]
+pub struct EnemyStatus(f32);
+
+// Create mesh handleer based on each object's name
+const PLAYER_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Player"));
+const ENEMY_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy"));
+const PLAYER_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Player Bullet"));
+const ENEMY_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy Bullet"));
+const WINDOW_SIZE_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Window Size"));
+
+// Create Meshes for each object
+
+// Create the Player Mesh --> This is commented out because we are using obj file
+// fn player() -> Mesh {
+//     let size: f32 = PLAYER_SIZE;
+
+//     let vertices = vec![
+//         Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
+//         Vertex::new([size, -size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 1
+//         Vertex::new([size, size, 0.0], [0.0, 0.0, 1.0]),   // Vertex 2
+//         Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 3
+//     ];
+
+//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+//     Mesh { vertices, indices }
+// }
+
+// // Create the Enemy Mesh --> This is commented out because we are using obj file
+// fn enemy() -> Mesh {
+//     let size: f32 = ENEMY_SIZE;
+
+//     let vertices = vec![
+//         Vertex::new([-size, -size, 0.0], [1.0, 0.0, 0.0]), // Vertex 0
+//         Vertex::new([size, -size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 1
+//         Vertex::new([size, size, 0.0], [1.0, 0.0, 0.0]),   // Vertex 2
+//         Vertex::new([-size, size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 3
+//     ];
+
+//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+//     Mesh { vertices, indices }
+// }
+
+// Create Player Bullet Mesh as a sqaure green
+fn player_bullet() -> Mesh {
+    let size: f32 = BULLET_SIZE;
+
+    let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([size, -size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([size, size, 0.0], [0.0, 1.0, 0.0]),
+        Vertex::new([-size, size, 0.0], [0.0, 1.0, 0.0]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+    Mesh { vertices, indices }
+}
+
+// Create Enemy Bullet Mesh as a sqaure red
+fn enemy_bullet() -> Mesh {
+    let size: f32 = BULLET_SIZE;
+
+    let vertices = vec![
+        Vertex::new([-size, -size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([size, -size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([size, size, 0.0], [1.0, 0.0, 0.0]),
+        Vertex::new([-size, size, 0.0], [1.0, 0.0, 0.0]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
+
+    Mesh { vertices, indices }
+}
+
+// Create Window Mesh so that the users will know what is the limit of movement
+fn window_size() -> Mesh {
+    let vertices = vec![
+        Vertex::new([-WITDH / 2., -HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([WITDH / 2., -HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([WITDH / 2., HEIGHT / 2., 0.0], [1.; 3]),
+        Vertex::new([-WITDH / 2., HEIGHT / 2., 0.0], [1.; 3]),
+    ];
+
+    let indices: Vec<u32> = vec![3, 0, 0, 1, 1, 2, 2, 3];
+
+    Mesh { vertices, indices }
+}
+
+// Create a struct for the Client State
+impl UserState for ClientState {
+    // Implement a constructor
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Declare the player color as green
+        let player_color = [0., 1., 0.];
+
+        // Read the player object file from the assets folder (that is created from blender)
+        let mut new_player_mesh = obj_lines_to_mesh(&include_str!("assets/galagaship.obj"));
+
+        // Update the player object/mesh with the player color
+        new_player_mesh
+            .vertices
+            .iter_mut()
+            .for_each(|v| v.uvw = player_color);
+
+        // Declare the enemy color as red
+        let enemy_color = [1., 0., 0.];
+
+        // Read the enemy object file from the assets folder (that is created from blender)
+        let mut new_enemy_mesh = obj_lines_to_mesh(&include_str!("assets/galaga_enemy.obj"));
+
+        // Update the enemy object/mesh with the enemy color
+        new_enemy_mesh
+            .vertices
+            .iter_mut()
+            .for_each(|v| v.uvw = enemy_color);
+
+        // Send the player mesh and the player mesh handler to the server side
+        io.send(&UploadMesh {
+            id: PLAYER_HANDLE,
+            mesh: new_player_mesh,
+        });
+
+        // Send the enemy mesh and the enemy mesh handler to the server side
+        io.send(&UploadMesh {
+            id: ENEMY_HANDLE,
+            mesh: new_enemy_mesh,
+        });
+
+        // Send the player bullet mesh and the player bullet mesh handler to the server side
+        io.send(&UploadMesh {
+            id: PLAYER_BULLET_HANDLE,
+            mesh: player_bullet(),
+        });
+
+        // Send the enemy bullet mesh and the enemy bullet mesh handler to the server side
+        io.send(&UploadMesh {
+            id: ENEMY_BULLET_HANDLE,
+            mesh: enemy_bullet(),
+        });
+
+        // Send the window mesh and the window mesh handler to the server side
+        io.send(&UploadMesh {
+            id: WINDOW_SIZE_HANDLE,
+            mesh: window_size(),
+        });
+
+        // Add player movement input based on keyboard/controller input
+        sched
+            .add_system(Self::player_input_movement_update)
+            .subscribe::<InputEvent>()
+            .subscribe::<GamepadState>()
+            .subscribe::<FrameTime>()
+            .build();
+
+        // Add player fire input based on keyboard/controller input
+        sched
+            .add_system(Self::player_input_fire_update)
+            .subscribe::<InputEvent>()
+            .subscribe::<GamepadState>()
+            .build();
+
+        Self::default()
+    }
+}
+
+// Implement client only side functions that will send messages to the server side
+impl ClientState {
+    // Send the player movement input to the server side
+    fn player_input_movement_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult) {
+        let mut direction = Vec3::ZERO;
+
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        self.input.handle_input_events(io);
+
+        let deadzone = 0.3;
+
+        if let Some(GamepadState(gamepads)) = io.inbox_first() {
+            if let Some(gamepad) = gamepads.into_iter().next() {
+                if gamepad.axes[&Axis::LeftStickX] < -deadzone {
+                    direction += Vec3::new(-1.0, 0.0, 0.0);
+                }
+
+                if gamepad.axes[&Axis::LeftStickX] > deadzone {
+                    direction += Vec3::new(1.0, 0.0, 0.0);
+                }
+            }
+
+            if self.input.key_held(KeyCode::A) {
+                direction += Vec3::new(-1.0, 0.0, 0.0);
+            }
+
+            if self.input.key_held(KeyCode::D) {
+                direction += Vec3::new(1.0, 0.0, 0.0);
+            }
+
+            if direction != Vec3::ZERO {
+                let distance = direction.normalize() * frame_time.delta * PLAYER_SPEED;
+
+                let command = MoveCommand(distance);
+
+                io.send(&command);
+            }
+        }
+    }
+
+    // Send the player fire input to the server side
+    fn player_input_fire_update(&mut self, io: &mut EngineIo, _query: &mut QueryResult) {
+        self.input.handle_input_events(io);
+
+        if let Some(GamepadState(gamepads)) = io.inbox_first() {
+            if let Some(gamepad) = gamepads.into_iter().next() {
+                if gamepad.buttons[&Button::East] {
+                    let command = FireCommand(true);
+                    io.send(&command);
+                }
+            }
+        }
+
+        if self.input.key_pressed(KeyCode::Space) {
+            let command = FireCommand(true);
+            io.send(&command);
+        }
+    }
+}
+
+// All state associated with server-side behaviour
+struct ServerState;
+
+// Implement server only side functions that will update on the server side
+impl UserState for ServerState {
+    // Implement a constructor
+    fn new(io: &mut EngineIo, sched: &mut EngineSchedule<Self>) -> Self {
+        // Create a player status entity (not player entity)
+        io.create_entity()
+            .add_component(PlayerStatus::default())
+            .build();
+
+        // Create an enemy status entity (not enemy entity)
+        io.create_entity().add_component(EnemyStatus(0.0)).build();
+
+        // Create Player entity with components
+        io.create_entity()
+            .add_component(
+                Transform::default()
+                    .with_position(Vec3::new(0.0, -50.0, 0.0))
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+            )
+            .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+            .add_component(Player::default())
+            .add_component(Synchronized)
+            .build();
+
+        // Create Enemy with components
+        io.create_entity()
+            .add_component(
+                Transform::default()
+                    .with_position(Vec3::new(0.0, 50.0, 0.0))
+                    .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+            )
+            .add_component(Render::new(ENEMY_HANDLE).primitive(Primitive::Lines))
+            .add_component(Synchronized)
+            .add_component(Enemy::default())
+            .build();
+
+        // Create the Window entity with components
+        io.create_entity()
+            .add_component(Transform::default())
+            .add_component(Render::new(WINDOW_SIZE_HANDLE).primitive(Primitive::Lines))
+            .add_component(Synchronized)
+            .build();
+
+        // Attach Spawn Player Function to the Engine schedule
+        sched
+            .add_system(Self::spawn_player)
+            .subscribe::<FrameTime>()
+            .query(
+                "Player",
+                Query::new().intersect::<PlayerStatus>(Access::Write),
+            )
+            .build();
+
+        // Attach Spawn Enemy Function to the Engine schedule
+        sched
+            .add_system(Self::spawn_enemy)
+            .subscribe::<FrameTime>()
+            .query(
+                "Enemy_Count",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .query(
+                "Enemy_Status",
+                Query::new().intersect::<EnemyStatus>(Access::Write),
+            )
+            .build();
+
+        // Attach Player Movement Function to the Engine schedule
+        sched
+            .add_system(Self::player_movement_update)
+            .subscribe::<MoveCommand>()
+            .query(
+                "Player_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Player>(Access::Write),
+            )
+            .build();
+
+        // Attach Enemy Movement Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_movement_update)
+            .subscribe::<FrameTime>()
+            .query(
+                "Enemy_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Enemy>(Access::Write),
+            )
+            .build();
+
+        // Attach Player Fire Function to the Engine schedule
+        sched
+            .add_system(Self::player_fire_update)
+            .subscribe::<FireCommand>()
+            .query(
+                "Player_Fire_Input",
+                Query::new().intersect::<Player>(Access::Read),
+            )
+            .build();
+
+        // Attach Player Bullet Movement Function to the Engine schedule
+        sched
+            .add_system(Self::player_bullet_movement_update)
+            .subscribe::<FrameTime>()
+            .query(
+                "Player_Bullet_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .build();
+
+        // Attach Enemy Fire Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_fire_update)
+            .query(
+                "Enemy_Fire_Input",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+
+        // Attach Enemy Bullet Movement Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_bullet_movement_update)
+            .subscribe::<FrameTime>()
+            .query(
+                "Enemy_Bullet_Movement",
+                Query::new()
+                    .intersect::<Transform>(Access::Write)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Enemy_Bullet_Count_Update",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+
+        // Attach Player Bullet to Enemy Collision Function to the Engine schedule
+        sched
+            .add_system(Self::player_bullet_to_enemy_collision)
+            .query(
+                "Player_Bullet",
+                Query::new()
+                    .intersect::<Transform>(Access::Read)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Enemy",
+                Query::new()
+                    .intersect::<Enemy>(Access::Write)
+                    .intersect::<Transform>(Access::Read),
+            )
+            .build();
+
+        // Attach Enemy Bullet to Player Collision Function to the Engine schedule
+        sched
+            .add_system(Self::enemy_bullet_to_player_collision)
+            .query(
+                "Enemy_Bullet",
+                Query::new()
+                    .intersect::<Transform>(Access::Read)
+                    .intersect::<Bullet>(Access::Write),
+            )
+            .query(
+                "Player",
+                Query::new()
+                    .intersect::<Player>(Access::Write)
+                    .intersect::<Transform>(Access::Read),
+            )
+            .query(
+                "Player_Status_Update",
+                Query::new().intersect::<PlayerStatus>(Access::Write),
+            )
+            .query(
+                "Enemy_Bullet_Count_Update",
+                Query::new().intersect::<Enemy>(Access::Write),
+            )
+            .build();
+
+        Self
+    }
+}
+
+// Implement the function systems for the server
+impl ServerState {
+    fn spawn_player(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+        for entity in query.iter("Player") {
+            if !(query.read::<PlayerStatus>(entity).status) {
+                let mut dead_time = query.read::<PlayerStatus>(entity).dead_time;
+                if dead_time == 0.0 {
+                    dead_time = frame_time.time;
+                }
+                if dead_time + PLAYER_SPAWN_TIME < frame_time.time {
+                    io.create_entity()
+                        .add_component(
+                            Transform::default()
+                                .with_position(Vec3::new(0.0, -50.0, 0.0))
+                                .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+                        )
+                        .add_component(Render::new(PLAYER_HANDLE).primitive(Primitive::Lines))
+                        .add_component(Player::default())
+                        .add_component(Synchronized)
+                        .build();
+                    io.remove_entity(entity);
+                    io.create_entity()
+                        .add_component(PlayerStatus::default())
+                        .build();
+                }
+                else {
+                    query.modify::<PlayerStatus>(entity, |value| {
+                        value.dead_time = dead_time;
+                    })
+                }
+            }
+        }
+    }
+    // The function that will spawn the enemy
+    fn spawn_enemy(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        if (query.iter("Enemy_Count").count() as u32) < ENEMY_COUNT {
+            for entity in query.iter("Enemy_Status") {
+                let mut dead_time = query.read::<EnemyStatus>(entity).0;
+
+                if dead_time == 0.0 {
+                    dead_time = frame_time.time;
+                }
+
+                if dead_time + ENEMY_SPAWN_TIME < frame_time.time {
+                    io.create_entity()
+                        .add_component(
+                            Transform::default()
+                                .with_position(Vec3::new(0.0, 50.0, 0.0))
+                                .with_rotation(Quat::from_euler(EulerRot::XYZ, PI / 2., 0., 0.)),
+                        )
+                        .add_component(Render::new(ENEMY_HANDLE).primitive(Primitive::Lines))
+                        .add_component(Synchronized)
+                        .add_component(Enemy::default())
+                        .build();
+                    io.remove_entity(entity);
+                    io.create_entity().add_component(EnemyStatus(0.0)).build();
+                }
+                else {
+                    query.modify::<EnemyStatus>(entity, |value| {
+                        value.0 = dead_time;
+                    })
+                }
+            }
+        }
+    }
+    // The function that will handle the player movement
+    fn player_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for player_movement in io.inbox::<MoveCommand>() {
+            for entity in query.iter("Player_Movement") {
+                let x_limit = WITDH / 2.0;
+                if query.read::<Player>(entity).current_position.x + player_movement.0.x
+                    - PLAYER_SIZE
+                    < -x_limit
+                    || query.read::<Player>(entity).current_position.x
+                        + player_movement.0.x
+                        + PLAYER_SIZE
+                        > x_limit
+                {
+                    return;
+                }
+
+                query.modify::<Transform>(entity, |transform| {
+                    transform.pos += player_movement.0;
+                });
+                query.modify::<Player>(entity, |player| {
+                    player.current_position += player_movement.0;
+                });
+            }
+        }
+    }
+
+    // The function that will handle the enemy movement
+    fn enemy_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity in query.iter("Enemy_Movement") {
+            let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+            let mut pcg_random_move = Pcg::new();
+            let mut pcg_random_direction = Pcg::new();
+
+            let x = if pcg_random_direction.gen_bool() {
+                pcg_random_move.gen_f32() * 1.
+            } else {
+                pcg_random_move.gen_f32() * -1.
+            };
+
+            let y = if pcg_random_direction.gen_bool() {
+                pcg_random_move.gen_f32() * 1.
+            } else {
+                pcg_random_move.gen_f32() * -1.
+            };
+
+            let speed = Vec3::new(x, y, 0.);
+
+            let direction = speed.normalize() * frame_time.delta * ENEMY_SPEED;
+
+            let x_limit = WITDH / 2.0;
+            let y_upper_limit = HEIGHT / 2.;
+            let y_limit = HEIGHT / 5.;
+
+            let current_position = query.read::<Enemy>(entity).current_position;
+
+            if (current_position.x + direction.x - ENEMY_SIZE < -x_limit)
+                || (current_position.x + direction.x + ENEMY_SIZE > x_limit)
+                || (current_position.y + direction.y >= y_upper_limit)
+                || (current_position.y + direction.y < y_limit)
+            {
+                return;
+            }
+            query.modify::<Transform>(entity, |transform| {
+                transform.pos += direction;
+            });
+            query.modify::<Enemy>(entity, |enemy| {
+                enemy.current_position += direction;
+            });
+        }
+    }
+
+    // The function that will handle the player fire
+    fn player_fire_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        if let Some(FireCommand(_value)) = io.inbox_first() {
+            for entity in query.iter("Player_Fire_Input") {
+                io.create_entity()
+                    .add_component(
+                        Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
+                    )
+                    .add_component(Synchronized)
+                    .add_component(Bullet {
+                        from_enemy: false,
+                        from_player: true,
+                        entity_id: entity,
+                    })
+                    .add_component(Transform::default().with_position(
+                        query.read::<Player>(entity).current_position
+                            + Vec3::new(-PLAYER_SIZE / 2., PLAYER_SIZE / 2., 0.0),
+                    ))
+                    .build();
+                io.create_entity()
+                    .add_component(
+                        Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
+                    )
+                    .add_component(Synchronized)
+                    .add_component(Bullet {
+                        from_enemy: false,
+                        from_player: true,
+                        entity_id: entity,
+                    })
+                    .add_component(Transform::default().with_position(
+                        query.read::<Player>(entity).current_position
+                            + Vec3::new(PLAYER_SIZE / 2., PLAYER_SIZE / 2., 0.0),
+                    ))
+                    .build();
+            }
+        }
+    }
+
+    // The function that will handle the player bullet movement
+    fn player_bullet_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
+
+        for entity in query.iter("Player_Bullet_Movement") {
+            if query.read::<Bullet>(entity).from_player {
+                if query.read::<Transform>(entity).pos.y > HEIGHT / 2. - 2.5 {
+                    io.remove_entity(entity);
+                }
+                query.modify::<Transform>(entity, |transform| {
+                    transform.pos +=
+                        Vec3::new(0.0, 1.0, 0.0) * frame_time.delta * PLAYER_BULLET_SPEED;
+                });
+            }
+        }
+    }
+
+    // The function that will handle the enemy fire update
+    fn enemy_fire_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        let mut pcg_fire = Pcg::new();
+
+        for entity in query.iter("Enemy_Fire_Input") {
+            if pcg_fire.gen_bool() {
+                if query.read::<Enemy>(entity).bullet_count < ENEMY_MAX_BULLET {
+                    query.modify::<Enemy>(entity, |value| {
+                        value.bullet_count += 1;
+                    });
+                    io.create_entity()
+                        .add_component(
+                            Render::new(ENEMY_BULLET_HANDLE).primitive(Primitive::Triangles),
+                        )
+                        .add_component(Synchronized)
+                        .add_component(Bullet {
+                            from_enemy: true,
+                            from_player: false,
+                            entity_id: entity,
+                        })
+                        .add_component(Transform::default().with_position(
+                            query.read::<Enemy>(entity).current_position
+                                + Vec3::new(0., -ENEMY_SIZE / 2., 0.),
+                        ))
+                        .build();
+                }
+            }
+        }
+    }
+
+    // The function that will handle the enemy bullet movement
+    fn enemy_bullet_movement_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        if let Some(frame_time) = io.inbox_first::<FrameTime>() {
+            for entity in query.iter("Enemy_Bullet_Movement") {
+                if query.read::<Bullet>(entity).from_enemy {
+                    if query.read::<Transform>(entity).pos.y < -HEIGHT / 2. + 2.5 {
+                        if query
+                            .iter("Enemy_Bullet_Count_Update")
+                            .any(|id| id == query.read::<Bullet>(entity).entity_id)
+                        {
+                            query.modify::<Enemy>(
+                                query.read::<Bullet>(entity).entity_id,
+                                |value| {
+                                    value.bullet_count -= 1;
+                                },
+                            );
+                        }
+                        io.remove_entity(entity);
+                    }
+                    query.modify::<Transform>(entity, |transform| {
+                        transform.pos +=
+                            Vec3::new(0.0, -1.0, 0.0) * frame_time.delta * ENEMY_BULLET_SPEED;
+                    });
+                }
+            }
+        }
+    }
+
+    // The function that will handle the collision from player bullet to enemy
+    fn player_bullet_to_enemy_collision(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity1 in query.iter("Player_Bullet") {
+            if query.read::<Bullet>(entity1).from_player {
+                for entity2 in query.iter("Enemy") {
+                    let current_player_bullet = query.read::<Transform>(entity1).pos;
+                    let current_enemy = query.read::<Transform>(entity2).pos;
+
+                    if collision_detection(
+                        current_player_bullet.x,
+                        current_player_bullet.y,
+                        BULLET_SIZE,
+                        current_enemy.x,
+                        current_enemy.y,
+                        ENEMY_SIZE,
+                    ) {
+                        io.remove_entity(entity1);
+                        io.remove_entity(entity2);
+                    }
+                }
+            }
+        }
+    }
+
+    // The function that will handle the collision from enemy bullet to player
+    fn enemy_bullet_to_player_collision(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
+        for entity1 in query.iter("Enemy_Bullet") {
+            if query.read::<Bullet>(entity1).from_enemy {
+                for entity2 in query.iter("Player") {
+                    let current_enemy_bullet = query.read::<Transform>(entity1).pos;
+                    let current_player = query.read::<Transform>(entity2).pos;
+
+                    if collision_detection(
+                        current_enemy_bullet.x,
+                        current_enemy_bullet.y,
+                        BULLET_SIZE,
+                        current_player.x,
+                        current_player.y,
+                        PLAYER_SIZE,
+                    ) {
+                        if query
+                            .iter("Enemy_Bullet_Count_Update")
+                            .any(|id| id == query.read::<Bullet>(entity1).entity_id)
+                        {
+                            query.modify::<Enemy>(
+                                query.read::<Bullet>(entity1).entity_id,
+                                |value| {
+                                    value.bullet_count -= 1;
+                                },
+                            );
+                        }
+                        io.remove_entity(entity1);
+                        io.remove_entity(entity2);
+                        for entity3 in query.iter("Player_Status_Update") {
+                            query.modify::<PlayerStatus>(entity3, |value| {
+                                value.status = false;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// The function that will handle the collision detection
+fn collision_detection(
+    obj1_x_position: f32,
+    obj1_y_position: f32,
+    obj1_size: f32,
+    obj2_x_position: f32,
+    obj2_y_position: f32,
+    obj2_size: f32,
+) -> bool {
+    if obj1_x_position - (obj1_size / 2.) <= obj2_x_position + (obj2_size / 2.)
+        && obj1_x_position + (obj1_size / 2.) >= obj2_x_position - (obj2_size / 2.)
+        && (obj1_y_position - (obj1_size / 2.) <= obj2_y_position + (obj2_size / 2.))
+        && (obj1_y_position + (obj1_size / 2.) >= obj2_y_position - (obj2_size / 2.))
+    {
+        return true;
+    }
+    return false;
+}
+
+// Defines entry points for the engine to hook into.
+// Calls new() for the appropriate state.
+make_app_state!(ClientState, ServerState);
+
+```
+## What is next...? Are we done...?
+So you might be wondering there is no page after this tutorial; therefore, are we done with this tutorial? Yes and No. Yes because we tackle all the basic syntax and concept of the engine that you have enough knowledge to create your own plugin; however, there is no text display or sound implementation. These features will be added into the plugin tutorial when we implement into the engine to use for the plugins. Therefore, please keep posted for additional tutorials for this plugin. If you want to check out the most up to date code for galaga, you can check out [**HERE**](https://github.com/ChatImproVR/galaga). 
