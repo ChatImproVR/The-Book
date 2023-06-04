@@ -1,7 +1,7 @@
 # Adding Object Behaviors
-Up to now, we have worked around the fundamentals of the plugin and creation of objects/entities. This section is the highlight of the plugin where things get interesting overall.
+Up to now, we have worked around the fundamentals of the plugin and creation of objects/entities. This section is the highlight of the plugin, where things get interesting.
 
-There are several things we need to add behavior for each object. Here is a list what will it be.
+There are behavior variables we need to add for each object:
 - User Input Movement Control for Player
 - Random Input Movement Control for Enemy
 - User Input Fire Control for Player
@@ -9,10 +9,10 @@ There are several things we need to add behavior for each object. Here is a list
 - Bullet Interaction between each entity (spawning, collision)
 
 ## Before We Start...
-Let's review the code that we have at the current moment. We have a "player", "enemy", and window screen. While the window screen does that matter that much, how can we differentiate between player and enemy? Based on the code, we can say they are graphically different (when we look at it while computers cannot), but what else is different? Sure, the position is different, but that is pretty much. Therefore, we need to add component (characteristics) to make it unique to each other. Before we get start working on these behaviors, let's add characteristics to each entity.
+Let's review the current code we have at the moment. We have a "player," an "enemy," and a window screen. Although the window screen may not be as relevant, we need to determine how we can distinguish between the player and the enemy. Based on the code, we can visually identify their differences (which computers cannot), but what other distinctions are there? Apart from their positions, there isn't much else. Consequently, we need to incorporate additional components (characteristics) to make each entity unique. Before we begin implementing these behaviors, let's assign specific characteristics to each entity.
 
 ## Creating additional Component (Creating Characteristics)
-Until now, we have a high chance that we share mostly similar code structure. However, from here, there is a high chance that the code will look very different because we might add different characteristics to the entity. Therefore, if you do not agree the logic of this tutorial, you can modify in your own way. In other words, from here and now on, I would recommend to understand the concept/syntax of the engine rather than copy and pasting the entire code and call it good. That being said...
+Up until this point, there is a strong likelihood that our code structures are mostly similar. However, going forward, the code may start to diverge significantly as we incorporate different characteristics for each entity. Therefore, if you disagree with the logic of this tutorial, feel free to modify it according to your own understanding. In other words, from this point on, we recommend focusing on grasping the concepts and syntax of the game engine rather than simply copying and pasting the entire code and considering it complete. With that being said...
 
 ### Player Component
 First, we will work on the "Player" component. We need to have the current player position so that the server can change based on the user input.
@@ -33,7 +33,7 @@ impl Default for Player {
 }
 ```
 
-The struct declares the component of the Player whereas the implementation of the Player will initilize the default component. We know we want the player to be at -50 at the Y position when the player spawns (as a default).
+The struct declares the component of the Player, whereas the implementation of the Player will initilize the default component. We know we want the player to be at -50 at the Y position when the player spawns (as a default).
 
 ### Enemy Component
 Unlike the Player component, we want to add another character than just current position of the enemy.
@@ -55,12 +55,12 @@ impl Default for Enemy {
     }
 }
 ```
-The struct will have not only the default position of the enemy, it will have bullet count. The bullet count represents how many bullets from that enemy is on the screen. With that description, the default value of the Enemy is 50 unit in the y value while no/0 bullets on screen when first loaded the scene.
+In addition to the default position of the enemy, the struct will now include a bullet count. The bullet count represents the number of bullets that the enemy has on the screen. Therefore, when the scene is first loaded, the default value for the enemy's position will be 50 units in the Y-axis, while the bullet count will be set to 0.
 
-You might asking why not for the Player component does not have a bullet limit? You can certainly add into it, but I choose not to do so. Then when you add the bullet count limit, then why can we not use the same component for enemy and player? Well, the main goal of having different component to differentiate between each entity. In other words, if they share the same struct, the name itself makes them different to each other if you add the component to each entity.
+You might wonder why the Player component does not have a bullet limit. While you can certainly add a bullet count limit to the Player component, we have not included one in this tutorial. The reason for this is that the main objective is to differentiate between each entity by having different components. In other words, if we were to use the same struct for both the enemy and the player, the components themselves would serve as the distinguishing factor between the entities.
 
 ### Bullet Component
-From now until a different section appears, I will just add snipt of code. If there is any explaination with certain value, I will add after the code.
+Here are a few snippets of code for adding a bullet component:
 
 ```rust
 // Add Bullet Component
@@ -139,7 +139,7 @@ impl Default for Score {
 ```
 I don't want to add this at this point since this implementation will change soon. -->
 
-## Adding the component(characteristics) to the right entity
+## Adding the component (characteristics) to the right entity
 Let's take a look at the following code.
 
 ```rust
@@ -191,12 +191,12 @@ impl UserState for ServerState {
     }
 }
 ```
-As you might noticed, it is the same implementation like how we add `Render`, `Transform`, and `Synchronized`. The only difference is that if we declare a default setting for the component, we can call default, otherwise, we need to fill out the struct when it is initilize. For example, the `EnemyStatus` does not have a default implementation; therefore, we need to add a `f32` value into that component. Since `EnemyStatus` is a timer of the spawn time, it should initilize as `0.0`. However, we can implement a default value, but in this demonstration, I would like to share that part with you to know there is a difference.
+As you might have noticed, it is implemented in the same way as `Render`, `Transform`, and `Synchronized`. The only difference is that if we declare a default setting for the component, we can call default, otherwise, we need to fill out the struct when it is initialized. For example, the `EnemyStatus` does not have a default implementation; therefore, we need to add a `f32` value into that component. Since `EnemyStatus` is a timer of the spawn time, it should be initialized as `0.0`. You can implement a default value as well, even though we don't implement it here.
 
 <!-- There is one component that you have not seen above; it is a `Score` component. This updated version will be out soon; in fact, we will talk about that in the next page of this tutorial. -->
 
 ## Communication from Client to Server
-The most common method that we will be using is communication from client to server. We have in depth documentation regarding [how it works](/Core_Concepts/client_and_server.md). The method we will be using is called [subscribe/publish method](/Core_Concepts/pub_sub.md). In short summary, the client will send a message to the server, and the server will update based on that message call. This method involves serializing and deserializing the message: the client will serialize the message before it sends to the server, and the server will deserialize the message to read the message. Therefore, we will need to use the following library.
+The most common method that we will be using is communication from client to server. If you want to know more about how this works, [check out our core concepts docs.](/Core_Concepts/client_and_server.md). The method we will be using is called [subscribe/publish method](/Core_Concepts/pub_sub.md). In short, the client will send a message to the server, and the server will update based on that message call. This method involves serializing and deserializing the message: the client will serialize the message before it sends to the server, and the server will deserialize the message to read the message. Therefore, we will need to use the following library.
 
 ```rust
 use serde::{Deserialize, Serialze};
@@ -205,7 +205,7 @@ use serde::{Deserialize, Serialze};
 Insert the following line where the other libraries are located.
 
 ### Creating a Movement Input Message Container
-Before we start writing out the message container, we need to structure what message we want to send to the server from the client. We want to have the information on what direction/vector the object needs to move. The message can also contain on which object will be moving, but we know that the only object that will be moving from input from users is the player object; hence, it is not required to have. However, (this is optional) if we are planning to expand Player versus Player gameplay, then we do want to mention it. The following code will be the message container that we will be using for this tutorial.
+Before we start writing out the message container, we need to structure what message we want to send to the server from the client. We want to have the information on what direction/vector the object needs to move. The message can also contain information on which object will be moving, but for a game of Galaga, we know the only object that a user would be able to move is the player object, so we don't need to specify that here (However, if we wanted to expand Player versus Player gameplay, then we do want to mention it). The following code will be the message container that we will be using for this tutorial.
 
 ```rust
 // Add movement command as message from client to server
@@ -213,7 +213,7 @@ Before we start writing out the message container, we need to structure what mes
 #[locality("Remote")]
 struct MoveCommand(Vec3);
 ```
-The first line declare what micro we will be using for this component/container. Because we are making a message container for movement input, it will contain `Message`, `Serialize`, and `Deserialize` micro services. The second line `#[locality('Remote')]` states that how we have specified the `Locality` of this message type. `Local` messages are sent to other plugins on this host. `Remote` messages are sent to the remote host. For example, a `Remote` message sent from a client would be received _only_ at the server. The last line will be the structure of the message container. Because we are sending just the direction, it will be a struct that only contains as a `Vec3`. We can change the format differently as below.
+The first line declare what macro we will be using for this component/container. Because we are making a message container for movement input, it will contain `Message`, `Serialize`, and `Deserialize` macro services. The second line `#[locality('Remote')]` states that how we have specified the `Locality` of this message type. `Local` messages are sent to other plugins on this host. `Remote` messages are sent to the remote host. For example, a `Remote` message sent from a client would be received _only_ at the server. The last line will be the structure of the message container. Because we are sending just the direction, it will be a struct that only contains as a `Vec3`. We can change the format differently as below.
 
 ```rust
 // Add movement command as message from client to server
@@ -226,7 +226,7 @@ struct MoveCommand{
 This format will specify which attribute we want to call for later in the server side. As of now, we will stick with the first format, but there will be a note if there is a difference if someone else use the format above.
 
 ### Creating a Fire Input Message Container
-With the same approach for Movement Input Message, we also need to establish the fire input message container as well. The only input we need from the is whether the "shoot" button has been triggered or not. Therfore the implementation of this message container will be the following:
+With the same approach for the Movement Input Message, we also need to establish the fire input message container as well. The only input we need for this game is whether the "shoot" button has been triggered or not. Therefore the implementation of this message container will be the following:
 
 ```rust
 // Add fire command as a message from client to server
@@ -283,9 +283,9 @@ impl UserState for ClientState{
 ```
 The first line is calling the `EngineSchedule` as `sched`. The second line will add the system to the engine schedule. We will write about the `player_input_movement_update` function in the next paragraph. But that function is declared inside the `ClientState`. The third line to fifth line, we will attach other feeatures. The features we are adding are `InputEvent`, `GamepadState`, and `FrameTime`. `InputEvent` is the connector between the client and the keyboard input. `GamepadState` is the connector between **xBox** controller and the client.  Lastly, `FrameTime` will read the frames based on the system setting; each system has their own framerate that it will change based on the frame rate. The last line will build that system with those feature attachments.
 
->Note: As of now, we only support **xBox** controller at this time; there are some controllers that might work, but we have not tested fully. Therefore, if there is an controller you want us to implement, please check out this [issue](https://github.com/ChatImproVR/chatimprovr/issues/85). 
+>Note: We only support **xBox** controller at this time. There are some controllers that might work, but we have not tested fully. Therefore, if there is an controller you want us to implement, please check out this [issue](https://github.com/ChatImproVR/chatimprovr/issues/85) for updates. 
 
-Now, lets implement the `player_input_movement_update` function. First, we need to implement in the `ClientState`. Within the `ClientState`, we will declare the function. The function default will take three arguments: `self`, `EngineIo`, and `QueryResult`. In this case, we are not using the `QueryResult` argument, so we can ignore the usage of that argument. You should have somthing similar as the following code.
+Now, lets implement the `player_input_movement_update` function. First, we need to implement in the `ClientState`. Within the `ClientState`, we will declare the function. The function default will take three arguments: `self`, `EngineIo`, and `QueryResult`. In this case, we are not using the `QueryResult` argument, so we can ignore the usage of that argument. You should have something similar as the following code.
 
 ```rust
 impl ClientState{
@@ -294,7 +294,7 @@ impl ClientState{
     }
 }
 ```
-Now, let's fill the function. The following code will have some part of the function.
+Now, let's fill the function:
 
 ```rust
 impl ClientState{
@@ -309,9 +309,9 @@ impl ClientState{
     }
 }
 ```
-The direction is declare as mutable since that value will change based on the input. The second line will read the frametime based on the `FrameTime` feature; it use the idea of [subscribe and publish](https://chatimprovr.github.io/The-Book/Core_Concepts/pub_sub.html).In short, it will read the first message that contains the `FrameTime` feature and will save it as `frame_time`. The thrid line initilize the input from keyboard. If you are planning to take input from the keyboard, then you need to declare that statement before calling any keyboard input related function.The value `input` is from the updated struct on the `ClientState`. The last line set a deadzone for the controller. Controller deadzone is the amount your control stick can move before it’s recognized in game.
+The direction is declared as mutable since that value will change based on the input. The second line will read the frametime based on the `FrameTime` feature; it use the idea of [subscribe and publish](https://chatimprovr.github.io/The-Book/Core_Concepts/pub_sub.html). In short, it will read the first message that contains the FrameTime feature and will save it as frame_time. The third line initializes the input from the keyboard. If you are planning to take input from the keyboard, then you need to declare that statement before calling any keyboard input-related function. The value input is from the updated struct on the ClientState. The last line sets a dead zone for the controller. The controller dead zone is the amount your control stick can move before it's recognized in the game.
 
-Now, let's focus on input listener part. Look at the next following code.
+Now let's focus on input listener part:
 ```rust
 // Block 1
 if let Some(GamepadState(gamepads)) = io.inbox_first() {
@@ -349,7 +349,8 @@ if direction != Vec3::ZERO {
     io.send(&command);
     }
 ```
-If the direction value is non zero vector, then we will create a message since there was a player input. First, we need to update the value based on the frametime; let it called as `distance`. Next, we will use the custom made `MoveCommand` message and attach the `distance` value. Once that value is attached, then will will send that command to the engine which will transfer to the server. With all that, we have finished writing the movement function on the client side. The following code the complete side of the `ClientState` implementation.
+If the direction value is non-zero vector, then we will create a message since there was a player input. First, we need to update the value based on the frametime; let it called as `distance`. Next, we will use the custom made `MoveCommand` message and attach the `distance` value. Once that value is attached, then will will send that command to the engine which will transfer to the server. With all that, we have finished writing the movement function on the client side. The following code the complete side of the `ClientState` implementation.
+
 ```rust
 impl ClientState{
     // Send the player movement input to the server side
@@ -390,7 +391,7 @@ impl ClientState{
 Now we need to work on the server side.
 
 ### Server Side
-With the same idea for the client side, we need to attach the function to the engine scheduler inside the `new` function on the `ServerState`. Take a look at the following code.
+With the same idea as the client side, we need to attach the function to the engine scheduler inside the `new` function on the `ServerState`:
 
 ```rust
 impl UserState for ServerState{
@@ -410,9 +411,9 @@ impl UserState for ServerState{
     }
 }
 ```
-The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add an **query**. Query is one of the most important concept when it comes to server side implementation;it will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the other systems such as collision. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
+The first line is the same sytax on the client side of adding a `player_movement_update` function to the system. We need to recieve input from the `MoveCommand` message; hence, we need to subscribe the `MoveCommand` message. Lastly, we need to add a **query**. Query is one of the most important concepts when it comes to server-side implementation. It will fetch all the entities that matches the conditions. The first parameter of the query function takes the name of the query; we will talk the importance of the naming the query in the other systems such as collision. The second parameter is the condition of the query. In this query, we want all the entities that has the `Player` component and `Transform` component. With those component, the function has permission to modify the component. If you want the component not to be modified, then we can simply change the permission from `Access::Write` to `Access::Read`. The last function is building just like the client side did. Now, lets switch our focus to the `player_movement_update` function.
 
-First, we are going to implement the function inside the `ServerState` as the following code. 
+First, we are going to implement the function inside the `ServerState` as the following: 
 
 ```rust
 impl ServerState{
@@ -427,14 +428,14 @@ for player_movement in io.inbox::<MoveCommand>(){
 
 }
 ```
-The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`. Since this statement is saying that we have an input from the client, we then need to modify the player movement. Now we need to go every entity that qualifies the condition. In the previous part, we have indicated that all entities that has the `Player` component and the `Transform` component will be modified. There is only one entity has those components which is the Player entity. ßßßß
+The `player_movement` will be the iterator of the `io.inbox::<MoveCommand>()`. Since this statement is saying that we have an input from the client, we then need to modify the player movement. Now we need to go every entity that qualifies the condition. In the previous part, we have indicated that all entities that has the `Player` component and the `Transform` component will be modified. There is only one entity has those components which is the Player entity.
 
 
 ```rust
 for entity in query.iter("Player_Movement"){}
 ```
 
-If we have multiple quries (not in this case but for future cases), then we can differentiate based on the name of the query. There is more detailed information in [here](../Core_Concepts/entity_component_system.md) or in the system development. From there on, we can add conditions before actually moving the entity inside the query; for example, if the player is about to go out of bounds, then we need to stop that. We will first the current position of the player from the `Player` component.
+For future reference, if we have multiple queries, then we can differentiate based on the name of the query. There is more detailed information in [our docs on the entity component system](../Core_Concepts/entity_component_system.md) or in the system development. From there on, we can add conditions before actually moving the entity inside the query. For example, if the player is about to go out of bounds, then we need to stop that. We will first the current position of the player from the `Player` component.
 
 ```rust
 let x_limit = WITDH / 2.0;
@@ -445,7 +446,7 @@ if query.read::<Player>(entity).current_position.x + player_movement.0.x - PLAYE
     }
 ```
 
-If the player is about to go out of bound, then we will do nothing with that input; otherwise, we will change the player position based on the input like the following statement.
+If the player is about to go out of bounds, then we will do nothing with that input. Otherwise, we will change the player position based on the input, like so:
 
 ```rust
 query.modify::<Transform>(entity, |transform| {
@@ -461,7 +462,7 @@ query.modify::<Player>(entity, |player| {
 });
 ```
 
-With all that, we have completed set up the player movements for both server and client. The following code is the final part of the server side code.
+With all that, we have completed set up the player movements for both server and client. The following code is the final part of the server side code:
 
 ```rust
 impl ServerState{
@@ -512,9 +513,9 @@ sched
     }
 }
 ```
-The only differences are that there is no `subscribe` for `MoveCommand` but `subscribe` for `Frametime` and the query filter changed from `Player` to `Enemy`. I will not go more depth about this code since we have seen this pattern before. In fact, most of the attachment to the engine will be the same except the query part which will be highlighted if needed in other systems.
+The only differences are that there is no `subscribe` for `MoveCommand` but `subscribe` for `Frametime` and the query filter changed from `Player` to `Enemy`. We don't need to go into depth about this code, since we have seen this pattern before. In fact, most of the attachment to the engine will be the same, with the exception of the query part, which will be highlighted if needed in other systems.
 
-Let's switch our focus to `enemy_movement_update` function that will be implemented in the `ServerState`. Because we are not looking at the inbox messages, we will look at every entities that qualifies the condition (the entity contains the `Transform' and `Enemy` component and mutable).
+Let's switch our focus to `enemy_movement_update` function that will be implemented in the `ServerState`. Because we are not looking at the inbox messages, we will look at every entity that qualifies the condition (the entity contains the `Transform' and `Enemy` component and mutable).
 
 ```rust
 impl ServerState{
@@ -525,20 +526,20 @@ impl ServerState{
     }
 }
 ```
-From there, we want to get the `Frametime`; therefore, we will use this statement. This is the same line we used for the User Input Movement on the client side, but this time only for the server side.
+From there, we want to get the `Frametime`. Therefore, we will use this statement. This is the same line we used for the User Input Movement on the client side, but this time only for the server side.
 
 ```rust
 let Some(frame_time) = io.inbox_first::<FrameTime>() else { return };
 ```
 
-Next, we need to initilize our random number generators using the `Pcg` crate. Check out [here](https://docs.rs/pcg/latest/pcg/) to learn more about `Pcg`, but it will be something like the following.
+Next, we need to initialize our random number generators using the `Pcg` crate. Check out the docs on the Pcg crate [here](https://docs.rs/pcg/latest/pcg/), but it will be something like the following:
 
 ```rust
 let mut pcg_random_move = Pcg::new();
 let mut pcg_random_direction = Pcg::new();
 ```
 
-I created two seperated random generator so that each part will have a different seed for different character of the movement: one random generator will be the magnitude the whereas the other one will be for the direction.
+For this tutorial we created two separate random generator so that each part will have a different seed for different character of the movement: one random generator will be the magnitude, whereas the other one will be for the direction.
 
 From there, we need to get values for `x` and `y` positions using the random generator. We will conditions to generate these values like the following code.
 
@@ -614,7 +615,7 @@ impl ServerState{
 ```
 
 ## Fire System
-We can implement the same method for User Input for player fire system whereas the enemy will have the same idea for random movement but fire rate. However, we do not have the bullet entity. Let's take a look into these systems for both player and enemy.
+We can implement the same method for User Input for player fire system, and the enemy will have the same idea for random movement but fire rate. However, we do not have the bullet entity. Let's take a look into these systems for both player and enemy:
 
 ### Player Fire Client System
 ```rust
@@ -630,7 +631,7 @@ impl UserState for ClientState{
     }
 }
 ```
-With the same idea of movement input, we will subscribe the `InputEvent` and `GamepadState` to take input for both controller and keyboard. This code will be in the `new` function in the `ClientState`.
+With the same idea of movement input, we will subscribe the `InputEvent` and `GamepadState` to take input for both controller and keyboard. This code will be in the `new` function in the `ClientState`:
 
 ```rust
 impl ClientState{
@@ -657,7 +658,7 @@ impl ClientState{
 In the code above, we set the client side if the space bar was triggered or the east side button on the right side is triggered. The `gamepad.buttons[&Button::East]` indicates the east button on the right side. You can find more button information in the engine implementation.
 
 ### Player Fire Server System
-For bullets, we need to implement two functions on the `ServerState`: a function for generating the bullets and a function for moving the bullets. Therefore, we have two system to attach the engine.
+For bullets, we need to implement two functions on the `ServerState`: a function for generating the bullets and a function for moving the bullets. Therefore, we have two systems to attach the engine.
 
 ```rust
 impl UserState for ServerState{
@@ -688,7 +689,7 @@ impl UserState for ServerState{
 }
 
 ```
-The first system is reading if there is a `FireCommand` from the client side in order to fire the system. The query for the first system only needs to read the player's current position in order ot shoot the bullet from player's current position from the `Player` component. The second system is moving the player's bullet. The query for this system will be the same idea for any movement system: the system needs `Transform` component and `Bullet` component. Let's take a look at the `player_fire_update` function first.
+The first system is reading if there is a `FireCommand` from the client side in order to fire the system. The query for the first system only needs to read the player's current position in order to shoot the bullet from player's current position from the `Player` component. The second system is moving the player's bullet. The query for this system will be the same idea for any movement system: the system needs `Transform` component and `Bullet` component. Let's take a look at the `player_fire_update` function first.
 
 ```rust
 impl ServerState{
@@ -696,7 +697,7 @@ impl ServerState{
     fn player_fire_update(&mut self, io: &mut EngineIo, query: &mut QueryResult) {
         if let Some(FireCommand(_value)) = io.inbox_first() {
             for entity in query.iter("Player_Fire_Input") {
-                // Create the bullet entity from the plauyer position (the left bullet)
+                // Create the bullet entity from the player position (the left bullet)
                 io.create_entity()
                     .add_component(
                         Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
@@ -713,7 +714,7 @@ impl ServerState{
                     ))
                     .build();
 
-                // Create the bullet entity from the plauyer position (the right bullet)
+                // Create the bullet entity from the player position (the right bullet)
                 io.create_entity()
                     .add_component(
                         Render::new(PLAYER_BULLET_HANDLE).primitive(Primitive::Triangles),
@@ -756,7 +757,7 @@ impl ServerState{
     }
 }
 ```
-The first line inside the function is the same line to read the `frame_time` value. For the every bullet from the player, if the bullet is out of bound from the scene, then remove that bullet from the screen; otherwise, we will move the bullet one unit up to the y-axis with the custom set speed for the player's bullet. As you read the code, it is very similar to movement for player and enemy. Let's switch our intention to `Enemy` since I have added some complexity to bullet fire rate.
+The first line inside the function is the same line to read the `frame_time` value. For the every bullet from the player, if the bullet is out of bound from the scene, then remove that bullet from the screen. Otherwise, we will move the bullet one unit up to the Y-axis with the custom set speed for the player's bullet. As you read the code, it is very similar to movement for player and enemy. Let's switch our intention to `Enemy` since I have added some complexity to bullet fire rate.
 
 
 ### Enemy Fire Server System
@@ -827,7 +828,7 @@ impl ServerState{
     }
 }
 ```
-When you first look at this function, you will notice a lot of similarity from the `player_fire_update` function such as create an entity as bullet that is from the enemy rather than the player. However, before creating the enemy's bullet entity, we have additional condition on enemy's bullet display limit. We have this limitation because it will be almost impossible to play since it will continously spamming bullets that the player will not even have a chance to kill the enemy. Therefore, if there is more bullets than `ENEMY_MAX_BULLET` value from each enemy, then it will not generate a new one until the bullet is gone from the scene (either from hitting the player or going out of bound). Therefore, we will read the current bullet amount on the screen from the `Enemy` component. We will modify that value in the next function. At the same time, when we generate the bullet, we will store the `parent entities id`. This value is important in the next function.
+When you first look at this function, you will notice a lot of similarity from the `player_fire_update` function. However, before creating the enemy's bullet entity, we have to add a condition on enemy's bullet display limit. We have this limitation because it will be almost impossible to play since it will continously spamming bullets that the player will not even have a chance to kill the enemy. Therefore, if there is more bullets than `ENEMY_MAX_BULLET` value from each enemy, then it will not generate a new one until the bullet is gone from the scene (either from hitting the player or going out of bound). Therefore, we will read the current bullet amount on the screen from the `Enemy` component. We will modify that value in the next function. At the same time, when we generate the bullet, we will store the `parent entities id`. This value is important in the next function.
 
 ```rust
 impl ServerState{
@@ -860,12 +861,12 @@ impl ServerState{
     }
 }
 ```
-This function is similar as `player_bullet_movement_update` function but having an additional bullet counter on screen and updater. Let's look at the query that states for `Enemy_Bullet_Count_Update`. The condition states that find the parent(the enemy) and see if that enemy is alive. If the enemy is alive, then update the `bullet_count` value by 1; otherwise, ignore it since that enemy is dead. Once that is complete, then remove the bullet from the screen. You can customize the option on how to implement the limitation of the bullet, but we need to use the idea of parenting between entities.
+This function is similar to the player_bullet_movement_update function but has an additional bullet counter on the screen and updater. Let's take a look at the query that states Enemy_Bullet_Count_Update. The condition states that we need to find the parent (the enemy) and check if that enemy is alive. If the enemy is alive, then we update the bullet_count value by 1; otherwise, we ignore it since that enemy is dead. Once that is complete, we remove the bullet from the screen. You can customize the option on how to implement the bullet limitation, but we need to use the concept of parenting between entities.
 
-Now we got a system that can shoot and move, but what is fun is that? We need to add collision between each entities. If a bullet hit a player or enemy, then it should get removed. After a certain time is passed from its death, then the player or enemy should respawn. Once that is set up, we have a game-like Galaga in our hand.
+Now we have a system that can shoot and move, but what's the fun in that? We need to add collision detection between entities. If a bullet hits a player or enemy, it should be removed. After a certain amount of time has passed since its death, the player or enemy should respawn. Once that is set up, we will have a game-like Galaga in our hands.
 
 ## Collision
-First, let's work on collision. There are two type of collision in Galaga: player bullet hitting the enemy or the enemy's bullet htting the player. But before that, lets make a collision function so that we do not need to write the same collision code multiple times.
+First, let's work on collision. There are two types of collision in Galaga: where the player's bullet hits an enemy, and where an enemy's bullet hits the player. But before that, lets make a collision function so that we do not need to rewrite the same collision code multiple times.
 
 ### Collision Function
 This function is based off from standard, classic game logic of collision.
@@ -893,7 +894,7 @@ fn collision_detection(
     return false;
 }
 ```
-We do not need to fully understand how the logic works, but we need to understand the input/argument of the function. The `x` and `y` positions of the object/entity is define as the center (not at the bottom left which most engine does). The `size` argument identifies the legnth between left side to the right side. In other words, we are defining the entity/object as a sqaure. If these two squares overlap each other, then we consider as collision and return that they are hitting each other; otherwise, it is not a collision.
+We do not need to fully understand how the logic works, but we need to understand the input/arguments of the function. The `x` and `y` positions of the object/entity are defined as the center (not at the bottom left, which is how most engines handle it). The `size` argument identifies the length between the left side and the right side. In other words, we are defining the entity/object as a square. If these two squares overlap each other, then we consider it a collision and return that they are hitting each other; otherwise, it is not a collision.
 
 ### Player Bullet to Enemy
 First, we need to attach the function with the right quries. We need two quries for collision: one for the player bullet and the enemy. The following code will capture those entities.
@@ -953,7 +954,8 @@ impl ServerState{
     }
 }
 ```
-First we read if player bullet exist. If it does, then we check if the enemy entity exist. After that, we check those positions of those entities and see if they have a collision from the previous function `collsion_detection`. If so, then we remove it. Very simply and no abstract meaning behind. `entity1` is the player bullet whereas `entity2` is the enemy.
+
+First, we check if the player bullet exists. If it does, then we check if the enemy entity exists. After that, we compare the positions of these entities and check if they have a collision using the previous function `collision_detection`. If a collision is detected, we remove the entities. This process is straightforward without any abstract meaning behind it. In this context, `entity1` refers to the player bullet, while `entity2` refers to the enemy.
 
 ### Enemy Bullet to Player
 However, enemy bullet to player collision is slightly different because not only we need to handle bullet limitation, but also respawning part for the player. Take a look at the following code below.
@@ -1094,7 +1096,7 @@ impl ServerState{
     }
 }
 ```
-First, we are setting up a timer. This function will first trigger (or pass the first condition) if the player status is dead (`False`). We will store the time when the player is dead in the `PlayerStatus` component. Then will will re-run the funciton since there is a `PlayerStatus` component that is `False` with the actual time that the player is dead. If a certain amount of time has passed since the player has been dead, then it will respawn at its original position. At the same time, we throw away the old `PlayerStatus` entity and create a new one with its default values. Otherwise, we will re-run the function again over and over. If you have not noticed, all the functions on the server and client side are continously running back of the scene and see if there are any changes that will trigger certain functions based on each entity conditions.
+First, we are setting up a timer. This function will first trigger (or pass the first condition) if the player status is dead (`False`). We will store the time of the player's death in the `PlayerStatus` component. Then will will re-run the function since there is a `PlayerStatus` component that is `False` with the actual time that the player is dead. If a certain amount of time has passed since the player has been dead, then it will respawn at its original position. At the same time, we throw away the old `PlayerStatus` entity and create a nn case you haven't noticed, all the functions on the server and client side are continously running back of the scene and see if there are any changes that will trigger certain functions based on each entity conditions.
 
 ### Respawning Enemy
 Let's switch our focus on the Enemy respawning part. Rather than reading the one query, we need to read two quries. 
@@ -1160,7 +1162,7 @@ impl ServerState{
 Compare to the `spawn_player` function, the `spawn_enemy` will check how enemies exist on the scene. If there is less than maximum amount of enemies on the scene (`ENEMY_COUNT`), then we need to spawn a new enemy. Nevertheless, we do not want to spawn the enemy immediately after its death from a different enemy; we want some cool down time for the enemy as well. Therefore, we will use the `EnemyStatus` component as a timer. With the same logic as the `PlayerStatus` component, we will record the time when the enemy is dead and check if a certain amount of time has passed. If so, then generate a new enemy and reset (delete and set a new one) the `EnemyStatus` entity.
 
 ## Summary/Current Code Progress
-That being said, we are mostly done with the Galaga game development. You should have something similar to this code below.
+That being said, we are mostly done with the Galaga game development. You should have something similar to this code below:
 ```rust
 use std::f32::consts::PI;
 
@@ -1298,40 +1300,6 @@ const ENEMY_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy"));
 const PLAYER_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Player Bullet"));
 const ENEMY_BULLET_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Enemy Bullet"));
 const WINDOW_SIZE_HANDLE: MeshHandle = MeshHandle::new(pkg_namespace!("Window Size"));
-
-// Create Meshes for each object
-
-// Create the Player Mesh --> This is commented out because we are using obj file
-// fn player() -> Mesh {
-//     let size: f32 = PLAYER_SIZE;
-
-//     let vertices = vec![
-//         Vertex::new([-size, -size, 0.0], [0.0, 0.0, 1.0]), // Vertex 0
-//         Vertex::new([size, -size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 1
-//         Vertex::new([size, size, 0.0], [0.0, 0.0, 1.0]),   // Vertex 2
-//         Vertex::new([-size, size, 0.0], [0.0, 0.0, 1.0]),  // Vertex 3
-//     ];
-
-//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
-
-//     Mesh { vertices, indices }
-// }
-
-// // Create the Enemy Mesh --> This is commented out because we are using obj file
-// fn enemy() -> Mesh {
-//     let size: f32 = ENEMY_SIZE;
-
-//     let vertices = vec![
-//         Vertex::new([-size, -size, 0.0], [1.0, 0.0, 0.0]), // Vertex 0
-//         Vertex::new([size, -size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 1
-//         Vertex::new([size, size, 0.0], [1.0, 0.0, 0.0]),   // Vertex 2
-//         Vertex::new([-size, size, 0.0], [1.0, 0.0, 0.0]),  // Vertex 3
-//     ];
-
-//     let indices: Vec<u32> = vec![3, 0, 2, 1, 2, 0];
-
-//     Mesh { vertices, indices }
-// }
 
 // Create Player Bullet Mesh as a sqaure green
 fn player_bullet() -> Mesh {
@@ -2045,5 +2013,5 @@ fn collision_detection(
 make_app_state!(ClientState, ServerState);
 
 ```
-## What is next...? Are we done...?
-So you might be wondering there is no page after this tutorial; therefore, are we done with this tutorial? Yes and No. Yes because we tackle all the basic syntax and concept of the engine that you have enough knowledge to create your own plugin; however, there is no text display or sound implementation. These features will be added into the plugin tutorial when we implement into the engine to use for the plugins. Therefore, please keep posted for additional tutorials for this plugin. If you want to check out the most up to date code for galaga, you can check out [**HERE**](https://github.com/ChatImproVR/galaga). 
+## What is next?
+So you might be wondering... since this is the last page of the tutorial, are we done with the program? Yes and No. Yes, because we tackle all the basic syntax and concept of the engine that you need to create your own plugin. However, there is no text display or sound implementation. These features will be added into the plugin tutorial later on, when these components are implemented into the engine. Please keep posted for additional tutorials for this plugin. If you want to check out the most up to date code for galaga, you can check out [**HERE**](https://github.com/ChatImproVR/galaga). 
