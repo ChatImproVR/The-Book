@@ -19,7 +19,5 @@
     - [Understanding the Plugin Template](./Beginner_Tutorial/understanding_the_plugin_template.md)
     - [Creating Objects](./Beginner_Tutorial/creating_objects.md)
     - [Adding Object Behaviors](./Beginner_Tutorial/adding_object_behaviors.md)
-    - [Configuring Game Settings](./Beginner_Tutorial/configuring_game_settings.md)
 - [For Engine developers](./for_engine_developers.md)
-- [Quality Of Life](./quality_of_life.md)
 - [Common fixes](./common_fixes.md)
