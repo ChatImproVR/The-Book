@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Core Concepts - The Book</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="../installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="../development_environment.html"><strong aria-hidden="true">3.</strong> Development Environment</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/core_concepts.html" class="active"><strong aria-hidden="true">4.</strong> Core Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Core_Concepts/plugin.html"><strong aria-hidden="true">4.1.</strong> Plugins</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/wasm.html"><strong aria-hidden="true">4.2.</strong> Webassembly</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/entity_component_system.html"><strong aria-hidden="true">4.3.</strong> Entity Component System</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/pub_sub.html"><strong aria-hidden="true">4.4.</strong> Pub/Sub channels</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/client_and_server.html"><strong aria-hidden="true">4.5.</strong> Client and Server</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/crates.html"><strong aria-hidden="true">4.6.</strong> Crates</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/names.html"><strong aria-hidden="true">4.7.</strong> Names</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/coordinate_system.html"><strong aria-hidden="true">4.8.</strong> Coordinate system</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/rendering.html"><strong aria-hidden="true">4.9.</strong> Rendering</a></li><li class="chapter-item expanded "><a href="../Core_Concepts/api_docs.html"><strong aria-hidden="true">4.10.</strong> API documentation</a></li></ol></li><li class="chapter-item expanded "><a href="../Beginner_Tutorial/beginner_plugin_development_tutorial.html"><strong aria-hidden="true">5.</strong> Beginner Plugin Development Tutorial</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../Beginner_Tutorial/setting_up_plugin_development_environment.html"><strong aria-hidden="true">5.1.</strong> Setting up Plugin Development Environment</a></li><li class="chapter-item expanded "><a href="../Beginner_Tutorial/understanding_the_plugin_template.html"><strong aria-hidden="true">5.2.</strong> Understanding the Plugin Template</a></li><li class="chapter-item expanded "><a href="../Beginner_Tutorial/creating_objects.html"><strong aria-hidden="true">5.3.</strong> Creating Objects</a></li><li class="chapter-item expanded "><a href="../Beginner_Tutorial/adding_object_behaviors.html"><strong aria-hidden="true">5.4.</strong> Adding Object Behaviors</a></li></ol></li><li class="chapter-item expanded "><a href="../for_engine_developers.html"><strong aria-hidden="true">6.</strong> For Engine developers</a></li><li class="chapter-item expanded "><a href="../common_fixes.html"><strong aria-hidden="true">7.</strong> Common fixes</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="how-does-chatimprovr-work"><a class="header" href="#how-does-chatimprovr-work">How does ChatImproVR work?</a></h2>
+<p><strong>ChatImproVR is based</strong> on plugins. <strong>Plugins</strong> run on both the <strong>Client</strong> and the <strong>Server</strong>. Each plugin adds functionality to the virtual world by providing a number of <strong>Systems</strong>.</p>
+<p>We refer to the <strong>Client</strong> or the <strong>Server</strong> a <strong>Plugin</strong> is running on as the <strong>&quot;Host&quot;</strong>. <strong>Systems</strong> communicate with the <strong>Host</strong> via <strong>Channels</strong> and via the Entity Component System (<strong>ECS</strong>). </p>
+<p>The <strong>Host</strong> can communicate with external APIs, and with the <strong>Remote</strong>. From the <strong>Client</strong>'s perspective, the <strong>Remote</strong> is the <strong>Server</strong>. From the <strong>Server</strong>'s perspective, the <strong>Remotes</strong> are the connected <strong>Clients</strong>.</p>
+<h2 id="channels"><a class="header" href="#channels">Channels</a></h2>
+<p><strong>Channels</strong> are modeled after the familiar Pub/Sub pattern. <strong>Systems</strong> subscribe to <strong>Channels</strong>, and receive <strong>Messages</strong> via their <strong>Inbox</strong>. Each <strong>Channel</strong> is referred to by it's <strong>Unique ID</strong>. This ID corresponds to exactly one responsibility and associated datatype. <em>If the underlying datatype changes, the ID must also change</em>. This is to ensure compatability between plugins. Otherwise, plugins may consume corrupted data.</p>
+<p>Each channel is either <strong>Local</strong> or <strong>Remote</strong>. The <strong>Local</strong> <strong>Channels</strong> can only send <strong>Messages</strong> within their <strong>Host</strong>. Conversely, <strong>Remote Channels</strong> can only send messages to the <strong>Remote</strong>. This is to help avoid confusion as to where a message might have originated, and to make optimizing communication easier.</p>
+<h2 id="entity-component-system"><a class="header" href="#entity-component-system">Entity Component System</a></h2>
+<p>ChatImproVR's <strong>ECS</strong> is very similar to other game engines' architectures (Bevy being a notable example). Essentially, the <strong>ECS</strong> acts as a global database, where <strong>Entities</strong> are simply keys and <strong>Components</strong> are sparsely populated columns in the metaphorical database. <strong>Systems</strong> make <strong>Queries</strong> to the <strong>ECS</strong>, which are usually joining one more more <strong>Components</strong>. </p>
+<p>Each <strong>Host</strong> has it's own <strong>ECS</strong>. The <strong>Server</strong>'s <strong>ECS</strong> is intended to contain the state of the world, while the <strong>Client</strong>'s <strong>ECS</strong>' are intended to contain snapshots of the world and locally visible objects such as graphical user interfaces and markers, as well as predictions of motion or action.</p>
+<p>One important difference from other engines is that ChatImproVR handles <strong>Components</strong> via their <strong>Unique ID</strong>, instead of by their datatype. Just like <strong>Channels</strong>, <em>If the underlying datatype changes, the ID must also change</em>. Another important difference is that <strong>Entities</strong> are intended to be <em>universally unique</em>. This means that <strong>Entities</strong> could be transferred between <strong>Servers</strong>, so items in the virtual world can be transferred throughout the metaverse.</p>
+<h2 id="scheduling"><a class="header" href="#scheduling">Scheduling</a></h2>
+<p>Execution of <strong>Systems</strong> on each <strong>Host</strong> is broken up into a number of <strong>Stages</strong>. Currently, the following stages are available (listed in order of execution):</p>
+<ul>
+<li><strong>Init</strong>: Executed once, right after the plugin is initialized.</li>
+<li><strong>Pre-Update</strong>: Executed before each update, once per <strong>Frame</strong>.</li>
+<li><strong>Update</strong>: Executed once per <strong>Frame</strong>.</li>
+<li><strong>Post-Update</strong>: Executed after each update, once per <strong>Frame</strong>.</li>
+</ul>
+<h2 id="synchronization"><a class="header" href="#synchronization">Synchronization</a></h2>
+<p>There is a special <strong>Sychronized</strong> component which, if attached to an <strong>Entity</strong> on the <strong>Server</strong>, will cause the entire <strong>Entity</strong> and all of it's <strong>Components</strong> to be copied to the <strong>Clients</strong>'s <strong>ECS</strong>. This mechanism is intended to make it very easy to create content which is visible to all <strong>Clients</strong> immediately. </p>
+<p>Expect this synchronization to be optimized, so that updates may not be immediate.</p>
+<p>In the future, we may offer lazy/immediate/streamed variants of this component.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../development_environment.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../Core_Concepts/plugin.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../development_environment.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../Core_Concepts/plugin.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

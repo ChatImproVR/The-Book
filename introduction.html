@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - The Book</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduction.html" class="active"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="development_environment.html"><strong aria-hidden="true">3.</strong> Development Environment</a></li><li class="chapter-item expanded "><a href="Core_Concepts/core_concepts.html"><strong aria-hidden="true">4.</strong> Core Concepts</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Core_Concepts/plugin.html"><strong aria-hidden="true">4.1.</strong> Plugins</a></li><li class="chapter-item expanded "><a href="Core_Concepts/wasm.html"><strong aria-hidden="true">4.2.</strong> Webassembly</a></li><li class="chapter-item expanded "><a href="Core_Concepts/entity_component_system.html"><strong aria-hidden="true">4.3.</strong> Entity Component System</a></li><li class="chapter-item expanded "><a href="Core_Concepts/pub_sub.html"><strong aria-hidden="true">4.4.</strong> Pub/Sub channels</a></li><li class="chapter-item expanded "><a href="Core_Concepts/client_and_server.html"><strong aria-hidden="true">4.5.</strong> Client and Server</a></li><li class="chapter-item expanded "><a href="Core_Concepts/crates.html"><strong aria-hidden="true">4.6.</strong> Crates</a></li><li class="chapter-item expanded "><a href="Core_Concepts/names.html"><strong aria-hidden="true">4.7.</strong> Names</a></li><li class="chapter-item expanded "><a href="Core_Concepts/coordinate_system.html"><strong aria-hidden="true">4.8.</strong> Coordinate system</a></li><li class="chapter-item expanded "><a href="Core_Concepts/rendering.html"><strong aria-hidden="true">4.9.</strong> Rendering</a></li><li class="chapter-item expanded "><a href="Core_Concepts/api_docs.html"><strong aria-hidden="true">4.10.</strong> API documentation</a></li></ol></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/beginner_plugin_development_tutorial.html"><strong aria-hidden="true">5.</strong> Beginner Plugin Development Tutorial</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Beginner_Tutorial/setting_up_plugin_development_environment.html"><strong aria-hidden="true">5.1.</strong> Setting up Plugin Development Environment</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/understanding_the_plugin_template.html"><strong aria-hidden="true">5.2.</strong> Understanding the Plugin Template</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/creating_objects.html"><strong aria-hidden="true">5.3.</strong> Creating Objects</a></li><li class="chapter-item expanded "><a href="Beginner_Tutorial/adding_object_behaviors.html"><strong aria-hidden="true">5.4.</strong> Adding Object Behaviors</a></li></ol></li><li class="chapter-item expanded "><a href="for_engine_developers.html"><strong aria-hidden="true">6.</strong> For Engine developers</a></li><li class="chapter-item expanded "><a href="common_fixes.html"><strong aria-hidden="true">7.</strong> Common fixes</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">The Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chatimprovr"><a class="header" href="#chatimprovr">ChatImproVR</a></h1>
+<p><img src="images/FZ.png" alt="FZ demo program" /></p>
+<h2 id="what-is-chatimprovr"><a class="header" href="#what-is-chatimprovr">What is ChatImproVR?</a></h2>
+<p><img src="images/chatimprovr_about.png" alt="visualization_about_chatimprovr" /></p>
+<p>ChatImproVR is a virtual world platform, with goals similar to that of VRChat, Neos, or SecondLife. A virtual world platform is a game engine and a set of tools to create and experience an immersive virtual space. These virtual spaces are then hosted online, where users can join them to socialize and enjoy the activities in the virtual world.</p>
+<p>ChatImproVR will improve on existing virtual world platforms by promoting open source software and prioritizing user control over content, all while featuring excellent flexibility.</p>
+<h2 id="who-is-chatimprovr-for"><a class="header" href="#who-is-chatimprovr-for">Who is ChatImproVR for?</a></h2>
+<p>Everyone! But to be more specific, we break down ChatImproVR users into two groups:</p>
+<ol>
+<li>
+<p><strong>Developers</strong>: These are users who work with the backend of the engine. Writing code, implementing plugins, etc. If you are enthusiastic about Rust or developing your own game from scratch, chances are that you're in this developer category.</p>
+</li>
+<li>
+<p><strong>Player</strong>:  Players use the &quot;front end&quot; of the engine. If you are content to put on the VR headset and just play the game without looking at the code too much, you're likely one of the players.</p>
+</li>
+</ol>
+<p>We want everyone to be able to use ChatImproVR for every aspect of the game experience-- from developing the game to playing it!</p>
+<h2 id="what-does-chatimprovr-do"><a class="header" href="#what-does-chatimprovr-do">What does ChatImproVR do?</a></h2>
+<p>Primarily ChatImproVR is a game engine, but it might be a bit different from the game engines that you are used to, like Unity or Unreal. To break it down, ChatImproVR has a plugin-based architecture. This means that developers can use whatever parts of our engine that they would like, and even add their own features just as easily. The hope is that developers will share the features that they create for the engine, and open-source developers can build the engine <em>together</em>, instead of providing game builders with a front end and limited back end. </p>
+<div class="table-wrapper"><table><thead><tr><th></th><th style="text-align: center">ChatImproVR</th><th style="text-align: center">Professional Game Engine</th><th style="text-align: center">Typical VR Game</th></tr></thead><tbody>
+<tr><td>Fully Open Source</td><td style="text-align: center">✔️</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td></tr>
+<tr><td>Can create games</td><td style="text-align: center">✔️</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td></tr>
+<tr><td>Visually-focused</td><td style="text-align: center">❌</td><td style="text-align: center">✔️</td><td style="text-align: center">✔️</td></tr>
+<tr><td>Can play games</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td><td style="text-align: center">✔️</td></tr>
+<tr><td>Plugin architecture</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td></tr>
+<tr><td>Code-oriented</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td></tr>
+<tr><td>Made in Rust</td><td style="text-align: center">✔️</td><td style="text-align: center">❌</td><td style="text-align: center">❌</td></tr>
+</tbody></table>
+</div>
+<p>Here are some examples of games that have been created with ChatImproVR so far:</p>
+<p><img src="images/demo_room_rough.JPG" alt="demo_room_rough" />
+<em>Demo Room</em></p>
+<p><img src="images/cube_example.JPG" alt="cube_example" />
+<em>Multiplayer</em></p>
+<img src="images/fluid_sim.JPG" width="800">
+<p><em>Fluid Simulation</em></p>
+<h2 id="how-do-i-get-started"><a class="header" href="#how-do-i-get-started">How do I get started?   <img src="images/ferris_getting_started.svg" width="65"></a></h2>
+<p>While this page serves as a product page, it also serves as the documentation page as well. The next section will cover the installation for the <strong>players</strong>. </p>
+<p>However, if you are planning to do some plugin development or engine development (being as a <strong>developer</strong>), then we would recommend to check out in the Development Environment section.</p>
+<p>If you are interested in the repository, check out <a href="https://github.com/ChatImproVR/chatimprovr">here</a>.</p>
+<h2 id="where-can-i-find-help"><a class="header" href="#where-can-i-find-help">Where can I find help?   <img src="images/ferris_confused.svg" width="60"></a></h2>
+<p>You're pretty much there! The Book is the information hub of ChatImproVR. Here is where you can find How to make your <a href="https://chatimprovr.github.io/The-Book/Beginner_Tutorial/beginner_plugin_development_tutorial.html">first plugin</a>, common issues and their <a href="https://chatimprovr.github.io/The-Book/common_fixes.html">fixes</a>, or even the <a href="https://chatimprovr.github.io/The-Book/Core_Concepts/core_concepts.html">core concepts</a> of what ChatImproVR is made of.</p>
+<p>But just in case The Book doesn't have the help you need, you can also:</p>
+<ul>
+<li>
+<p>Refer to some of our <a href="https://github.com/orgs/ChatImproVR/repositories">example plugins</a></p>
+</li>
+<li>
+<p>Report an <a href="https://github.com/ChatImproVR/chatimprovr/issues">issue</a> in the ChatImproVR engine repository</p>
+</li>
+<li>
+<p>Or, if all else fails, you can contact the devleopers directly:</p>
+</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>Developer Name</th><th>Email</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/Masterchef365">Duncan Freeman</a></td><td>duncan.freeman1@gmail.com</td></tr>
+<tr><td><a href="https://github.com/Exiled1">Rudy Peralta</a></td><td>rudyperalta831@gmail.com</td></tr>
+<tr><td><a href="https://github.com/MrKangs">Kenneth Kang</a></td><td>gykang00@gmail.com</td></tr>
+<tr><td><a href="https://github.com/toddgr">Grace Todd</a></td><td>grace.miriam.todd@gmail.com</td></tr>
+</tbody></table>
+</div>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next" href="installation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next" href="installation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
